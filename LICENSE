@@ -1,0 +1,51 @@
+FilamentCraft Commercial License
+================================
+
+Copyright (c) 2026 Hoceine EL IDRISSI. All rights reserved.
+
+This software (the "Software") is licensed, not sold. By purchasing a
+licence through the official distribution channel (filamentcraft.dev) the licensee
+("you") is granted a non-exclusive, non-transferable, non-sublicensable
+right to use, install, and integrate the Software in commercial and
+non-commercial projects, subject to the terms below.
+
+1. Permitted use
+   a. You may install and use the Software in any number of your own
+      Laravel + Filament applications.
+   b. You may modify the source code for the purposes of your own use,
+      including patching bugs and adapting the Software to your needs.
+   c. You may distribute the Software as a compiled, non-source dependency
+      inside applications you build for clients, provided the Software is
+      not the primary value of the deliverable and is not extractable as
+      a standalone product.
+
+2. Restrictions
+   a. You may NOT redistribute the Software, in source or compiled form,
+      as a standalone product, package, fork, plugin, theme, or template
+      to any third party.
+   b. You may NOT remove, alter, or obscure any copyright notice, licence
+      file, or attribution embedded in the Software.
+   c. You may NOT resell, sublicense, lease, rent, or otherwise transfer
+      your licence to any other party.
+   d. You may NOT use the Software to build a directly competing product
+      or service.
+
+3. Number of licences
+   Each licence covers a single end-user / organisation. If multiple
+   organisations use the Software, each requires its own licence.
+
+4. Warranty disclaimer
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+   NON-INFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE
+   FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM, OUT OF, OR
+   IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+
+5. Termination
+   This licence terminates automatically upon any breach of the terms.
+   On termination you must cease all use of the Software and destroy all
+   copies in your possession.
+
+For licence enquiries: hello@filamentcraft.dev
