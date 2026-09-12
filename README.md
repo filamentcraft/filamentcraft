@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://filamentcraft.dev"><img src="art/filamentcraft-banner.jpg" alt="FilamentCraft — Shopify-style visual website builder for Filament" width="100%"></a>
+  <a href="https://filamentcraft.dev"><img class="filament-hidden" src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/filamentcraft-banner.jpg" alt="FilamentCraft — Shopify-style visual website builder for Filament" width="100%"></a>
 </p>
 
 <h1 align="center">FilamentCraft</h1>
@@ -23,12 +23,12 @@
 
 | | |
 |---|---|
-| ![The editor — section rail, live iframe preview, settings panel](art/editor-overview.png) | ![The no-code section builder](art/section-builder-canvas.png) |
-| ![32 built-in sections](art/builtin-sections.png) | ![Editing a Hero section live](art/hero-editor.png) |
-| ![Theme panel](art/theme-panel.png) | ![Color scheme picker](art/color-scheme-editor.png) |
-| ![Bunny Fonts picker](art/font-picker.png) | ![Device preview](art/live-preview-devices.png) |
-| ![Per-page SEO with SERP preview](art/seo-search-tab.png) | ![Multi-locale editing with RTL](art/locale-menu.png) |
-| ![Site-scoped media library](art/media-library-gallery.png) | ![A published page](art/public-page.png) |
+| ![The editor — section rail, live iframe preview, settings panel](https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/editor-overview.png) | ![The no-code section builder](https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/section-builder-canvas.png) |
+| ![32 built-in sections](https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/builtin-sections.png) | ![Editing a Hero section live](https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/hero-editor.png) |
+| ![Theme panel](https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/theme-panel.png) | ![Color scheme picker](https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/color-scheme-editor.png) |
+| ![Bunny Fonts picker](https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/font-picker.png) | ![Device preview](https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/live-preview-devices.png) |
+| ![Per-page SEO with SERP preview](https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/seo-search-tab.png) | ![Multi-locale editing with RTL](https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/locale-menu.png) |
+| ![Site-scoped media library](https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/media-library-gallery.png) | ![A published page](https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/public-page.png) |
 
 ## Highlights
 
