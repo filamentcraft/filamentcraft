@@ -7,6 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.40.13] — 2026-09-28
+
+### Added
+
+- **`.fc-page` for host pages.** A host route rendered in `<x-filamentcraft::layout>` puts `fc-page`
+  on its outer element and its headings get the site's display font and heading scale, like every
+  built-in section, instead of relying on a built-in class name.
+- **A scripted open state for the filter sheet.** `.fc-filter-sheet.is-open` opens the mobile filter
+  sheet from Alpine or any script; the checkbox still works with JavaScript off.
+- **`.fc-icon-tile--stacked`** stacks two lines in an icon tile, such as a day over a month.
+- **A payment note setting on the cart and checkout.** Leave it empty for the default, or say what
+  fits a storefront that doesn't take payment on delivery.
+- **Muted and sale ink tokens.** `--fc-color-on-background-muted`, `--fc-color-on-surface-muted` and
+  `--fc-color-danger-ink` are derived per color scheme, with matching `text-*` utilities.
+
+### Fixed
+
+- **The cart badge and toasts ignored Livewire.** `CartEvents::UPDATED` and `CartEvents::TOAST`
+  were heard only on `document`, but Livewire dispatches on `window`, so a host component's
+  dispatch never updated the built-in badge or showed a toast. The listeners now catch the event
+  wherever it is dispatched, once.
+- **Muted copy failed WCAG AA.** Footer text and links, the cart and checkout notes, and the
+  struck-through old price now use derived muted colors that clear 4.5:1 on every shipped surface,
+  and a sale price uses a derived red ink instead of the badge fill color (2:1 before).
+- **The cart assumed cash on delivery.** Its note now says only that nothing is charged yet; the
+  checkout keeps its cash-on-delivery note, without the em-dash.
+- **The checkout section threw outside the `web` middleware.** It read the session's validation
+  errors unguarded, so rendering it in a test, a cache warm or a preview without that middleware
+  failed.
+- **The imageless media placeholder read as a broken image.** Its monogram is smaller and fainter.
+
+### Docs
+
+- The custom-sections guide explains that the public `site.css` only carries the utilities the
+  built-in sections use, and why a value that changes between Livewire renders must stay out of
+  `x-data`. The e-commerce example documents the cart and toast events and the filter sheet's
+  `is-open` hook.
+
 ## [1.40.12] — 2026-09-28
 
 ### Changed
