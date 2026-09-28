@@ -7,6 +7,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.40.14] — 2026-09-28
+
+Run `php artisan filamentcraft:upgrade` after updating: this release adds the
+`filamentcraft_submissions` migration.
+
+### Added
+
+- **Form submissions are stored and land in an Inbox.** Contact and Newsletter submissions are
+  saved to `filamentcraft_submissions` and listed in a new **Inbox** in the panel, with an unread
+  badge, type, read and site filters, a detail view, and read / unread / delete actions (one or in
+  bulk). It only shows submissions for sites the signed-in user can reach. Turn it off with
+  `->withSubmissionsInbox(false)` or `filamentcraft.forms.inbox`.
+- **Email alerts for submissions.** `filamentcraft.forms.notify` takes an address, a
+  comma-separated list or an array; each gets an email per submission, with Reply-To set to the
+  visitor on contact messages. A mail failure never reaches the visitor.
+- **Spam defence on the public forms.** Both forms have a hidden honeypot field and a per-visitor
+  rate limit (`forms.honeypot`, `forms.throttle`, default 5 per minute).
+- **More than one catalog.** Register extra catalogs (courses, events...) with a `Catalog`
+  implementation through `->catalogs([...])` or `filamentcraft.commerce.catalogs`; the bound
+  `Storefront` stays the `products` catalog, so existing stores change nothing. The product
+  listing, carousel, detail, category grid and store hero get a **Catalog** select once more than
+  one is registered. Cart lines remember their catalog, prices resolve from it on the server, and
+  `placeOrder()` lines include `catalog` so a mixed basket can be routed.
+- **A real toast stack.** `<x-filamentcraft::toast-host />` now has a close button, swipe and
+  Escape to dismiss, a timer that pauses on hover, focus and background tabs, a drain bar, a
+  count for repeated messages, and a cap on visible toasts (`:max`, default 3). New `position`
+  prop. `CartEvents::TOAST` accepts an optional `action: {label, url}` link (paths and http(s)
+  only) and `type` as an alias for `tone`.
+- **Overlay and state components.** `<x-filamentcraft::sheet>` (a native dialog: bottom sheet with
+  a drag handle on phones, bottom sheet or side drawer on wider screens),
+  `<x-filamentcraft::empty-state>`, `<x-filamentcraft::pills>` (single-choice chips built on real
+  radios, so arrow keys, forms and `wire:model` work) and `<x-filamentcraft::skeleton>`. All are
+  styled from theme tokens, work right to left, and ship their CSS in `site.css`.
+- **A visitor's language is remembered.** Choosing a language with `?locale=` now carries across
+  plain links on the same site for the rest of the session. Switchers name the default language
+  explicitly so switching back works; hreflang and canonical URLs never depend on the session.
+  Turn it off with `filamentcraft.localization.remember`. `LocaleAlternate::forSwitcher()` gives
+  host-built switchers the same links.
+- **Safe areas on notched phones.** Page shells now use `viewport-fit=cover`, so the safe-area
+  insets the package already uses work when a site is installed to a home screen. Override it
+  with `filamentcraft.layout.viewport` or the layout component's `viewport` prop.
+- `filamentcraft:doctor` warns when form submissions would be discarded, fails when storage is on
+  but the table is missing, lists registered catalogs and warns about sections pointing at a
+  catalog nothing registers.
+
+### Changed
+
+- Toasts stay 4.5 seconds by default (errors 2 seconds longer) and errors are announced with
+  `role="alert"`. Error toasts carry a new `fc-toast--err` class alongside the old
+  `fc-toast--error`.
+
+### Fixed
+
+- **Language switcher links inside Livewire sections** pointed at `/livewire/update` after a
+  re-render. They now point at the page the section was loaded on (new `PinsPageUrl` trait for
+  your own components).
+
 ## [1.40.13] — 2026-09-28
 
 ### Added
