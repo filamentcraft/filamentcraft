@@ -7,6 +7,283 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.40.12] — 2026-09-28
+
+### Changed
+
+- **`filamentcraft:install` starts you with an example site.** After the migrations it seeds the
+  published `filamentcraft:starter` site (header, footer and a seven-section homepage), attached to
+  your first owner record when tenancy is configured, with no prompt. Pass `--family=` to pick its
+  style or `--no-example` to start empty. Install skips the example when any site already exists,
+  so re-running it never duplicates one. `--example` still works but is no longer needed; the
+  smaller three-section "Studio Demo" seed it used to create is gone.
+
+### Fixed
+
+- **"Create Site" on an empty dashboard opened nothing.** The dashboard is a table page, and Filament
+  renders a table page's action modals inside the table, which the no-site state never draws. The
+  empty state now renders its own modal container, so both "Create Site" buttons open the form.
+- **The dashboard used a Blade Icons component.** Apps that disable Blade Icons components for
+  performance broke on `<x-heroicon-o-paint-brush>`; the view now uses `@svg()`. The icon's tint also
+  read Filament v3's RGB-channel variables, which are full colors in v4, so it rendered untinted.
+- **Carousel dots counted slides instead of pages.** Four slides with three visible drew four dots,
+  three of which scrolled to the same end and none of which then showed as current. Dots are now one
+  per page, the current one carries `aria-current="true"` after a click or swipe, and their labels
+  read "Go to page N of M" in every shipped language. A dot also scrolled with `scrollIntoView()`,
+  which dragged the whole page sideways; it now scrolls the track only.
+
+## [1.40.11] — 2026-09-28
+
+### Fixed
+
+- **In-page links reach their section.** Every section wrapper now carries its section id as an
+  HTML `id`, so a button or link set to `#plans` or `#contact` scrolls to that section. Ids are
+  sanitised and escaped; ids starting with `fc-` get no anchor, since that prefix is reserved for
+  the package's own elements.
+- **Brand Kit is scoped to the panel that sets it.** `->brandKit()`, `->brandFonts()`,
+  `->brandPalette()` and `->withoutBuiltinSchemes()` wrote to `config('filamentcraft.brand')`, so in
+  an app with several panels the last panel registered locked the fonts, palette and schemes of all
+  of them. The kit now lives on the plugin instance and only applies on its own panel; config stays
+  the app-wide default for panels without a kit. `filamentcraft:doctor` and `php artisan about`
+  report each panel's kit separately. Code-registered fonts (`->registerFont()`) stay global.
+
+## [1.40.10] — 2026-09-28
+
+### Added
+
+- **Section scheduling.** Every section has a Schedule group with Show from and Show until, and
+  the published page only shows it inside that window. Use it for campaigns, seasonal banners and
+  time-boxed header announcements. The editor canvas keeps showing every section. The sidebar
+  and the canvas toolbar mark upcoming, live and ended sections. A campaign section can
+  **replace** another one (the everyday hero while the Black Friday hero is live), and
+  **Preview on start date** shows the page as visitors will see it when the campaign starts.
+  Times follow Filament's timezone and are stored as UTC. Blueprints get
+  `->schedule(from:, until:)`. Turn it off with `sections.scheduling`.
+
+### Fixed
+
+- A hidden FAQ section no longer emits `FAQPage` JSON-LD.
+
+## [1.40.9] — 2026-09-27
+
+### Changed
+
+- **Team section thumbnail.** The preview image in the add-section picker now shows four men
+  in the same illustrated style; the other thumbnails show no people.
+
+## [1.40.8] — 2026-09-26
+
+### Added
+
+- **UUID and ULID primary keys.** Set `database.key_type` to `uuid` or `ulid` (or run
+  `filamentcraft:install --keys=uuid`) and every FilamentCraft table and model uses them. No
+  `HasUuids` needed on your side. `sites.owner_id` and the `user_id` columns follow your owner and
+  `User` models' key types. An interactive install asks, preselecting your `User` model's type.
+  `filamentcraft:doctor` fails when the config and the migrated tables disagree. Existing installs
+  keep integer keys.
+- **Swap any model for your own subclass.** Register it under `models` in the config, or run
+  `php artisan make:filamentcraft-model Site`. Every package query, relation, Filament resource,
+  route binding and factory then returns your class, with its scopes, casts and events.
+  Overrides must extend the FilamentCraft model; anything else throws at boot.
+
+### Changed
+
+- FilamentCraft models are no longer `final`.
+
+### Fixed
+
+- Editor drafts, undo history and the autosave preference now key on the real user id. They cast it
+  to `int`, so users with UUID or other string ids could share one draft slot (`'0190a…'` and
+  `'0190b…'` both became `190`), and the canvas preview ignored their drafts.
+- Duplicating a custom section named the copy `… filamentcraft::filamentcraft.actions.duplicate_suffix`
+  instead of `… copy`.
+- **Postgres:** a malformed id (a hand-edited URL, a tampered editor request) no longer throws a
+  database error. Postgres rejects comparing a `bigint` or `uuid` column with `'abc'` where
+  SQLite and MySQL just find nothing; FilamentCraft now treats it as "not found" everywhere.
+- **Postgres:** the page search in link pickers is case-insensitive again (`LIKE` is
+  case-sensitive on Postgres, so "pric" missed "Pricing Page").
+- `filamentcraft:doctor` reports a `single_site_id` that isn't a valid key instead of crashing, and
+  skips its content checks when the key type doesn't match the tables.
+
+## [1.40.7] — 2026-09-26
+
+### Fixed
+
+- **`filamentcraft:upgrade` now applies migrations in production.** It ran `migrate` without
+  `--force`, so with `APP_ENV=production` a non-interactive deploy (Forge, CI) cancelled at
+  Laravel's confirmation prompt and published migrations were never applied. Both `upgrade` and
+  `install` (after its own prompt) now pass `--force`.
+
+## [1.40.6] — 2026-09-26
+
+### Fixed
+
+- **Catalog thumbnails for the newest sections.** Bento, Marquee, Steps, Showcase, Scroll showcase
+  and Sticky reveal showed a bare placeholder icon in the **Add section** catalog. They now ship
+  preview images in the same style as the rest of the catalog, and a test fails if a built-in
+  section ever ships without one.
+
+## [1.40.5] — 2026-09-24
+
+### Added
+
+- **AI assistant in the editor.** A topbar **Assistant** button (⌘J, also in the command palette and on
+  every selected section) opens an assistant that writes a page or a whole site from a short brief
+  and applies plain-language requests — "change my main color to deep teal", "add a FAQ about
+  shipping after the features", "make this section punchier" — as validated, undoable edits to the
+  draft. Generation is two small structured calls (plan the section types from a one-line-per-type
+  catalog, then write only the copy fields of the chosen types over the picked style preset), so a
+  homepage costs ~500 prompt tokens per step. Runs on the optional `laravel/ai` package; editors
+  pick a *Fast / Balanced / Advanced* tier while the models behind them, per-site encrypted keys,
+  usage tracking (`filamentcraft_ai_usages`) and section/page limits are all developer-configured
+  under `filamentcraft.ai` — or fluently on the plugin (`->aiModels()`, `->aiDefaultTier()`,
+  `->aiSiteKeys()`, `->aiUsage()`, `->aiProviderOptions()`, `->aiLimits()`). A generation also
+  designs the site in one extra call: an existing scheme or a custom palette (authored as the
+  `ai-brand` scheme with derived, readable text colors), a type pairing, theme settings and the
+  look every written section starts from — reviewable on a card next to the plan, switchable off.
+  The assistant is a slide-over with the step's actions pinned to the bottom, an edit log on the
+  Ask tab (your request, a one-line reply, then one row per change; a section row selects that
+  section in the canvas), and an inline "Ask AI" bar on every selected section; a request sent from
+  that bar closes the assistant once it has applied. A whole-site run is one model call per request,
+  chained back to back, with each page shown as queued / writing / done / failed, a retry on the
+  failed one, and no duplicate page if a response is lost mid-run. Overloaded providers and
+  connection timeouts get one retry inside a single deadline, then the fast tier. Ask requests
+  carry the site's last brief and each section's heading, so rewritten copy stays on-brand.
+  New migration: `create_filamentcraft_ai_usages`.
+
+  <p>
+    <img src="https://filamentcraft.dev/images/ai-brief.png" width="260" alt="The Generate tab's brief: business, audience, tone, style and scope">
+    <img src="https://filamentcraft.dev/images/ai-plan.png" width="260" alt="The planned sections under a design card naming its reference">
+    <img src="https://filamentcraft.dev/images/ai-ask.png" width="260" alt="The Ask tab as an edit log with three change rows and Undo">
+  </p>
+- **AI access and spending controls.** `->aiAccess(bool|Closure)` decides who may use the assistant
+  (the closure gets the user and the site); `limits.requests_per_minute` (default 30) caps model
+  calls per user, and `limits.monthly_tokens` sets an optional token budget per site, shown next to
+  the month's usage and flagged by `filamentcraft:doctor` when usage tracking is off. `timeout` is
+  now the model time one web request may spend, shared by every call in it; the design step runs
+  as its own request after the plan, and sections added by one Ask request are written in a single
+  call. Ask sends the last three exchanges, so follow-ups like "shorter" land, and keeps edits made
+  in the settings panel while it waits for the model.
+- **Generated sites no longer look generated.** The design step now reasons from a scene, a
+  named real-world reference and a colour strategy before choosing colours; picks fonts from a
+  curated set described by voice instead of the Inter/Playfair defaults; and a cream, sand or beige
+  background is corrected in code. Plans skip sections that would need invented facts, copy uses
+  `[placeholders]` instead of made-up names, quotes, clients and phone numbers, invented external
+  links fall back to `#`, only one eyebrow survives per page, and feature cards get a real icon.
+
+  <img src="https://filamentcraft.dev/images/ai-design-card.png" width="520" alt="A design card: fir green and rust, after a 1960s Oregon seed-packet label">
+- **Write your own prompts.** `->aiInstructions()` adds house rules to every task or to one
+  (`AiTask::PlanDesign`, `FillSections`…); a closure gets the site and task, so rules can follow a
+  tenant's plan or industry. `->aiVoice()` replaces the copywriting style while the no-invented-facts
+  and language rules stay. `->aiPromptUsing()` takes the last word over every request before it is
+  sent, including its tier. Rules and a voice can also live in `filamentcraft.ai.prompts`, and they
+  reach `FakeAiRunner` so your tests can assert on the final prompt. See
+  [Your own prompts](https://filamentcraft.dev/guide/ai-assistant#your-own-prompts).
+- **AI fallback steps down one tier and remembers slow models.** A failed or silent model hands the
+  request to the next tier down, and any model that failed or took over 12 seconds is tried last
+  for two minutes. Failed Ask requests stay in the thread with **Try again**, a note appears after
+  8 seconds of waiting, and the error banner closes instantly.
+
+  <p>
+    <img src="https://filamentcraft.dev/images/ai-ask-working.png" width="260" alt="An Ask request in progress with its elapsed seconds">
+    <img src="https://filamentcraft.dev/images/ai-plan-pending.png" width="260" alt="The design being chosen as its own step while the write button waits">
+    <img src="https://filamentcraft.dev/images/ai-done.png" width="260" alt="The Done step as a list of changes">
+  </p>
+
+- **Four new built-in sections: Marquee, Steps, Bento grid and Showcase.** An endless logo or word
+  ticker (pure CSS, pauses on hover, reduced-motion aware), a numbered "how it works" sequence, an
+  asymmetric grid of mixed-size tiles, and alternating media-and-copy feature rows. Each ships the
+  four preset families and is translated into every bundled language.
+- **Motion effects, inspired by Aceternity UI and rebuilt in pure CSS.** The Hero and Call to
+  action take a background effect (aurora, spotlight, twin spotlights, light beams, meteors, grid,
+  dots, lamp, starfield) and a moving-border or glow-border button; the Hero adds a word-by-word
+  reveal, a highlighted phrase and rotating words. Features cards can glow or highlight,
+  Testimonials gain endlessly moving rows, Gallery and Team a focus effect, and the Timeline a
+  scroll beam. Two new sections: **Scroll showcase** (a screenshot that settles flat as you scroll)
+  and **Sticky reveal** (a pinned panel that follows the step being read). Everything is off by
+  default, uses the theme's colours, runs right-to-left, respects reduced motion and adds no
+  JavaScript to the site. See [Effects](https://filamentcraft.dev/guide/effects).
+- **Hero secondary button.** The hero takes an optional outlined second button next to the main
+  call to action; it shows once both its label and link are set.
+- **Section builder feedback.** The preview shows a progress line while a change is on its way and
+  says so when an update fails instead of failing silently; Save reads "Saving…" while it runs.
+  Blocks now stack with a built-in rhythm (a Spacer replaces the gap rather than adding to it), the
+  desktop preview fills the canvas instead of shrinking a 1440px page to unreadable text, and
+  reopening a section lands on its structure.
+
+### Fixed
+
+- **An unknown tenant subdomain served another tenant's site.** Once any site is served by
+  subdomain, a request for `{unknown}.{primary}` now returns 404 instead of falling through to the
+  first live site.
+- **Saving a custom section could silently do nothing.** If the section was deleted in another tab
+  while you were building it, Save now keeps your layout as a new section; any other failure says
+  so. A re-save no longer claims the section was just added to the catalog.
+- **Section builder polish.** Layer names use the whole row (the hidden row actions no longer
+  reserve their space), row actions and the drag handle meet the 24px target size, focus rings are
+  solid, small text is 12px, the Discard changes button only appears on saved sections and says
+  what it keeps, the back arrow mirrors in right-to-left layouts, and deleting a custom section
+  names it. Two starter layouts used values the inspector could not show.
+- **A site could take over another site's subdomain.** Custom domains were only checked against
+  other custom domains, so a site could claim `acme.myapp.com` while another site owned the `acme`
+  subdomain — and because a domain claim outranks a subdomain match, it served that address
+  instead. Custom domain and subdomain are now checked against each other, and the platform's own
+  host, its `www.` twin and the `www` subdomain are reserved.
+- **The sitemap judged every language by the default one.** A page marked noindex only in its
+  default language disappeared from the sitemap in every language, and a translation marked
+  noindex was still listed as an alternate. Each language URL now gets its own sitemap entry, and
+  only languages that are indexable are listed.
+- **Changing a column count in the section builder could exceed the block limit.** Adding columns
+  now respects `section_definitions.max_nodes` and warns instead of dropping the extra blocks from
+  the live page.
+- **The canvas toolbar vanished after restyling a section with a preset.** Applying a preset from
+  the section header's **Browse presets** left the selected section with no Edit / Move / Duplicate
+  / Hide / Delete toolbar until a page reload. The full canvas refresh discarded the toolbar while
+  the overlay survived, and the repaint only rebuilt it when the section node itself changed.
+- **The header CTA arrow pointed the wrong way on right-to-left sites.** The arrow next to the
+  header's call-to-action label now mirrors under `dir="rtl"`, like the arrows on every other
+  section's buttons.
+
+## [1.40.4] — 2026-09-23
+
+### Fixed
+
+- **The editor topbar no longer crushes or overlaps on smaller screens.** Between 1280px and 1440px
+  the view controls ran under the language picker, and below 768px button labels spilled over the
+  next button. The bar now sizes itself from the space it actually has (a CSS container query, so a
+  narrow window or a docked panel behaves the same), and controls leave it in priority order: first
+  labels, then undo/redo, auto-save, hover controls and focus mode, then search, settings and the
+  live-page link, and on phones the device switcher. Everything that leaves the bar is in a new
+  **More** menu, so no action becomes unreachable. Page and language names truncate instead of
+  pushing the bar wider.
+- On phones the section drawer's close button no longer covers the Header card, the closed drawer
+  no longer casts a shadow over the canvas edge, and it can no longer be reached with the keyboard
+  while it is off-screen.
+
+## [1.40.3] — 2026-09-23
+
+### Changed
+
+- **Built-in sections share one type system.** Every section heading now sits on a single fluid
+  scale (`fc-title`, and `fc-title--display` for heroes) in the theme's heading font, with a
+  readable lede (`fc-lede`) under it. Twelve sections — articles, comparison, contact, countdown,
+  gallery, locations, newsletter, portfolio, tabs, team, timeline and video — were missing from the
+  heading-font rule and fell back to the body face; they now match the rest of the page. Kickers
+  are sentence case instead of tracked capitals, and card titles pick up the heading face too.
+- **Image heroes are full-bleed covers.** A hero with a background image grows to most of the
+  viewport, anchors its copy to the bottom over a gradient scrim, and keeps its kicker legible on
+  the photo. Hero proof points are a hairline-divided fact row instead of small cards.
+- **Layouts that read better by default.** Contact and newsletter are two-column (heading beside the
+  form) instead of a narrow centred card, image-and-text gives the image a taller frame with no
+  padded card around it, the featured testimonial is set large in the heading face, stats lay four
+  items on four columns instead of orphaning the last, and the two projects under a featured
+  portfolio project share the full row.
+
+### Fixed
+
+- The header language menu marks the active language with `aria-current`.
+- Contact form message fields were one line tall; they now open at about five lines and resize vertically.
+
 ## [1.40.2] — 2026-09-08
 
 ### Fixed
