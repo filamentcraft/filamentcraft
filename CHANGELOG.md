@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.40.15] — 2026-09-29
+
+### Added
+
+- **A real phone bottom bar for the header.** The header's `show_mobile_nav` bar gets rebuilt:
+  - Up to five tabs, with each nav link choosing where it shows (`everywhere`, `header` only, or
+    `bottom_bar` only; the last is the way to add a Home tab).
+  - An icon per link, guessed from the label when none is picked.
+  - A **More** tab that opens a native bottom sheet with the links that don't fit, header-only
+    links, the call to action and the languages. The sheet can be dragged down to dismiss.
+  - An optional call-to-action tab.
+  - `docked` or `floating` styles, and labels that are always shown, shown on the active tab
+    only, or hidden.
+  - The bar hides while scrolling down and while the visitor types into a field. The header's
+    hamburger steps aside on phones once the bar reaches everything it did.
+
+### Fixed
+
+- **Switching language from the canvas header works on every device.** Locale links in the
+  editor preview (the phone menu's language chips, the desktop dropdown, `<x-filamentcraft::locale-switcher>`)
+  now switch the editor's locale instead of navigating the preview to a storefront URL it can't
+  serve, which showed a 404 in the phone view.
+
+- **The bottom bar marks the right tab on every page.** The active tab was picked on the server
+  while the header is cached per locale, so the first page rendered after a cache flush stayed
+  active on every page. It's now marked in the browser, including `#section` links while their
+  section is on screen.
+- **A sticky header no longer drags fixed elements with it.** `.fc-header--sticky` put
+  `backdrop-filter` on the header itself, which made it the containing block for anything
+  `position: fixed` inside it, including the bottom bar. The blur now lives on a pseudo-element.
+- **Floating buttons clear the bottom bar.** The back-to-top/WhatsApp buttons and the floating
+  dark-mode toggle now read `--fc-bottom-chrome`, the same offset toasts and the watermark already
+  used, so they sit above the bar instead of on it.
+- **The newsletter email field no longer collapses on phones.** It used `flex-1` inside a column,
+  so its flex basis overrode the input height and it shrank to its text height. When stacked on a
+  phone it now matches the button's height.
+
 ## [1.40.14] — 2026-09-28
 
 Run `php artisan filamentcraft:upgrade` after updating: this release adds the
