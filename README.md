@@ -100,6 +100,18 @@ That's it for the minimal install — open the panel and you'll find a "Template
 
 Verify the setup any time — `php artisan filamentcraft:doctor` checks migrations, theme sync, sites, published assets, and panel wiring, printing a fix-it hint under anything that fails. `php artisan about` shows the installed version, registered theme/section counts, tenancy mode, and license state at a glance.
 
+## Starter kits
+
+Rather start from a finished app? Three open-source Laravel 13 + Filament 5 projects, each set up with one `composer setup`:
+
+| Kit | What you get |
+|---|---|
+| [starter-site](https://github.com/filamentcraft/starter-site) | A company website: five editable pages, a contact form inbox, a seeded media library |
+| [starter-store](https://github.com/filamentcraft/starter-store) | One online shop: catalog, basket, cash-on-delivery checkout, orders and stock |
+| [starter-multistore](https://github.com/filamentcraft/starter-multistore) | A store platform: merchants sign up and get their own storefront at `/{store}` |
+
+See [filamentcraft.dev/guide/starter-kits](https://filamentcraft.dev/guide/starter-kits) for what each one includes.
+
 ## Upgrading
 
 Migrations ship as stubs that `filamentcraft:install` copies into your `database/migrations/`, and the editor CSS/JS is copied into your `public/`. `composer update` refreshes neither — it only replaces `vendor/`. Run one command after every update of this package:
