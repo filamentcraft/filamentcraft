@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.40.16] — 2026-09-30
+
+### Added
+
+- **`->lockBlueprintPages()` keeps seeded pages in place.** Off by default. When on, a page seeded
+  from a blueprint can't be deleted or unpublished, and its slug, type and status are fixed, in the
+  dashboard, the Templates resource and the editor (settings menu, ⌘K, page settings). The server
+  refuses these changes too, not only the UI. Content stays editable, pages editors create stay
+  fully editable, and a copy of a blueprint page is not locked. Accepts a closure that receives the user.
+
 ## [1.40.15] — 2026-09-29
 
 ### Added
