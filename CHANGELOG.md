@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.40.18] — 2026-10-01
+
+### Changed
+
+- **A redesigned AI assistant panel.** Every state of the slide-over got a polish pass:
+  - Generate and Ask are a two-way switch instead of underlined tabs, and the header carries an
+    assistant mark.
+  - The brief is split into three groups (the site, the look, what to write). Tone chips show a
+    check when picked, style and scope cards gain a radio dot, the style swatches are larger, and
+    "Also design the site" is a switch.
+  - Finished steps turn solid green with a filled connector, and the done step no longer repeats
+    "Done" as the current step.
+  - Planned sections sit in icon tiles with an inline-editable intent, "Add a section" is a
+    full-width target, and the design preview shimmers while colors and fonts are chosen.
+  - Ask opens with suggestions anchored above the composer. Your request shows as a bubble, the
+    reply carries the assistant mark, and applied changes sit in a card with Undo at its foot.
+  - Every control has a visible keyboard focus ring, the brief's error state keeps a red ring
+    while focused, the footer no longer overflows on phones, dark swatches stay visible in dark
+    mode, and all motion respects reduced-motion.
+
 ## [1.40.17] — 2026-10-01
 
 ### Changed
