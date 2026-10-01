@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.40.17] — 2026-10-01
+
+### Changed
+
+- **A calmer editor toolbar with one main action.** Publish is the only filled button; Save and
+  the Assistant are outlined. A "Saved" / "Unsaved changes" label replaces the three separate
+  save indicators, and Discard only appears when there is something to discard. Auto-save moved
+  into the settings sheet as an on/off switch.
+- **Duplicate controls removed.** The page switcher no longer repeats the homepage badge, the
+  sidebar toggle left the device controls (click the active rail icon to collapse the sidebar
+  instead), template settings got their own icon instead of a second gear, and section presets
+  use a swatch icon so they no longer look like the AI button.
+- **Flatter sections sidebar.** Section rows, Header and Footer are plain rows with a hover
+  background instead of bordered cards; "Add section" is an outlined button, and settings groups
+  are tighter with consistent headers.
+
+### Added
+
+- **Hovering a section in the sidebar scrolls the canvas to it** and outlines it, after a short
+  pause so sweeping the cursor down the list doesn't scroll the page.
+
+### Fixed
+
+- **Tapping header, footer or phone bottom-bar links no longer breaks live preview.** These links
+  used to load the live page into the canvas, where edits (fonts, text, colors) stopped showing
+  until a reload. They now stay in the preview, and the editor returns the canvas to the preview
+  if anything else navigates it away.
+- **Scrolling the canvas to a section clears a sticky site header** instead of hiding the
+  section's top behind it, and corrects itself when images load mid-scroll.
+- **Related-product rows drop the product being viewed** when the route binding is a string or
+  `Stringable`, not only an Eloquent model.
+- **Hero headings hyphenate only on narrow screens**, so desktop headings no longer break words.
+
 ## [1.40.16] — 2026-09-30
 
 ### Added
