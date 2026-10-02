@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.40.19] — 2026-10-02
+
+### Added
+
+- **Theme presets.** A preset is a ready-made site: colors, fonts and buttons, plus the pages,
+  header and footer that go with them. Operators open **Themes** from the editor rail, settings
+  panel or command palette, browse a library of full-page screenshots, preview any preset on their
+  own site without saving, and apply it in one click.
+  - **Full theme** (the default) applies the style and replaces the preset's pages, header and
+    footer; the bar names exactly what it replaces before you apply. **Style only** keeps every
+    page and changes colors, fonts and buttons.
+  - Every switch records a restore point (the last ten are kept). **Undo** in the notification and
+    **Restore previous design** in the panel put the site back exactly.
+  - Four presets ship built in: Modern, Editorial, Bold and Elegant, each with screenshots.
+  - New sites start from a **Start from** picker (Blank or any preset) in the editor's new-site
+    dialog and the Sites resource.
+  - Presets that break the panel's Brand Kit are shown disabled with the reason, and the server
+    refuses them too.
+- **Preset DX.** `php artisan make:filamentcraft-theme-preset Harbor --from-site=harbor` exports a
+  site built in the editor into one readable PHP class (only non-default settings are written).
+  Without `--from-site` it scaffolds a starter. Classes in `app/Themes/Presets` are discovered
+  automatically; register others with `themePresets()`, `discoverThemePresetsIn()` or config, and
+  hide the built-ins with `withoutBuiltinThemePresets()`. `filamentcraft:doctor` validates every
+  host preset, and `ThemePresetTester::for(...)->assertValid()->assertRenders()` does the same in
+  tests.
+
+### Upgrading
+
+- Run `php artisan filamentcraft:upgrade` to publish and run the `filamentcraft_site_snapshots`
+  migration. Until then the Themes panel shows the command and **Apply** stays disabled.
+
 ## [1.40.18] — 2026-10-01
 
 ### Changed
