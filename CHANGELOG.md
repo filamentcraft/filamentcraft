@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.40.20] — 2026-10-02
+
+### Fixed
+
+- **Record pages get their own SEO.** Product and other dynamic record pages now emit the URL
+  actually served as canonical, `og:url` and `Offer.url`, with the record's name, description and
+  image. Before, every record pointed its canonical at the template page.
+- hreflang links keep only the `locale` query parameter, so `utm_*` / `gclid` no longer leak into
+  alternates. Head hreflang and the sitemap share one rule: non-indexable locales are left out,
+  and a page whose canonical points elsewhere gets no hreflang and no sitemap entry.
+- A dynamic template's own slug (e.g. `/product`) answers `noindex` and is skipped by IndexNow.
+- IndexNow respects the site-wide indexing switch, per-page noindex and canonical overrides.
+- `JsonLd::encode` substitutes invalid UTF-8 instead of emitting an empty script.
+
+### Changed
+
+- Hidden pages emit `noindex, follow`; indexable pages emit `index, follow, max-image-preview:large`.
+- Sites with indexing off no longer `Disallow: /` in robots.txt (that hid the noindex from
+  crawlers); public pages send `X-Robots-Tag: noindex` instead.
+- The homepage title defaults to the site name instead of "Home — Site".
+- Organization and WebSite JSON-LD use the site home URL with `@id` links (`#organization`,
+  `#website`); `og:locale` uses the territory form (`ar_AR`); `twitter:site` comes from the X link.
+- Descriptions and share images fall back to the page's own section content before the site default.
+
+### Added
+
+- Product JSON-LD: all images, `brand`, `sku`, `mpn`, `gtin`, sale `StrikethroughPrice`,
+  `priceValidUntil`, and `JsonLd::offerDetailsUsing()` for shipping / return policy details.
+- Sitemap lists catalog products for product-detail dynamic pages, includes `<image:image>`
+  entries, splits into a sitemap index past 50,000 URLs and is cached until the next publish.
+  Other dynamic templates can list records via `DynamicTemplateDefinition::sitemap()`.
+- `DynamicTemplateDefinition::seo()` returns a `RecordSeo` (title, description, image, type,
+  author, dates); `OgType::Article` records emit `BlogPosting`.
+- SEO checklist in the editor's SEO panel: title and description length, share image, noindex,
+  canonical elsewhere, missing translations, multiple H1 sections.
+- `filamentcraft:doctor` reports duplicate descriptions and checks every locale.
+
 ## [1.40.19] — 2026-10-02
 
 ### Added
