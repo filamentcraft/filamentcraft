@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.40.21] — 2026-10-02
+
+### Fixed
+
+- **Canonical URLs on multi-panel hosts.** Outside a panel (public pages, queued jobs) `publicUrlUsing()`
+  and `localeUrlsUsing()` closures registered by different panels are now all tried until one
+  returns a URL. Before, only the last-registered panel's closure ran, so a site owned by another
+  panel fell back to the auth-gated preview URL as its canonical, sitemap and JSON-LD URL.
+
 ## [1.40.20] — 2026-10-02
 
 ### Fixed
