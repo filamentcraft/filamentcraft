@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.40.22] — 2026-10-03
+
+### Added
+
+- **Sitemaps for path-mounted tenant sites.** `Route::filamentCraftTenant()` now also registers
+  `/{tenant}/sitemap.xml` (and its `sitemap-{page}.xml` children), scoped to that tenant's live
+  site and honouring the site's indexing switch. Pass `sitemap: false` to opt out.
+- `SitemapIndex::for(iterable $sites)` builds a root `<sitemapindex>` for hosts that mount many
+  sites; `SitemapIndex::urls()` / `urlFor()` expose the per-site sitemap URLs.
+- `filamentcraft:doctor` warns when tenant routes are registered without a `publicUrlUsing()`
+  resolver (canonicals would fall back to the preview URL).
+
+### Changed
+
+- `TenantSiteResolver` uses the owner's `primarySite()` when the owner implements `SiteOwner`,
+  matching the site the tenant page route already renders.
+
 ## [1.40.21] — 2026-10-02
 
 ### Fixed
