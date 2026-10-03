@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.40.23] — 2026-10-03
+
+### Fixed
+
+- **The editor preview now behaves like the live site.** Before, every plain link inside a
+  section was cancelled, so sort, category filter and pagination links did nothing. Clicks on
+  links outside a section (header, footer, phone bottom bar) were swallowed, and site-script
+  triggers such as sheet/drawer openers never saw the click. Page scripts, Alpine and
+  Livewire now handle every click first. Links within the page load in place, and links to
+  another page switch the editor to that page, including tenant-prefixed URLs and links to
+  unpublished pages. A link the site can't serve offers **Open in new tab**.
+- **Add to cart in the preview no longer loses the item.** The section-select request raced
+  the cart `POST` and saved a stale session over it. A form submit no longer selects its
+  section, and a post that redirects to another storefront page moves the editor there.
+- **Live edits keep the canvas's sort and filters**, and section refreshes now render against
+  the preview page, so the links they build and their cart `return` values match the page.
+- `data-fc-nav` links resolve by their real `href` before falling back to the section-based
+  page-kind lookup, so hosts with custom checkout/cart sections still navigate.
+
+
 ## [1.40.22] — 2026-10-03
 
 ### Added
