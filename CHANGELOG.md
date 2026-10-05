@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.40.24] — 2026-10-05
+
+### Changed
+
+- The editor's browser tab now reads 'Site editor · <page>' so it is easy to tell apart from the admin panel. Hosts can change it with editorDocumentTitleUsing().
+
 ## [1.40.23] — 2026-10-03
 
 ### Fixed
