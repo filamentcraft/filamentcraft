@@ -7,6 +7,111 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.0] — 2026-10-06
+
+### Security
+
+- **Editor components re-check what they edit.** The editor page's template and region ids are
+  now locked, and every editor component verifies on mount that its template belongs to the
+  current tenant and its region to that template's site, so a forged region id can no longer
+  reach another site's AI settings, custom sections or regions.
+- **The media library only adopts files it owns.** An image path typed into a section is added
+  to the library only when it sits in the uploads directory (fonts and SEO uploads excluded)
+  and no other site's library or pages use it. Deleting a library image keeps any file
+  another row still points at.
+- **Custom fonts are scoped to a site.** Fonts added from the editor belong to the editing
+  site. The font manager lists and changes only that site's fonts; existing fonts stay shared
+  and can be managed only from an unowned (single-tenant) site. A font's uploaded files are
+  only ever deleted from the font upload directory, and never while another font uses them.
+- **Section settings can no longer break out of the canvas seed script** (`</script>` in a
+  setting is now escaped).
+- **Preview, section-refresh, region, definition and icon-picker routes require editor
+  access.** They now authorise against the panel that hosts the editor, on that panel's guard
+  (`canAccessPanel()` plus `canAccessUsing()`), instead of any logged-in account.
+- **Checkout shipping signatures are bound to the site, the cart's catalogs and a 24-hour
+  expiry.** Checkout forms rendered before this release fail once with the order-failed
+  message; reloading the checkout page fixes it.
+- Cart endpoints are throttled (60 requests a minute) and reject a variant the product does
+  not offer.
+- A public 404 explains the miss (site slug, unpublished pages) only while `app.debug` is on.
+- Clicking an absolute link to another host in the editor canvas no longer opens a local page
+  with the same path.
+- The contact form caps the message at 5,000 characters and the email at 255; the newsletter
+  email is capped at 255.
+- **Font pickers and storefront CSS only offer a site's own and shared fonts.** Another
+  site's custom fonts no longer appear in the editor's font pickers or brand-kit allow-list,
+  and their `@font-face` rules are no longer emitted on your storefront.
+
+### Fixed
+
+- **Translations no longer inherit the default language's SEO copy.** A page's title, description,
+  social copy and canonical override now apply to their own language only, so a French page never
+  ships an English meta description or canonicalises to the English URL. The social image and the
+  noindex switch still carry over, and saving a translation's SEO no longer pins them.
+- **The site's default meta description is used for the default language only.** Translations fall
+  back to text from the page itself, or to no description, never to copy in another language.
+- **"Custom per-bot rules" in AI crawlers & GEO now shows the bot list.** It stayed hidden, so
+  saving blocked every AI training crawler.
+- **The SEO previews match the live page.** The description falls back to the page's own text, the
+  share image to the page's first image, and the homepage title to the bare site name. Counters
+  update while you type and count the full title, previews follow the content's direction (RTL), and
+  the modal names the language being edited.
+- **Unknown product URLs now return 404.** On a `{product}` page without a `bind()`, any slug used to
+  answer 200 with an indexable page.
+- **Hreflang tags are built from the canonical URL**, not the request URL, so `/home`, alias hosts and
+  letter-case variants advertise the same alternates as the sitemap. No `x-default` is emitted when
+  the default language is noindex, matching the sitemap.
+- **Redirects keep the query string**, so `/old?locale=fr` lands on `/new?locale=fr`.
+- **Publishing or renaming a page from the Pages resource** now goes through the same publish step as
+  the editor (IndexNow ping, published revision), creates the 301 from the old slug and clears the
+  page cache.
+- **IndexNow** skips sites that are not live and reserved development domains (`.test`, `.local`, IP
+  addresses), serves the key of every live site on a shared host, and stays off when the public routes
+  are off (the key file could not be served).
+- The sitemap lists nothing while page URLs are only the auth-gated preview, `llms.txt` skips pages
+  canonicalised elsewhere and escapes Markdown, non-ASCII slugs are percent-encoded, Product schema
+  never emits a non-ISO `priceCurrency`, and the breadcrumb's first item uses the site name.
+- Undoing a theme preset keeps SEO settings edited after it was applied.
+- The `home` page is treated as the homepage while the chosen homepage is unpublished, as `/` serves it.
+- Share images accept JPG, PNG or WebP up to 5 MB, canonical and social URLs must be `http(s)`, and the
+  X field accepts an `@handle`.
+- The editor's SEO settings warn when `public_routes` is off or a static `public/robots.txt`,
+  `sitemap.xml` or `llms.txt` shadows the dynamic one. `filamentcraft:doctor` now checks `llms.txt` too
+  and counts section text as a description.
+- **"Style only" theme presets keep your content settings.** Social links, WhatsApp, the
+  announcement text, header layout and every other non-style site setting now survive a
+  style-only apply; only fonts, sizes, radii, colours and other style values are replaced.
+- Product carousel, category grid and store hero sections are no longer fragment-cached, so
+  prices and stock are always live.
+- **`robots.txt` can list every path-mounted tenant's sitemap.** On a host that mounts sites
+  under `/{tenant}`, the `Sitemap:` line pointed at whichever single site the host resolved to.
+  Register `RobotsTxt::sitemapsUsing()` to list the sitemap URLs yourself; without it nothing
+  changes.
+- **The editor preview no longer places real orders or sends real form messages.** Checkout and the
+  contact and newsletter forms explain that they only send from the live site.
+- **Checkout views published before this release keep working.** The old shipping signature is still
+  accepted while `filamentcraft.commerce.legacy_shipping_signature` is `true` (the default), so a
+  customised `sections/checkout.blade.php` neither errors nor fails orders. Update it to the new
+  fields, then turn the option off; it is removed in 2.0.
+- **Two editors can no longer overwrite each other's page silently.** Save and Publish now check
+  whether someone else saved the page after your draft started, and offer "Overwrite anyway" or
+  "Load latest" instead of replacing their work. Discard drops only your own draft and no longer
+  rolls back a version another editor saved. Drafts from before this release save as before.
+
+### Upgrade
+
+- Run `php artisan filamentcraft:upgrade` to publish and run the new
+  `add_site_id_to_filamentcraft_custom_fonts` migration. Until it runs, fonts stay shared and
+  can be managed only from an unowned site.
+- If you published and customised `sections/checkout.blade.php`, it keeps working for now. When
+  convenient, add the hidden `site` and `shipping_expires` inputs and pass the new arguments to
+  `ShippingSignature::sign()` (see the e-commerce example in the docs), then set
+  `filamentcraft.commerce.legacy_shipping_signature` to `false`.
+- `MediaLibrary::register()` and `replace()` gained an optional `directory` argument; a host
+  that adopts paths outside `filamentcraft.uploads.directory` must pass it.
+- If a user model does not implement `Filament\Models\Contracts\FilamentUser`, the editor's
+  preview routes now return 403 outside the `local` environment, matching the panel itself.
+
 ## [1.40.24] — 2026-10-05
 
 ### Changed
