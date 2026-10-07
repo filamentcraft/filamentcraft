@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.1] — 2026-10-07
+
+### Fixed
+
+- **AI-generated pages now use the palette the assistant designed.** Section presets pinned
+  their own colour scheme on every section, so the authored `ai-brand` scheme never rendered.
+  Generated sections now follow the site's scheme.
+- **No more repeated words in generated headlines.** Preset rotating words and highlight marks
+  were appended after the AI-written heading ("…for accounting firms QuickBooks"). Generated
+  heroes leave heading effects off.
+- **No preset demo copy on generated pages.** A section the model skipped used to keep another
+  business's sample copy. It is now asked for once more, and dropped if still missing.
+- **No invented or placeholder facts.** Pricing plans, stats, quotes and team names that are
+  placeholders (`[Price]`), numbers the brief never stated, or clock times posing as stats are
+  removed, and a section left with nothing true to show is dropped.
+- **Stuck model answers stop in seconds.** Every assistant task has an output budget, and an
+  empty structured answer is retried once before falling back to the next model.
+
+### Changed
+
+- **Colours are chosen by voice and built in code.** The design step names two colours from a
+  curated set (clay, cobalt, jade…); FilamentCraft builds the background, surface, button and
+  accent in OKLCH with guaranteed contrast and no cream backgrounds. It also authors a soft and
+  a bold variant (`ai-brand-soft`, `ai-brand-bold`) that sections alternate for page rhythm.
+  A brand kit with a locked palette keeps choosing among its own schemes.
+- **Generated sections keep their preset composition.** The writer picks each section's tone
+  (base, soft or bold; the opening section is never bold) and, when the site's media library
+  has photos, which photo goes where. Photos are offered by their alt text, and an empty photo
+  slot gets the closest-matching unused photo.
+- **Image layouts stay when a site has no photos yet.** Their empty frames show the owner
+  where a photo belongs.
+
 ## [1.41.0] — 2026-10-06
 
 ### Security
