@@ -7,6 +7,78 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.2] — 2026-10-08
+
+### Added
+
+- **Use FilamentCraft from an Inertia, React, Vue or Livewire app.**
+  `php artisan filamentcraft:install --standalone [--owner="App\Models\Team"]` writes and
+  registers an editor-only panel provider built on the new `EditorPanelProvider`, and prints the
+  few steps left for your app. Nothing about Filament to configure; your users never see a
+  Filament screen. See the [React, Vue & Livewire Apps](https://filamentcraft.dev/guide/inertia-react) guide.
+- **Starter kits for React, Vue and Livewire.** `starter-react`, `starter-vue` and
+  `starter-livewire` are Laravel's own starter kits with teams, where every team builds and
+  publishes its own website. The guide also walks through adding FilamentCraft to an app
+  already built from one. See [Starter Kits](https://filamentcraft.dev/guide/starter-kits#own-ui).
+- **`HasWebsiteEditor` user trait.** Implements Filament's `canAccessPanel()`, `getTenants()` and
+  `canAccessTenant()` from two methods you override: `canUseWebsiteEditor()` and
+  `editableWebsiteOwners()`. `canUseWebsiteEditor()` returns `false` until you override it, so
+  nobody can open the editor by accident.
+- **`EditorUrl::to($siteOrPage, $region, $locale)`.** Editor links from anywhere (an Inertia
+  controller, a mail), with the panel and tenant segment worked out for you.
+- **`php artisan filamentcraft:uninstall`.** Removes the generated panel provider and its
+  `bootstrap/providers.php` entry, the published assets and the config, then lists every file of
+  yours that still uses FilamentCraft. `--drop-tables` also drops the FilamentCraft tables and
+  their migrations. It asks first, and needs `--force` in production.
+- **Editor-only panels.** `FilamentCraftPlugin::make()->editorOnly()` registers the editor page
+  and nothing else (no dashboard, no Sites, Templates, Themes or Inbox resources), for apps whose
+  own UI (Inertia, React, Vue, Livewire) lists sites and pages. See the new
+  [React, Vue & Livewire Apps](https://filamentcraft.dev/guide/inertia-react) guide.
+- **Choose where the editor's "All pages" link goes.** `editorExitUrlUsing($url, $label)` takes a
+  URL or a closure that receives the page being edited. Links that leave the panel load as a full
+  page instead of `wire:navigate`, so an Inertia page opens normally. A page with an unreadable
+  saved format redirects there too.
+
+### Fixed
+
+- **An editor-only panel no longer redirects in a loop.** A panel without navigation sent its
+  home URL to the panel path and back (Filament v4 and v5). Those URLs now answer 404.
+- **Route-name tools work with the editor-only panel.** The editor route is named
+  `filament.{panel}.pages.filamentcraft.editor.{template}`, and the braces made Laravel
+  Wayfinder generate invalid TypeScript. In an `editorOnly()` panel it is now
+  `filament.{panel}.pages.filamentcraft.editor`. Existing panels keep the old name, and the URL is
+  unchanged everywhere.
+- **Provisioning a site no longer needs `filamentcraft:sync-themes` first.** After a fresh
+  `migrate`, `SiteProvisioner` (and `StarterSiteBlueprint::seed()`) creates the missing theme rows
+  from the registered themes instead of throwing. `filamentcraft:sync-themes` uses the same new
+  `ThemeRowSynchronizer`.
+- **Sections, themes, theme presets and blueprints registered on the plugin now reach the public
+  site and the console.** `registerSection()`, `discoverSectionsIn()`, `registerTheme()`,
+  `themePresets()` and `registerBlueprint()` only loaded while a Filament panel booted, so a custom
+  section showed in the editor but vanished from the published page, and
+  `filamentcraft:seed-blueprints` / `sync-themes` saw nothing. They now load at app boot.
+- **Locked sections stay put.** The settings panel's remove, move and duplicate buttons, and the
+  AI assistant's remove, move and hide operations, now respect a section's `locked` flag like the
+  section list already did.
+- **Sealed pages refuse new sections on the server**, not only by hiding the button.
+- **The AI assistant respects a locked Brand Kit palette**, caps how many operations one request
+  can apply, and caps the business, audience and page-purpose fields at 1,000 characters.
+- **Gallery and Team links are sanitised.** The gallery image link and the team member X,
+  LinkedIn and GitHub links are now `Link` settings, so `javascript:` URLs are dropped. Saved
+  plain-text links keep working.
+- **Video file URLs** no longer accept protocol-relative `//host/...` paths.
+- **Saving and publishing re-check for a conflicting edit inside the transaction**, so two editors
+  publishing at the same moment can no longer silently overwrite each other.
+- **`filamentcraft:seed-blueprints` reports failures** and exits non-zero instead of logging them
+  quietly.
+- **The host-normalising migration** no longer aborts when two sites' subdomains differ only by
+  case.
+- **The editor no longer leaks memory** across page switches in a long session.
+- **`filamentcraft:install --standalone`** validates `--path`, rejects a path another panel uses,
+  aliases an owner model whose name clashes with the provider's imports, and `--force` no longer
+  overwrites a provider you have edited. Reinstalling over kept tables restores the real
+  `key_type` (uuid/ulid) in the config. `EditorUrl::to()` prefers the editor-only panel.
+
 ## [1.41.1] — 2026-10-07
 
 ### Fixed
