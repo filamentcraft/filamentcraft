@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.4] — 2026-10-12
+
+### Added
+
+- **Translate with AI.** From the editor's language menu, translate the current page, or any pages
+  and header/footer regions you tick, from one language into another. Only text is sent, each
+  distinct string once; a per-site translation memory makes re-runs and later pages almost free and
+  keeps terms consistent. Placeholders, HTML, links and number formats are protected and checked.
+  Nothing is published: the open page lands in your draft (undoable), other pages get a "Translated
+  to …" version in Page history. See [Translate with AI](https://filamentcraft.dev/guide/localization#ai-translation).
+
+### Upgrade
+
+- Run `php artisan filamentcraft:upgrade` to publish and run the new `filamentcraft_translation_memory`
+  migration.
+
 ## [1.41.3] — 2026-10-12
 
 ### Added
