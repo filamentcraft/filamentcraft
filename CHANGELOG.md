@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.3] — 2026-10-12
+
+### Added
+
+- **Page history in the editor.** A new History tab (clock icon) lists every saved version of
+  a page, grouped by day, with who saved it and what changed ("Hero, FAQ edited · Gallery
+  added"). Click a version to preview it read-only in the canvas, step through versions with the
+  arrows or ↑ / ↓, and **Restore this version** to make it the current draft. Restoring never
+  publishes and never deletes anything, and the toast offers **Undo**. Save and Publish (and
+  their shortcuts) pause while you preview. No migration needed: it reads the revisions every
+  save already stores. See [Page history](https://filamentcraft.dev/guide/editor#history).
+
 ## [1.41.2] — 2026-10-08
 
 ### Added
