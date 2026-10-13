@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.5] — 2026-10-13
+
+### Changed
+
+- **The four theme presets now look like finished websites.** Modern, Editorial, Bold and Elegant
+  ship with curated photography, product shots and real wordmark logos instead of grey
+  "Upload an image" placeholders and plain-text logo strips. Each starter home is composed for its
+  family: Modern adds a product tour, Editorial a portfolio, Bold a bento grid and Elegant a gallery.
+  Applies to new starter sites, the theme library's Full mode and every section preset.
+- **Section presets use Heroicons instead of emoji** for feature, bento, steps, tabs, timeline and
+  banner icons.
+- Fixed uneven grids in the presets: bento tiles fill their rows, two-plan pricing is centred, logo
+  strips and testimonials no longer leave an orphan card, and logo strips drop the oversized heading.
+
+### Added
+
+- **Hero media "Below".** Puts the hero image under the copy at its natural size, framed with a soft
+  glow, for product screenshots.
+
+### Fixed
+
+- The theme library preview could show the previous preset's fonts and colours when several
+  previews rendered in one request.
+- Image settings now accept root-relative paths such as `/images/brand/hero.webp` instead of
+  prefixing them with the disk URL.
+- A blueprint section built from a preset with no blocks no longer falls back to the section's demo
+  blocks.
+- AI page generation no longer copies the presets' bundled demo photos into your pages; it uses your
+  site's own photos.
+
+### Upgrade
+
+- Run `php artisan filamentcraft:upgrade` (or `filamentcraft:install`) to publish the new preset images
+  to `public/images/filamentcraft/presets`.
+
 ## [1.41.4] — 2026-10-12
 
 ### Added
