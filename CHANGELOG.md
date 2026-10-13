@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.6] — 2026-10-13
+
+### Added
+
+- **Export and import whole sites.** One `.zip` carries a site's pages, header and footer, theme,
+  settings, languages, custom sections, fonts, redirects and images. Export or import from the
+  editor's settings sheet, or with `php artisan filamentcraft:export` / `filamentcraft:import` for
+  staging-to-production moves. Import creates a new draft site (domain never copied) or replaces
+  the current one with an undo in the Themes panel. Bundles are validated before anything is written
+  (safe paths, checksums, allowed file types, size cap `filamentcraft.transfer.max_mb`). See
+  [Export & Import Sites](https://filamentcraft.dev/guide/export-import).
+
 ## [1.41.5] — 2026-10-13
 
 ### Changed
