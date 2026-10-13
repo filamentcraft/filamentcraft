@@ -26,7 +26,7 @@
 </p>
 
 <p align="center">
-  <a href="https://demo.filamentcraft.dev/launch/admin"><img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/editor.jpg" alt="The FilamentCraft editor: section list on the left, live preview of the page on the right" width="100%"></a>
+  <a href="https://demo.filamentcraft.dev/launch/admin"><img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/edit.jpg" alt="The editor with the Hero section of a coffee roaster selected and its settings panel open" width="100%"></a>
 </p>
 
 > FilamentCraft is a commercial package. This public repository holds the docs, changelog, screenshots and the issue tracker. The source installs from a private Composer registry once you have a license. Bug reports and feature requests are welcome from anyone, customer or not.
@@ -44,6 +44,10 @@ Who uses it:
 
 ## What's new
 
+**1.41.6: Export and import whole sites.** One `.zip` carries a site's pages, header and footer, theme, settings, languages, custom sections, fonts, redirects and images. Export or import from the editor's settings, or with `php artisan filamentcraft:export` / `filamentcraft:import` for staging-to-production moves. Bundles are validated before anything is written. [Docs](https://filamentcraft.dev/guide/export-import)
+
+**1.41.5: Theme presets that look like finished websites.** Modern, Editorial, Bold and Elegant now ship with real photography, product shots and wordmark logos instead of grey placeholders, and each starter home is composed for its style.
+
 **1.41.4: Translate with AI.** From the editor's language menu, translate the current page, or any pages and header/footer regions you tick, into another language. Only text is sent, each distinct string once, and a per-site translation memory keeps terms consistent and makes re-runs almost free. Placeholders, HTML, links and number formats are protected and checked. Nothing is published: the open page lands in your draft, other pages get a new version in page history. [Docs](https://filamentcraft.dev/guide/localization#ai-translation)
 
 **1.41.3: Page history.** A History tab lists every saved version of a page, grouped by day, with who saved it and what changed ("Hero, FAQ edited · Gallery added"). Preview any version read-only in the canvas, step through with the arrow keys, and restore it as the current draft. Restoring never publishes or deletes anything, and it can be undone. [Docs](https://filamentcraft.dev/guide/editor#history)
@@ -58,17 +62,32 @@ Full list in the [changelog](CHANGELOG.md).
 
 Drag sections to reorder them and the preview updates as you go. Preview at desktop, tablet and mobile sizes, hover a section for quick edit, move, duplicate, hide and delete buttons, and keep 50 steps of undo that survive a page refresh. Save a draft, publish, or discard back to the live version. Any section can be scheduled to show from or until a date.
 
-<img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/editor-mobile.jpg" alt="Mobile preview in the editor" width="100%">
+**Check the phone before it ships.** Desktop, tablet and phone previews reflow the real page.
+
+<img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/phone.jpg" alt="The coffee roaster homepage previewed inside a phone frame" width="100%">
 
 ### 38 built-in sections, plus your own
 
 Hero, features, bento grid, pricing, FAQ, testimonials, gallery, team, timeline, video, countdown, locations, contact and newsletter forms, commerce sections and more. Each comes with presets in four styles (modern, editorial, bold, elegant). Write your own sections in PHP and Blade, or let your users build new section types in the browser with the no-code section builder: no PHP, no release.
 
+<table>
+  <tr>
+    <td width="50%"><img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/builder.jpg" alt="The section builder with a split layout, a stats row and a palette of blocks"></td>
+    <td width="50%"><img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/bento.jpg" alt="A homewares store in the editor with its bento grid tiles listed as repeater items"></td>
+  </tr>
+  <tr>
+    <td>Build the section nobody shipped: start from a layout or drop in blocks.</td>
+    <td>Cards, tiles and slides are real lists you reorder and duplicate.</td>
+  </tr>
+</table>
+
 ### Design and Brand Kit
 
 Colors, fonts and buttons, with 14 color schemes and every Bunny Font. Theme presets let operators preview a whole new look and apply it in one click, with undo. The Brand Kit locks fonts to an allow-list and colors to a palette, so client sites stay on brand. Per-section look settings, opt-in motion effects and a visitor dark-mode toggle are included.
 
-<img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/design-schemes.jpg" alt="Color schemes in the editor settings" width="100%">
+**Try a new look without the risk.** Preview any theme preset on the real site, apply the full theme or only its style, and undo it from the same panel.
+
+<img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/theme.jpg" alt="The Elegant theme preset previewed on the canvas with an Apply theme bar" width="100%">
 
 ### Page history
 
@@ -82,8 +101,11 @@ The optional AI assistant writes a page or a whole site from a short brief in th
 
 <table>
   <tr>
-    <td width="34%"><img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/ai-plan.jpg" alt="AI assistant section plan"></td>
-    <td width="66%"><img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/ai-translate.jpg" alt="Translate with AI dialog listing pages and regions"></td>
+    <td width="66%"><img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/ai-brief.jpg" alt="The assistant beside the canvas: business description, audience, tone and style family"></td>
+    <td width="34%"><img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/ai-ask.jpg" alt="The Ask tab with suggested requests"></td>
+  </tr>
+  <tr>
+    <td colspan="2"><img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/ai-translate.jpg" alt="Translate with AI dialog listing pages and regions"></td>
   </tr>
 </table>
 
@@ -91,15 +113,27 @@ The optional AI assistant writes a page or a whole site from a short brief in th
 
 Each locale is its own content, with its own header, footer and announcement bar. Right-to-left languages flip the whole page, hreflang tags and a locale switcher are handled for you, and the package itself ships in seven languages (ar, de, en, es, fr, ja, pt).
 
-<img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/storefront-rtl.jpg" alt="An Arabic, right-to-left storefront page" width="100%">
+<img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/arabic.jpg" alt="The same homepage in Arabic, laid out right to left, with the language menu open" width="100%">
 
 ### Commerce from your own tables
 
 Store hero, category grid, product carousel, product listing, product detail, cart and checkout sections read your products through one `Storefront` contract. The cart is session-backed with server-side prices, and checkout places a cash-on-delivery order through the same contract.
 
-<img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/commerce-shop.jpg" alt="A product listing page built with the commerce sections" width="100%">
+<table>
+  <tr>
+    <td width="50%"><img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/store.jpg" alt="Kiln Street, a pottery shop homepage"></td>
+    <td width="50%"><img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/store-product.jpg" alt="A stoneware bowl product page with price and add to basket"></td>
+  </tr>
+</table>
 
 ### Multi-tenant
+
+<table>
+  <tr>
+    <td width="50%"><img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/multistore.jpg" alt="Stallhouse, a platform page listing merchant stores"></td>
+    <td width="50%"><img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/site.jpg" alt="Northbay Joinery, a workshop homepage"></td>
+  </tr>
+</table>
 
 Sites belong to any owner model. No tenancy package is required, and it works next to stancl/tenancy, spatie/laravel-multitenancy, Filament tenancy or a single-site app. Run one site per app or one per tenant, on custom domains or subdomains.
 
