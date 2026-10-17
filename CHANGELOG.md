@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.7] — 2026-10-17
+
+### Added
+
+- **React and Vue sections (islands).** Extend `IslandSection` and a component in your own Vite
+  bundle renders the section. Settings, blocks and presets stay in PHP; the component gets them as
+  props and keeps its state while the editor changes them. `php artisan make:filamentcraft-island`
+  scaffolds the section, the component, the islands entry and the Vite input in one go, and
+  `npm run dev` hot-reloads islands inside the editor canvas. Any Blade section can also mount one
+  with `<x-filamentcraft::island>`. See [React & Vue Sections](https://filamentcraft.dev/guide/islands).
+
+### Fixed
+
+- The editor's page history no longer crashes in apps that switch Laravel's date factory to
+  `CarbonImmutable` (the default in Laravel's starter kits).
+
 ## [1.41.6] — 2026-10-13
 
 ### Added
