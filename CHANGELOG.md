@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.8] — 2026-10-19
+
+### Added
+
+- **Platform license tier.** A new `platform` tier for self-serve SaaS, where your customers create
+  their own sites. `filamentcraft:doctor` reports Platform keys as unlimited, and on an Agency key
+  with 25 or more sites it mentions the Platform tier. Nothing is ever blocked. See
+  [Pricing](https://filamentcraft.dev/pricing).
+
+### Changed
+
+- New Agency licenses include 24 months of updates (renewal $149). Agency licenses bought before
+  2026-10-19 keep lifetime updates and SaaS use.
+- The pricing page and docs now share the home page's colors and type.
+
 ## [1.41.7] — 2026-10-17
 
 ### Added
