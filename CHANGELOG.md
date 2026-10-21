@@ -7,6 +7,85 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.9] — 2026-10-21
+
+### Added
+
+- **Dutch (`nl`) translation** of the whole package, contributed by Studioweb (Starteenwinkel.nl).
+- **Render hooks in the built-in views.** `->renderHook(RenderHook::HeaderNavEnd, fn ($section) => view(...))`
+  adds markup to the header nav and actions, mobile menu, footer, hero, product detail (with the
+  product in `$context`) and before/after any section, so hosts stop copying views.
+- **Per-site form recipients.** `->formRecipientsUsing(fn (Site $site, SubmissionType $type) => ...)`
+  mails Contact and Newsletter submissions to each site's own inbox; `null` falls back to `forms.notify`.
+- **`SiteLocaleAdded` event**, fired once per locale a saved site gains, to fill in translated defaults.
+- **Preset control without subclassing.** `->hidePresets(HeroSection::class, ['bold'])` and
+  `->addPresets(HeroSection::class, [Preset::make(...)])`.
+- **Custom editor fields per setting type.** `->settingComponentUsing(Link::class, fn ($setting) => Select::make(...))`
+  replaces how a setting edits everywhere. Setting types (`Link`, `Text`, `Select`, …) are no longer
+  `final`; a subclass edits like its parent unless you register a builder for it.
+- **Catalog collections and filters.** `->catalogCollections(['sale' => 'On sale'])` adds options to the
+  product carousel, which also gains Tag and Brand filters (`CatalogQuery::$tag` / `$brand`).
+- **Hero background video.** YouTube (nocookie), Vimeo (background mode) or MP4 behind the hero content,
+  muted and looped. Phones, reduced-motion visitors and Save-Data keep the background image as poster.
+  A new overlay darkness setting replaces the default gradient when set.
+
+### Changed
+
+- **Platform license is now $799** (was $999), still with lifetime updates and 12 months of priority
+  support. See [Pricing](https://filamentcraft.dev/pricing).
+- **Two-panel editor on wide screens.** At 1280px and wider, selecting a section opens its settings
+  in a dock on the far side of the canvas while the section tree stays on the left, as in Shopify's
+  theme editor. The dock slides in and out, closes with its X button or Escape, and the Settings
+  icon opens page settings there. The dock steps aside while Themes or History is open, so nothing
+  can be edited during a preview. Narrower screens keep the single sidebar, and the drawer on
+  phones is unchanged.
+- **Ink editor accent you can change.** The editor's indigo accent is now a neutral ink (off-white
+  in dark mode). Change it with `FilamentCraftPlugin::make()->editorPrimaryColor()`, which takes a
+  hex, rgb() or oklch() color, a Filament palette such as `Color::Teal`, or a Closure, plus an
+  optional dark-mode color. `->usePanelPrimaryColor()` matches the panel's own primary color.
+  Button text, checkmarks, radio dots and toggle knobs pick black or white for contrast, so any
+  color stays legible in both themes.
+- The Section Builder's canvas selection now uses the same teal as the page canvas instead of indigo.
+- **Icon picker cleanup.** The icon field spans the full panel width, its popover stays on screen,
+  the set and style switchers are a compact segmented control, emoji values show as the emoji, and
+  its text is readable in dark mode.
+- **Quieter focus and safer Escape.** Text fields no longer draw a colored ring or outline when
+  focused, and the phone drawer lost its side shadow. Escape now closes only the open menu, modal
+  or add-section dialog instead of also deselecting the section behind it.
+- **Section settings panel redesign.** Groups are slim one-line rows with a chevron and a dot when
+  they hold a value changed from the section's starting defaults. Selects, numbers, colors and icons
+  sit beside their label; option buttons are a compact segmented control; toggles sit on the label's
+  row. Remove moved from the header toolbar to a pinned footer.
+- **Shopify-style section tree.** Each section in the sidebar expands to list its blocks with a
+  preview of their text ("Feature – Visual editor"); clicking one opens that block in Settings.
+  The footer sits right after the sections and Add section is an inline link.
+- **Choice tiles.** Option pickers whose enum implements `HasChoicePreview` (media placement,
+  alignment, section height, shape, arrangement) show a small wireframe of each option. Hosts can
+  use the same `ChoiceTiles` field and `ChoicePreview` helper for their own enums.
+- **Section header menu and image fields.** Hide, move, duplicate and remove live in a ⋯ menu next to
+  presets. Image settings show their label above one card with the library picker and a compact drop
+  zone. Range units appear inside the input ("40 %") instead of in the label. Switches sit on the
+  right of their label, help text is smaller, and Filament's panel colour no longer leaks into the
+  editor's toggles and links.
+- **Media library redesign.** Tiles show the file type and size, images without alt text carry a
+  badge and get their own "Missing alt text" filter, a grid/list toggle remembers your choice, a
+  floating bar handles bulk delete, and images can be dragged straight onto the panel to upload.
+- **Eye-comfort dark mode.** The editor's dark theme is a neutral graphite with off-white text
+  instead of slate blue.
+
+### Removed
+
+- The hero's Background gradient setting. A gradient already saved on a hero no longer renders.
+
+### Fixed
+
+- Dragging the sidebar edge saved a half-animated width, and double-clicking the edge never reset it.
+- `visibleIf` on a setting now matches when the field it watches is an enum button group (it compared
+  the enum case to a string and always hid the setting).
+- Range settings now honour `visibleIf`; they were always shown.
+- The hero's button links now use a host `settingComponentUsing(Link::class)` builder; they kept the
+  built-in page picker before.
+
 ## [1.41.8] — 2026-10-19
 
 ### Added
