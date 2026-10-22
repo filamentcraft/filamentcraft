@@ -70,7 +70,7 @@ Keep these in mind:
 - Top-level `Setting`s without a `Category` land in an implicit "General" group.
 - `stylesheets()` / `scripts()` URLs load on public pages **and** in the editor preview.
 
-**Register it in config.** Config registration covers panel, preview and public routes. The plugin's `->registerTheme()` only applies inside the panel, so public pages could fall back to the default theme.
+**Register it in config.** Config registration needs no panel at all, so it is the safest route for public pages, queue jobs and console commands. The plugin's `->registerTheme()` is also booted for every registered panel's plugin on each request (`FilamentCraftPlugin::bootPanelRegistries`), so it normally works on public pages too; if a public page falls back to the default theme, move the registration to config.
 
 ```php
 // config/filamentcraft.php
@@ -92,7 +92,9 @@ use FilamentCraft\Models\Theme;
 $site->theme()->associate(Theme::forSlug('acme'))->save();
 ```
 
-Registering a class with an existing slug replaces that theme. An unknown slug on a site's theme row silently falls back to the default theme.
+Registering a class with an existing slug replaces that theme. An unknown slug on a site's theme row silently falls back to the default theme. `sync-themes` (and `Theme::forSlug`) only create **missing** rows: renaming `name()` never updates an existing row, and changing `slug()` orphans the old row. Blueprint provisioning syncs rows itself.
+
+Host CSS that wants Tailwind shade utilities (`bg-primary-600`) maps the variables in Tailwind v4: `@theme inline { --color-primary: var(--color-primary); … }` for each token you use. Emitted helpers: `--fc-scheme-current-bg` / `-fg` (aliases `--color-bg` / `--color-fg`) and per-scheme swatches `--fc-scheme-{slug}-bg` / `-fg`. A `Group` inside a theme `Category` does not group (it renders an empty header): nest a `Category`. `Font::onlyCategory([...])` accepts `sans`, `serif`, `mono`, `display`, `handwriting`, `system`.
 
 ## Theme presets
 
@@ -149,6 +151,8 @@ final class HarborPreset extends ThemePreset
 - `style()` is keyed like `Site.settings_json`: `color_scheme`, `schemes` (merged onto the site's), and any theme setting id. Ids the site's theme doesn't declare are ignored, so one preset works across themes. Override `themeSlug()` to switch theme too.
 - Author all 22 tokens. Missing ones inherit from `modern` or the parent section, not from a complete scheme.
 - Auto-discovered from `app/Themes/Presets`. Or register via config `themes.presets` / `themes.preset_paths`, or plugin `->themePresets([...])` / `->discoverThemePresetsIn($path)`. `->withoutBuiltinThemePresets()` hides the four built-in families.
+- **`regions()` is empty by default, and `Full` apply replaces only the regions the preset declares.** A preset without `regions()` keeps the old header and footer, so the previous brand's nav and logo survive. Declare them: `BlueprintRegion::make(RegionName::Header)->sections([BlueprintSection::fromPreset(HeaderSection::class, 'modern')])`, and the same for the footer.
+- More API: `description()`, `previewImage()`, `screenshots()`; `PresetPage::make(…)->seal()` hides Add section on that page and `->ofType(TemplateType::…)`; `static provision(?Model $owner, ?string $name, ?string $slug): Site` provisions a new tenant's site from it. `make:filamentcraft-theme-preset --from-site=` skips no-code builder sections with a warning. Applying records a snapshot (10 restore points per site, needs the `filamentcraft_site_snapshots` migration); style-only apply resets all theme settings to defaults first (keeping SEO, AI settings and the site's own schemes).
 - Apply in code: `app(\FilamentCraft\Theming\Presets\ThemePresetApplier::class)->apply($site, new HarborPreset, \FilamentCraft\Enums\ThemeApplyMode::Full)`. `Full` replaces pages and regions; the style-only mode resets style settings. The newest apply can be undone from a snapshot.
 - Test it: `\FilamentCraft\Testing\ThemePresetTester::for(HarborPreset::class)->assertValid()->assertRenders();`
 
@@ -174,7 +178,7 @@ FilamentCraftPlugin::make()
     ->withoutBuiltinSchemes();                            // or ->withoutBuiltinSchemes(['cupcake', 'nord'])
 ```
 
-- Pass a whole kit with `->brandKit(BrandKit::make()->fonts([...])->palette([...]))`, or return one from a theme that implements `FilamentCraft\Theming\HasBrandKit` (the theme's kit wins over the panel's).
+- Pass a whole kit with `->brandKit(BrandKit::make()->fonts([...])->palette([...]))`, or return one from a theme that implements `FilamentCraft\Theming\HasBrandKit`. Resolution order: theme kit, then panel plugin kit, then `config('filamentcraft.brand')`. `Font::only([...])` is an exact per-field list and hides "Add custom font". A kit blocks a preset in the UI (disabled card with the reason), enforced server-side too.
 - Brand schemes to keep visible belong on `Theme.tokens_json['schemes']` or the site.
 - Hiding schemes never empties the picker completely.
 - Fonts added by editors in the font picker are scoped to that site. Fonts registered in code with `->registerFont(BrandFont …)` are available to every site.

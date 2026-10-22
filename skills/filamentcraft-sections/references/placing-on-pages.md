@@ -46,7 +46,7 @@ $revision = DB::transaction(function () use ($home, $defaults): TemplateRevision
 event(new TemplateDraftSaved($home->refresh(), $revision));
 ```
 
-- **Content:** start from `defaults()` (or a preset: `BlueprintSection::fromPreset(ProcessSection::class, 'editorial')`, merged over the defaults the way `BlueprintSeeder::sectionPayload()` does). Then replace the placeholder copy with the user's real copy if they gave it; otherwise say the copy is placeholder.
+- **Content:** start from `defaults()` (or a preset: `BlueprintSection::fromPreset(ProcessSection::class, 'editorial')`, merged over the defaults the way `BlueprintSeeder::sectionPayload()` does; chaining `->settings([...])` after `fromPreset()` replaces the preset's settings, so spread `getSettings()`). Presets carry effects, stock photos and dummy links: blank them on real pages. Then replace the placeholder copy with the user's real copy if they gave it; otherwise say the copy is placeholder.
 - **Every locale bucket** gets its own section: translations are separate lists. Translate the copy, or tell the user which locales show the default-language copy.
 - **Draft by default.** The new head is a draft the team can review in the editor. Publish (`$home->publishHead()`, which fires `TemplatePublished`) only when the user asked for it live, and say so in your summary. Undo is History in the editor.
 - **Script it as a file** you run with `php artisan tinker path/to/script.php` (or a one-off command) so it's repeatable, and make it idempotent: skip a bucket that already has the section type.

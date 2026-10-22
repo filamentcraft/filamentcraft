@@ -71,7 +71,9 @@ Rules, each one a real production failure:
 - Don't add `@livewireScripts`, `@livewireStyles` or your own Alpine/Livewire. FilamentCraft injects them only on pages that need them, and a second copy breaks both.
 - `@push('fc-scripts')` inside a section view never reaches the layout, because sections render as standalone, cacheable fragments. Push page-level assets from the page that renders `<x-filamentcraft::layout>`.
 - Return `cacheable(): false` when output depends on the session, cart, user, time or CSRF.
-- For forms, reuse `FilamentCraft\Sections\Concerns\GuardsFormSubmissions` (honeypot, throttling, editor-preview guard) like the built-in Contact and Newsletter sections. Those built-ins dispatch `ContactFormSubmitted` / `NewsletterSubscribed`; listen to those events rather than rebuilding them.
+- For forms, reuse `FilamentCraft\Sections\Concerns\GuardsFormSubmissions` (honeypot, throttling, editor-preview guard) like the built-in Contact and Newsletter sections. Render its public `$website` honeypot input (hidden, `wire:model="website"`) or the guard does nothing. Those built-ins dispatch `ContactFormSubmitted` / `NewsletterSubscribed`; listen to those events rather than rebuilding them. A custom form that dispatches them must pass the real `Site` and a `sectionId`: events with a null site are ignored, nothing is stored or mailed.
+- Drawers and modals: use `<x-filamentcraft::sheet>` (view-api.md), never Livewire state for open/closed.
+- Livewire 3 and 4: self-closing `<livewire:x />` tags, no `wire:transition` modifiers, stick to `#[Url]`, `#[Computed]`, `#[Locked]`, `#[On]` and `dispatch()`; custom JS uses `Livewire.hook('morphed', …)` (setup skill, config-pitfalls.md).
 
 ## Alpine in a BladeSection
 
@@ -91,5 +93,6 @@ This writes the section class, `resources/js/islands/PricingCalculator.tsx`, the
 - Settings, blocks and presets are declared in PHP as usual. The component gets every setting as a prop (defaults filled), `blocks` as `[{id, type, …settings}]`, and `island: {editing, locale, dir}`. Images arrive as `{url, alt, width, height, srcset}`, links as `{href, label, external, target}`, rich text as sanitised HTML.
 - `$component` (defaults to the slug), `$fallback` (a Blade view for crawlers and no-JS visitors; it receives `$section`), `$contained` (container width, default true). Override `props()` with `[...parent::props($section), 'extra' => …]`.
 - No `liveUpdate`; a settings change re-renders the island and keeps its state.
+- Config `islands.entries`, `build_directory`, `hot_file`, `react_refresh` locate the Vite entry. The island's CSS layer must come after the package's (pitfalls.md). Next.js components need `next/image` swapped for `<img>`.
 - Needs `filamentcraft.assets.site_js_enabled`, and `filamentcraft:doctor` checks the islands entry is in the Vite build.
 - Search engines only see `$fallback`, so give content-heavy islands a real fallback view.

@@ -20,7 +20,7 @@ php artisan filamentcraft:customize-section hero ProductHero --no-interaction   
 php artisan filamentcraft:customize-section hero AppHero --replace --copy-view --no-interaction
 ```
 
-- The class lands in `app/Sections` (auto-discovered) and inherits settings, blocks, presets, defaults and the view.
+- The class lands in `app/Sections` (auto-discovered) and inherits settings, blocks, presets, defaults and the view. Other flags: `--slug=` (rejected with `--replace`), `--namespace`, `--path`, `--view-path`, `--force` (rolls back on failure). When the target is outside `app/Sections` it prints the exact `->registerSection()` line. After a change on a live site run `filamentcraft:clear-cache`.
 - `--copy-view` copies the Blade view into `resources/views/sections` so you own the markup. Without it, the class keeps following the package view on updates.
 - **Replacement keeps the built-in slug.** Every stored page and region resolves to your class with no migration, so stay compatible: keep existing setting and block keys, give new settings defaults, and tolerate legacy values. Test pages and regions (header and footer are regions).
 - Contact and Newsletter stay Livewire components when subclassed.
@@ -67,7 +67,7 @@ FilamentCraftPlugin::make()
     ->allowSections(['hero', 'features', 'cta']); // or an allow-list
 ```
 
-Config equivalents: `filamentcraft.sections.allowed` (null = all) and `filamentcraft.sections.disabled`.
+Config equivalents: `filamentcraft.sections.allowed` (null = all) and `filamentcraft.sections.disabled`. These are enforced on the editor's insert paths only. `->withBuiltinSections(false)` **unregisters** every built-in, so stored pages that use them render nothing; see [pitfalls.md](pitfalls.md).
 
 ## Setting editors
 

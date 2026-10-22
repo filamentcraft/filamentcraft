@@ -14,9 +14,9 @@ A FilamentCraft page is an ordered list of **sections**. Each section type is a 
 
 Pick the cheapest option that works, in this order:
 
-1. **A built-in already does it.** There are 38 (hero, features, testimonials, pricing, faq, stats, team, gallery, cta, tabs, timeline, logo-cloud, bento, showcase, image-text, rich-text, contact, newsletter, video, countdown, locations, comparison, steps, marquee, portfolio, articles, banner, scroll-showcase, sticky-reveal, header, footer, plus the commerce sections). Run `php artisan filamentcraft:sections` to see what is registered in this app, and `php artisan filamentcraft:sections <slug>` for one section's settings, blocks and presets.
+1. **A built-in already does it.** There are 38 (hero, features, testimonials, pricing, faq, stats, team, gallery, cta, tabs, timeline, logo-cloud, bento, showcase, image-text, rich-text, contact, newsletter, video, countdown, locations, comparison, steps, marquee, portfolio, articles, banner, scroll-showcase, sticky-reveal, header, footer, plus the commerce sections). Run `php artisan filamentcraft:sections` to see what is registered in this app, and `php artisan filamentcraft:sections <slug>` (`--json` for scripts: includes defaults and full presets) for one section's settings, blocks and presets.
 2. **A built-in is close.** `php artisan filamentcraft:customize-section` creates a subclass, either as a separate variant or replacing the built-in everywhere while keeping stored content. See [references/customizing-builtins.md](references/customizing-builtins.md).
-3. **It is copy, images and layout, and editors should own it.** The no-code section builder in the editor (Add section, then "Create your own") makes reusable section types without a deploy.
+3. **It is copy, images and layout, and editors should own it.** The no-code section builder in the editor (Add section, then "Create your own") makes reusable section types without a deploy (stored as `custom::<slug>`; config `section_definitions`).
 4. **It needs logic, data, interactivity or exact design control.** Write a section class (this skill).
 
 When a built-in fits a request worded as "build a section", use it and say which one and why; a near-duplicate custom section splits the team's content across two types.
@@ -29,12 +29,12 @@ When a built-in fits a request worded as "build a section", use it and say which
 4. **Add four presets** slugged `modern`, `editorial`, `bold`, `elegant` with real-sounding copy.
 5. **Test it** with `SectionDataFactory` (see [references/testing.md](references/testing.md)).
 6. **Check the CSS**: `php vendor/filamentcraft/filamentcraft/resources/boost/skills/filamentcraft-sections/scripts/check-classes.php resources/views/sections/services.blade.php`. Or run it from wherever this skill is installed. It lists Tailwind utilities the shipped `site.css` doesn't contain.
-7. **Look at it in the editor**: add the section to a page, change every setting and confirm the canvas follows, check mobile width, then publish and view the page.
+7. **Look at it in the editor**: add the section to a page, change every setting and confirm the canvas follows, check mobile width, then publish and view the **published URL**: the canvas can show classes the live page lacks. On a live site run `php artisan filamentcraft:clear-cache` after changing a view or class (the fragment cache key ignores your code).
 8. **Place it on a page** only if the user asked: append a revision, never edit one, and leave it as a draft unless they asked for it live. Recipe: [references/placing-on-pages.md](references/placing-on-pages.md). The same applies when a built-in covered the request.
 
 ## Schema rules
 
-- **Pin `slug()`.** It is stored in every saved page; renaming the class must not orphan content.
+- **Pin `slug()`, and make it unique.** It is stored in every saved page; renaming the class must not orphan content. The default slug comes from the class name and **silently replaces a built-in** with the same slug (`FaqSection`, `HeroSection`, `PricingSection`…) on every page. Check `php artisan filamentcraft:sections` first. `custom::*` is reserved for builder sections.
 - **Every visible string is a setting.** No literal copy in the view, except accessibility text you translate with `__()`.
 - **Anything that repeats is a block**, never numbered fields (`title_1`, `title_2`). Editors get a reorderable repeater, and the count isn't capped by your schema. Give the block's main field the id `title`, `label`, `name` or `heading`, so repeater rows are labelled.
 - **Group the panel** with `Group::make('content_group')->label('Content')`, then `layout_group` and `style_group` with `->collapsed()`. A `Group` swallows the fields after it until the next `Group`.
@@ -61,7 +61,7 @@ The view receives one variable, `$section` (a `SectionData`).
 - **Empty states**: wrap the block grid in `@if (count($section->blocks) > 0) … @elseif ($section->designMode) <x-filamentcraft::empty-state title="…" /> @endif`, so visitors never see an empty frame but editors get a hint.
 - Use `@php … @endphp` blocks; don't mix them with inline `@php(...)` in one view. Use logical properties (`ms-*`, `text-start`) so RTL sites work. No `scale` hover effects (`fc-lift` moves, it doesn't grow).
 
-Everything available on `$section`, the Blade components, all primitives and tokens: [references/view-api.md](references/view-api.md).
+Everything available on `$section`, the Blade components (sheet, pills, skeleton, carousel props, image has no `srcset`), all primitives and tokens: [references/view-api.md](references/view-api.md). Slug collisions, cache, canvas-vs-live CSS, no-code builder config, catalog curation and other traps: [references/pitfalls.md](references/pitfalls.md).
 
 ## Example
 

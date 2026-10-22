@@ -42,6 +42,7 @@ php artisan filamentcraft:import .fc-migration/site.json --replace=acme --force 
 - `type`: `page` (default), `post`, `landing`, `custom`.
 - `publish`: default true, meaning the page is published inside the (draft) site. False keeps it as a draft page.
 - `seo`: a flat object for the default locale, or keyed by locale: `{ "en": {...}, "fr": {...} }`.
+- `locales` + `translations`: do not list a locale you will not translate. An extra locale with no content still advertises hreflang and sitemap entries that serve the default language (duplicate content).
 - `translations`: a full section list per extra locale. A locale without a list falls back to the default locale on the public site. Translate every visible string; don't leave mixed languages.
 
 ## Sections
@@ -65,7 +66,7 @@ php artisan filamentcraft:import .fc-migration/site.json --replace=acme --force 
 | `type` | a registered section slug (`php artisan filamentcraft:sections`) |
 | `settings` | setting id ⇒ value; ids come from `filamentcraft:sections <slug>` |
 | `blocks` | list of `{ "type", "settings", "id"? }`; `type` must be one of the section's block slugs |
-| `preset` | start from one of the section's presets (`modern`, `editorial`, `bold`, `elegant`): its layout and style values apply, your settings win |
+| `preset` | start from one of the section's presets (`modern`, `editorial`, `bold`, `elegant`): its layout, style **and effect** values apply (e.g. Hero `modern` turns on `backdrop=aurora` and `heading_effect=generate`, `bold` sets `cta_style=glow-border`, `editorial` sets `backdrop=dots`), your settings win. Design mode blanks only copy fields (text, link, image), so effects the source site never had survive: set `backdrop`, `heading_effect`, `cta_style`, `rotating_words` to `none`/empty in `settings`, or skip `preset` |
 | `defaults` | `design` (default): keep the section's layout/style defaults but **blank every text, link and image field you don't set**, and add no default blocks, so no placeholder copy appears. `all`: keep default copy and blocks, and preset copy and blocks too (useful for scaffolding, never for migration). `none`: store only what you give |
 | `hidden` | keep the section but don't render it |
 | `id` | optional stable id; generated otherwise |

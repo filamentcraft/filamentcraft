@@ -102,7 +102,7 @@ Rules this recipe depends on:
 - **Settings must exist on the site's theme.** `sync()` silently drops ids the theme doesn't declare.
 - **A Range value outside its min/max renders the default.** `box_radius => 40` renders 4, not 32.
 - **Set fonts explicitly.** The Studio theme's stock font value is a placeholder, so a migrated site should always store `default_font` and `heading_font`.
-- **If the site shows the visitor dark-mode toggle,** override the `dark` scheme with a branded dark palette too. The toggle switches to `dark`.
+- **If the site shows the visitor dark-mode toggle,** override the `dark` scheme with a branded dark palette too. The toggle switches to `dark` unless the element has `data-fc-scheme-dark="nord"`. Enable it with the Header/Footer settings `show_scheme_toggle` and `scheme_toggle_placement` (`inline` or `floating`); custom sections can `@include('filamentcraft::sections.partials.scheme-toggle', ['floating' => true, 'darkScheme' => 'dark'])`.
 - **Source sections that are deliberately dark** (a dark hero band) get their own scheme, e.g. `brand-dark`, set on those sections' `scheme` setting. Keep the site default light unless the source site is dark throughout.
 
 ## Fonts
@@ -123,7 +123,9 @@ FilamentCraftPlugin::make()->registerFont(
 );
 ```
 
-The `@font-face` rules are emitted at the top of fc-tokens. Only bundle a commercial font after the user confirms the license covers the new site.
+The `@font-face` rules are emitted at the top of fc-tokens. Only bundle a commercial font after the user confirms the license covers the new site. `BrandFont::make(…)->stack('Arial, sans-serif')` registers a web-safe stack; `->face($url, $weight, FontStyle::Italic)` adds italics (Bunny links have none).
+
+**A slug that is not in the catalog loads nothing**: the value renders as a bare `font-family: playfair-display` with no `<link>`. Verify with `app(\FilamentCraft\Support\FontCatalog::class)->find($slug)` (null means it will not load). The catalog is fetched from Bunny once and cached for 24 h, **including a 4-font fallback (inter, roboto, merriweather, jetbrains-mono) when the fetch fails** (sandbox, CI, deploy script, no network). After a failed fetch run `app(\FilamentCraft\Support\FontCatalog::class)->flush()`. Registering a `BrandFont` also fixes fonts you control.
 
 ## Custom CSS
 
@@ -133,7 +135,7 @@ There is no custom-CSS field. Ship CSS through one of these:
 - the plugin's `->stylesheet($url)` or `->viteBuild(...)`,
 - `config('filamentcraft.assets.extra_styles')`.
 
-Unlayered host CSS beats every package rule (site.css lives in `@layer`), so `.fc-btn { … }` overrides work. Variables on `:root` do not (see above). Prefer settings and schemes, because those stay editable in the editor; CSS is for what the knobs can't express.
+Unlayered host CSS beats every package rule (site.css lives in `@layer theme, base, components, utilities, filamentcraft`), so `.fc-btn { … }` overrides work; a host bundle's **layered** utilities lose to the package's same-named ones. Variables on `:root` do not win (see above). Plugin-level `->stylesheet()` / `->viteBuild()` reach public pages only through the default panel, and a wrong `viteManifest()` path registers nothing without error: prefer `filamentcraft.assets.*` config (setup skill). Page order: package, plugin, `extra_styles`, `vite_builds`, theme `stylesheets()` (later wins). `mirrorEditorStyles()` affects the editor canvas only. Prefer settings and schemes, because those stay editable in the editor; CSS is for what the knobs can't express.
 
 ## Writing a theme class, a theme preset, or a Brand Kit
 

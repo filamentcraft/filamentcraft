@@ -51,7 +51,7 @@ Get the installed catalog: `php artisan filamentcraft:sections --json > .fc-migr
 - **Only when nothing fits** (a distinctive layout the site is known for, or data-driven content) write a custom section with the filamentcraft-sections skill, schema first and every string a setting. Expect zero to three per site.
 - **Header and footer** become the `header` and `footer` regions: nav links as `nav-link` blocks, footer links as `link` blocks.
 - **Repeated content types** (blog posts, products, team members, locations) stay data. Products go through the Storefront adapter. A blog or directory with hundreds of entries belongs in host models with a dynamic template, not hundreds of hand-made pages; migrate the representative pages and ask before bulk-creating.
-- **Third-party embeds** (Calendly, Typeform, maps, chat widgets) are listed for the user, not rebuilt.
+- **Third-party embeds** (Calendly, Typeform, chat widgets) are listed for the user, not rebuilt. Video and map embeds are allow-listed (YouTube, Vimeo, direct files; Google/OSM embed URLs): anything else renders empty, so check [references/section-mapping.md](references/section-mapping.md) `video` and `locations`.
 
 Write the mapping into `.fc-migration/plan.md`: one table per page type (source section, then FilamentCraft type, preset if any, notes), the custom sections to build, and open questions. For large or ambiguous sites, show the plan to the user before building.
 
@@ -91,7 +91,7 @@ Create `.fc-migration/site.json`, a plain description of the whole site that `fi
 Rules:
 
 - **Every string comes from the crawl** (`page.json` headings, paragraphs, buttons, repeated items, `html`), never invented and never retyped from a screenshot. Screenshots are for layout only. If something is missing (an alt text, a button label), leave it empty and list it for the user.
-- **Fill every visible field.** Text, link and image fields you don't set are stored empty, so no FilamentCraft placeholder copy leaks onto the page. That is the default `"defaults": "design"` mode. Look at `section-NN.png` to set layout options (columns, alignment, media position) to match.
+- **Fill every visible field.** Text, link and image fields you don't set are stored empty, so no FilamentCraft placeholder copy leaks onto the page. A `preset` still brings its effects (`backdrop`, `heading_effect`, `cta_style`) onto the page: set them to `none` for a faithful copy. That is the default `"defaults": "design"` mode. Look at `section-NN.png` to set layout options (columns, alignment, media position) to match.
 - **Images** are paths relative to `site.json`, usually `assets/<file>` from `assets.json`. The importer copies them into the site's media library and fills alt text from `media[]`. It accepts jpg, png, webp, gif and avif; SVGs are rasterised by `fetch-assets.mjs` when Playwright is present.
 - **Copy small print exactly.** Keep inline labels ("Phone:", "Email:", "From $"), and copy `tel:`, `mailto:` and external hrefs character for character (`tel:+16035550142`, not a reformatted number). These are the strings visitors and parity checks notice first.
 - **Keep the URLs.** Use each page's old path as its slug when you can (`about`, `services/web-design`), so no redirect is needed. Map everything else in `redirects`. See [references/seo-and-redirects.md](references/seo-and-redirects.md).

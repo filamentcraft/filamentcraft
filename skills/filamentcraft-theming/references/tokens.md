@@ -117,6 +117,6 @@ Merge order, later wins: package defaults, then `Theme.tokens_json['schemes']` (
 ]
 ```
 
-`SiteColorSchemes`: `forSite($site)` (merged map), `overrides($site)`, `activeFor($site)`, `setActive($site, $slug)`, `syncOverrides($site, $schemes)` (replaces the `schemes` key), `add($site, cloneFrom:, slug:)`, `remove($site, $slug)`, `isBuiltIn($slug)`.
+`SiteColorSchemes`: `forSite($site)` (merged map), `overrides($site)`, `activeFor($site)`, `setActive($site, $slug)`, `syncOverrides($site, $schemes)` (replaces the `schemes` key and drops entries identical to the package default, so overriding `modern` with stock tokens stores nothing; `setActive()` stores nothing for `modern` or unknown slugs), `add($site, cloneFrom:, slug:)`, `remove($site, $slug)`, `isBuiltIn($slug)`.
 
 `SiteThemeSettings`: `values($site, $schema)`, `sync($site, $schema, $values)` (replaces all theme settings; keeps `color_scheme`, `schemes`, `seo`, `ai`), `overrides($site)`.

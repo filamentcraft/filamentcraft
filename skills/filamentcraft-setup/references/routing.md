@@ -24,9 +24,9 @@ Domains and subdomains are unique per site and normalised on save. A tenant's cu
 Route::filamentCraftTenant(Workspace::class);   // GET /{tenantSlug}/{path?}, name filamentcraft.tenant.public
 ```
 
-Named arguments: `tenantParameter`, `tenantSlugColumn`, `pathParameter`, `name`, `tenantPattern` (default excludes `admin`), `sitemap`.
+Named arguments: `tenantParameter`, `tenantSlugColumn`, `pathParameter`, `name`, `tenantPattern` (default excludes only `admin`), `sitemap`. Mounted at the root it swallows `/login` and other root paths: mount it under a prefix or narrow `tenantPattern`. Details in [host-matching-and-urls.md](host-matching-and-urls.md).
 
-For a custom URL shape, bind the site in your own middleware (`app()->instance(Site::class, $site)`) and call the controller:
+For a custom URL shape, bind the site in your own middleware (`app()->instance(Site::class, $site)`) and call the controller. Do not stack it with `filamentcraft.site` / `filamentcraft.tenant`: they re-bind `Site` and overwrite yours.
 
 ```php
 Route::middleware(['web', ResolveShopSite::class])
@@ -57,10 +57,10 @@ Redirect::query()->updateOrCreate(
 );
 ```
 
-Matching is exact and case-sensitive against the request path without the query string. The query string is carried over.
+In a tenant path mount a root-relative `to_path` is prefixed with the mount. Matching is exact and case-sensitive against the request path without the query string. The query string is carried over.
 
 ## SEO pieces
 
 - Per page: `FilamentCraft\Seo\TemplateSeo::write($template, 'en', ['title' => …, 'description' => …, 'og_image' => …, 'canonical' => …, 'indexable' => true])`. `seo_json` isn't mass-assignable.
-- Site-wide defaults: `FilamentCraft\Seo\SiteSeoSettings::write($site, ['title_suffix' => true, 'description' => …, 'og_image' => …, 'org_logo' => …, 'social' => [...], 'indexing' => true])`.
+- Site-wide defaults: `FilamentCraft\Seo\SiteSeoSettings::write($site, ['title_suffix' => true, 'description' => …, 'og_image' => …, 'org_logo' => …, 'social' => [...], 'indexing' => true])`. It merges top-level keys only (`array_replace`), so write the whole `social` map or you drop the other profile URLs.
 - Extra sitemap URLs: `SitemapBuilder::appendUsing(fn (Site $site): iterable => [['loc' => …, 'lastmod' => …]])`.

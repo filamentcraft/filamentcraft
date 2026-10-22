@@ -31,8 +31,10 @@ final class AboutPage extends AbstractBlueprint
 
     public function sections(): array
     {
+        $hero = BlueprintSection::fromPreset(HeroSection::class, 'editorial');
+
         return [
-            BlueprintSection::fromPreset(HeroSection::class, 'editorial')->settings(['heading' => 'Our story', 'subheading' => '…']),
+            $hero->settings([...$hero->getSettings(), 'heading' => 'Our story', 'subheading' => '…']),
             BlueprintSection::make(FaqSection::class)->blocks([
                 ['type' => 'item', 'settings' => ['question' => 'Where are you?', 'answer' => '14 Wharf Lane']],
             ]),
@@ -46,7 +48,7 @@ $page = $exists ? null : app(\FilamentCraft\Blueprints\BlueprintSeeder::class)->
 
 - `seedOne()` never fails on a taken slug: it picks `about-2`. Check first, as above.
 - It fills every locale of the site with the same sections; translate them afterwards (locales-and-translation.md).
-- `settings()` merges over the section's defaults, so **unset copy fields keep the section's placeholder text**. Set every visible field, or blank it with `''`. `blocks()` replaces the default blocks. Setting ids and block types: `php artisan filamentcraft:sections <slug>`.
+- `settings()` **replaces** the override array, and the result merges over the section's defaults. So after `fromPreset()`, chaining `->settings([...])` throws the preset's layout, scheme and effect settings away (only its blocks survive): spread `$section->getSettings()` as above. Unset copy fields keep the section's placeholder text: set every visible field, or blank it with `''`. Presets also set effects (`backdrop`, `heading_effect`, `cta_style`), stock `bg_image` photos and dummy links; blank or replace those on real pages. `blocks()` replaces the default blocks. Setting ids and block types: `php artisan filamentcraft:sections <slug>`.
 - `publish: true` publishes and flushes the cache. Add it to the menu with `HeaderMenu::addPage()` (regions-and-menus.md).
 - Many pages, or pages with images: write a JSON site spec instead and import it (filamentcraft-site-migration skill, `site-spec.md`).
 
@@ -93,7 +95,7 @@ Bucket operations (`$state->bucket('en')`, `ensureBucket()`):
 |---|---|---|
 | change some settings | `applySettings($id, [...])` | merges |
 | replace a section's blocks | `applyBlocks($id, $blocks)` | replaces the list |
-| add a section | `upsertSection(LocaleBucket::newSectionId('faq'), 'faq', $settings, $blocks)` then place its id in `$bucket->order` | on an existing id it **replaces** all settings |
+| add a section | `upsertSection(LocaleBucket::newSectionId('faq'), 'faq', $settings, $blocks)` (appends the id to `$bucket->order` when new) | on an existing id it **replaces** all settings |
 | remove / move / copy / hide | `removeSection($id)`, `moveSection($id, ±1)`, `duplicateSection($id)`, `toggleHidden($id)` | `locked` is only enforced in the editor; respect it yourself |
 
 Then leave it as a draft, or publish (`$page->publishHead()`) if the user asked for it live. If someone has the page open with unsaved edits, their next save asks them to resolve the conflict; mention it.

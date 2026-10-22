@@ -64,3 +64,4 @@ SectionDataFactory::for(QuoteRequestSection::class)
 - `php artisan filamentcraft:sections services` confirms registration and the schema.
 - `php artisan filamentcraft:doctor` reports unknown section types in published pages and sections that failed to render on the live site.
 - Run Pest with `--parallel`.
+- Host-side tests: `config(['filamentcraft.public_routes' => true])` inside a test body registers nothing (routes are read at load), so set it before boot (Testbench `defineEnvironment()`). Call `ImageSizeResolver::reset()` after a test that registers `imageSizesUsing()`; it is process-wide. Mount a Livewire section with `Livewire::test(Class::class, ['section' => $data])` (the factory's `->test()` does this).

@@ -18,7 +18,7 @@ Facts to rely on:
 - Shipping comes from the checkout section's `shipping_flat` and `free_threshold` settings. The form carries an HMAC signature over those values, the store, the site, the catalogs and an expiry (24 hours), keyed on `APP_KEY`. Rotating `APP_KEY` invalidates open checkout forms.
 - `return` only accepts root-relative paths, which is why `Storefront::url()` must return them.
 - Checkout refuses requests coming from the editor preview, empty carts and out-of-stock lines.
-- Browser events: `filamentcraft:cart-updated` (`{count, store}`) and `filamentcraft:toast`. Elements with `[data-fc-cart-count]` update automatically.
+- Browser events: `filamentcraft:cart-updated` (`{count, store}`) and `filamentcraft:toast`. Elements with `[data-fc-cart-count]` update automatically. The cart is namespaced by the rendering site's slug (`store`, fallback `default`), so two sites on one host keep separate carts.
 
 If you build your own checkout form against `filamentcraft.cart.checkout`, reproduce every hidden field the built-in view sends:
 
@@ -41,6 +41,8 @@ When the shop already has a checkout (Cashier, Stripe Checkout, Paddle, a Shopif
 - To keep the host's cart page but give it the site's look, wrap it with `<x-filamentcraft::layout>` (see dynamic-pages.md).
 - Make `placeOrder()` return `OrderResult::failed()` so the built-in flow can never create orphan orders.
 - Add-to-cart buttons (on `product-listing` cards and the `product-detail` section) post to the package cart. For the host's own cart, either point `filamentcraft.commerce.card_view` at a card that posts to your route and customize `product-detail` (`filamentcraft:customize-section product-detail --replace --copy-view`), or keep the package cart and send its checkout button to your checkout.
+
+A host Livewire cart can dispatch `CartEvents::UPDATED` (`count`) and `CartEvents::TOAST` (`message`, optional `tone` ok|info|err, optional `action: {label, url}` where `url` starts with `/` or `http(s)://`) from `FilamentCraft\Commerce\CartEvents`; render `<x-filamentcraft::toast-host :life :max position>` once in the page so the toasts have somewhere to appear.
 
 ## Migrating a shop
 
