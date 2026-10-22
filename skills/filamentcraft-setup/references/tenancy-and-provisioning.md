@@ -56,7 +56,7 @@ Public pages for those tenants: `Route::filamentCraftTenant(Workspace::class);` 
 php artisan filamentcraft:install --standalone --owner="App\Models\Team" --path=site-editor --no-interaction
 ```
 
-This writes `app/Providers/Filament/WebsiteEditorPanelProvider.php` (extends `FilamentCraft\Editor\EditorPanelProvider`; hooks: `id()`, `path()`, `ownerModel()`, `ownerSlugColumn()`, `publicRouteName()`, `exitUrl(Template)`, `exitLabel()`, `configureEditor(FilamentCraftPlugin)`, `configurePanel(Panel)`).
+This writes `app/Providers/Filament/WebsiteEditorPanelProvider.php` (extends `FilamentCraft\Editor\EditorPanelProvider`; hooks: `id()`, `path()`, `isDefault()`, `ownerModel()`, `ownerSlugColumn()`, `publicRouteName()`, `exitUrl(Template)`, `exitLabel()`, `configureEditor(FilamentCraftPlugin)`, `configurePanel(Panel)`). More in [standalone-and-kits.md](standalone-and-kits.md).
 
 ```php
 use Filament\Models\Contracts\FilamentUser;
@@ -88,6 +88,8 @@ EditorUrl::to($site);                       // homepage
 EditorUrl::to($template, locale: 'fr');
 EditorUrl::to($site, RegionName::Header);
 ```
+
+`EditorUrl::to()` returns `null` when the site has no pages, no editor panel exists, or the site has no owner in a tenant panel.
 
 ## Provisioning a site for every tenant
 
@@ -145,7 +147,10 @@ final class WorkspaceObserver
 
 - `provision()` runs in one transaction: site, theme, pages (published, and the site live, unless `publish()` returns false), homepage, regions. `app(SiteProvisioner::class)->provision($class, $owner, name:, slug:)` picks a blueprint dynamically.
 - Overridable: `themeSlug()`, `locales()` (first entry is the default), `publish()`, `siteSettings()` (initial `settings_json`: scheme, fonts, theme knobs).
-- Themes must exist first (`filamentcraft:sync-themes`), or provisioning throws.
+- `provision()` syncs missing Theme rows itself. It throws only when no theme is registered or `themeSlug()` names an unregistered slug; fix the registration (config `themes.register` or the plugin's `registerTheme()`), not `sync-themes`.
+- Provisioning without an owner creates an owner-less site that every operator in tenant panels can see; always pass the owner instance.
+- Presets bring non-copy settings and demo assets with them: effects (Hero `modern` sets `backdrop=aurora`, `heading_effect=generate`; `bold` sets `cta_style=glow-border`; `editorial` sets `backdrop=dots`), bundled stock images (`bg_image` under `/images/filamentcraft/presets/`) and dummy links such as `/start`. For client sites, override those settings (`none`, empty image, real URLs) after spreading the preset's.
+- Registering a blueprint with `registerBlueprint()` also seeds it as a draft into every new site (`blueprints.auto_seed`); see config-pitfalls.md.
 - Blueprint page slugs are slugified, so they can't be nested (`services/web-design` becomes `servicesweb-design`). Create nested pages with a JSON site spec import or in the editor.
 - Footer defaults mention FilamentCraft; set your own brand and copyright in the footer section's settings.
 - `->lockBlueprintPages()` stops tenants renaming or deleting blueprint pages; `sealed()` on a page blueprint hides Add section (register it with `registerBlueprint()` too).

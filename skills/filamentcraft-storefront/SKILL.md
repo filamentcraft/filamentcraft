@@ -35,7 +35,8 @@ FilamentCraft never stores products. Products, prices, stock and orders stay in 
    ]);
    ```
 5. **Create the store pages**, each a normal page holding the matching section: `shop` (product-listing), `product` (product-detail; the template the definition above renders), `cart` (cart), `checkout` (checkout), plus product-carousel, category-grid and store-hero wherever they fit. Build them in the editor, or in code so they are reproducible: a page blueprint (a class extending `FilamentCraft\Blueprints\AbstractBlueprint` whose sections come from `BlueprintSection::fromPreset(ProductListingSection::class, 'modern')->settings([...])`) seeded with `app(\FilamentCraft\Blueprints\BlueprintSeeder::class)->seedOne($site, $blueprint, publish: true)`, skipping slugs that already exist. Add the shop and cart to the header with `app(\FilamentCraft\Support\HeaderMenu::class)->addPage($site, $page)`. A whole new site can instead come from a JSON site spec (`php artisan filamentcraft:import site.json`, see the filamentcraft-site-migration skill).
-   - The product template page is also reachable at its own slug and shows the first product. Pick a slug no existing link uses (check the header: starter sites link `/product` to a marketing page), and keep it noindex.
+   - The product template page is also reachable at its own slug and shows the first product. Pick a slug no existing link uses (check the header: starter sites link `/product` to a marketing page). The package already forces it noindex and keeps it out of the sitemap.
+   - `fromPreset()` then `->settings([...])` replaces the preset's settings (spread `getSettings()`); presets also bring effects, stock photos and dummy links, so blank those on a real shop.
 6. **Decide who owns checkout** ([references/cart-and-checkout.md](references/cart-and-checkout.md)). Either use the built-in session cart and cash-on-delivery checkout, which call your `placeOrder()`, or keep the host's checkout or payment provider and point `url('checkout')` at it.
 7. **Verify**: `php artisan filamentcraft:doctor` (it warns when published pages use commerce sections but no adapter is bound), unit-test the adapter, then in a browser open the shop, filter, open a product, add to cart, change the quantity and place an order. Confirm the order row exists in the host table.
 
@@ -49,11 +50,11 @@ FilamentCraft never stores products. Products, prices, stock and orders stay in 
 - **`variants` are option names only** (strings). There is no per-variant price, SKU or stock; the cart rejects a variant that isn't in the list.
 - **`placeOrder()` re-reads every price** from the database inside a transaction (never trust the cart), writes the host's order, and returns `OrderResult::failed()` when nothing resolves.
 - **Image URLs** must be absolute or root-relative. Resolve storage paths with `Storage::disk('public')->url($path)`.
-- Optional `meta` keys feed SEO: `sku`, `mpn`, `gtin`, `brand`, `updated_at` (sitemap lastmod), `price_valid_until`.
+- Optional `meta` keys feed SEO: `sku`, `mpn` (dropped if they contain whitespace), `gtin` (only 8, 12, 13 or 14 digits), `brand`, `updated_at` (sitemap lastmod), `price_valid_until` (alias `sale_ends_at`). `JsonLd::offerDetailsUsing(fn (ProductData $p, Site $site): array => [...])` merges `shippingDetails` / `hasMerchantReturnPolicy` into every Offer.
 
 ## Caching
 
-`category-grid`, `product-carousel`, `product-listing`, `product-detail`, `store-hero`, `cart` and `checkout` opt out of the fragment cache, so catalog changes show immediately. If you write your own section that reads the catalog, return `cacheable(): false` too.
+`category-grid`, `product-carousel`, `product-listing`, `product-detail`, `store-hero`, `cart` and `checkout` opt out of the fragment cache, so catalog changes show immediately. If you write your own section that reads the catalog, or reads `$section->context()` bindings of a dynamic page, return `cacheable(): false` too (cache identity ignores record changes).
 
 ## More than products
 

@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.13] — 2026-10-22
+
+### Changed
+
+- **Agent skills: completeness and accuracy pass.** Every skill was audited against the docs and the
+  source. New references cover host matching and URLs, standalone editor and starter kits, config
+  pitfalls and section pitfalls. Corrected claims: provisioning syncs theme rows itself, hreflang is
+  emitted for every site locale, `fromPreset()->settings()` replaces the preset settings,
+  `SiteSeoSettings::write` merges top-level keys only, and regions are created lazily
+  (`firstOrCreate`, plus an announcement-bar recipe). Added: built-in slug collisions, fragment cache
+  limits, public-route and tenant-mount traps, owner key types, plugin asset registration on
+  non-default panels, preset leakage when migrating, image `srcset` behaviour, dynamic-template
+  binding rules and embed allowlists.
+
 ## [1.41.12] — 2026-10-22
 
 ### Added

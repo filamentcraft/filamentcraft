@@ -231,6 +231,7 @@ address, hours and map for places people visit.
 - copy: eyebrow, title, intro, map_embed_url, map_image (image)
 - options: map_source=auto|map|embed|image|none; map_zoom=auto|world|country|region|city|district|street|building; map_ratio=wide|standard|square|tall; map_tone=natural|muted|tinted|night; map_interactive (checkbox); layout=split|cards; columns=2|3; align=start|center; shape=clean|contained|layered|wireframe; density=compact|comfortable|airy
 - blocks: location: name, address, lat, lng, phone, email, hours, map_url (link)
+- `map_embed_url` must start with `https://www.google.com/maps/embed`, `https://maps.google.com/maps` or `https://www.openstreetmap.org/export/embed`, otherwise it is dropped (a pasted Google share link is not an embed URL). `lat`/`lng` accept pasted map URLs or `geo:` values; the section then draws a tile map (`maps.tile_url`, default tile.openstreetmap.org: not for busy production).
 
 ### `logo-cloud`
 row of client or partner names; needs real clients from the brief.
@@ -336,6 +337,8 @@ dated milestones in order; needs real dates from the brief.
 
 ### `video`
 embedded video with heading and caption; needs a video link.
+
+`video_url` accepts only YouTube (`watch`, `embed`, `shorts`, `youtu.be`), Vimeo (`vimeo.com/<id>`, `player.vimeo.com/video/<id>`) and direct `https://` or root-relative `.mp4`/`.webm`/`.ogg` files. Wistia, Loom, Vidyard or an `http://` mp4 parse to nothing and the section renders **empty with no error**: use a link plus cover image, or flag it in the report.
 
 - copy: eyebrow, heading, description, video_url, cover (image)
 - options: width=contained|narrow|full; ratio=wide|standard|cinema; align=start|center; shape=clean|contained|layered|wireframe; density=compact|comfortable|airy

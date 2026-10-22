@@ -22,7 +22,7 @@ Carry into each page's `seo`:
 | `<title>` | `title`, copied whole: it is used exactly as written (the site's `title_suffix` only applies to pages without an SEO title) |
 | meta description | `description` |
 | `og:image` | `og_image` (download it with the assets) |
-| canonical, if it pointed elsewhere on purpose | `canonical` |
+| canonical, if it pointed elsewhere on purpose | `canonical` (a page whose canonical points elsewhere leaves hreflang and the sitemap) |
 | robots `noindex` | `indexable: false` |
 | hreflang alternates | pair translations by these, then add them under `translations` |
 

@@ -18,7 +18,7 @@
 | `$section->designMode` | true inside the editor canvas: show hints and empty states |
 | `$section->site` | `?Site` (null in some tests) |
 | `$section->locale` | render locale (the app locale is set to it while rendering, so `__()` works) |
-| `$section->colorScheme($id = 'scheme')` | never null: section scheme, else page scheme, else `modern` |
+| `$section->colorScheme($id = 'scheme')` | never null: section scheme, else page scheme, else `modern`; also `outputCssVars()`, `classes()`, `attributes()`, `token()`, `background()`, `foreground()` |
 | `$section->liveUpdate($settingId)` | live-edit binding (below) |
 | `$section->context($key, $default)` / `routeContext()` | dynamic-page route data (bound models, parameters) |
 | `$section->currentRecordKey('product', 'record')` | the current record's key on a dynamic page |
@@ -49,12 +49,15 @@ Optional elements: always render them and hide when empty, so the canvas can rev
 
 | Component | Props | Notes |
 |---|---|---|
-| `image` | `image` (ImageValue/string/null), `alt`, `decorative`, `eager`, `bind` | lazy `<img>`; editor-written alt wins over `alt`; stays in the DOM (hidden when empty) |
-| `icon` | `name`, `fallback` | Heroicons by name; up to 4 characters render as a glyph (emoji, "01") |
+| `image` | `image` (ImageValue/string/null), `alt`, `decorative`, `eager`, `bind` | lazy `<img>` with `src`, `alt`, `loading`, `decoding` only: **no `srcset`, `width` or `height`**; editor-written alt wins over `alt`; stays in the DOM (hidden when empty) |
+| `icon` | `name`, `fallback` | any registered Blade Icons set by name (Heroicons: `heroicon-o|s|m|c-`); up to 4 characters render as a glyph (emoji, "01"); an unresolvable longer name renders **nothing, silently** |
 | `empty-state` | `title`, `hint`, `icon`, `actionLabel`, `actionUrl` | for `@elseif ($section->designMode)` |
-| `carousel` + `carousel.slide` | `section`, `id`, `label`/`labelledby`, `columns`, `gap`, `peek`, `arrows`, `dots`, `count`; slide: `index`, `total` | accessible carousel; JS ships with the site bundle |
+| `carousel` + `carousel.slide` | `section`, `id`, `label`/`labelledby`, `locale`, `columns`, `gap`, `peek`, `arrows`, `dots`, `count`, `previous-label`, `next-label`, `status` (placeholders `{start} {end} {total}`); slots `header`, `actions`; slide: `index`, `total` | accessible carousel; CSS vars `--fc-carousel-gap`, `-basis`, `-basis-sm|lg|xl`. Needs the site JS bundle (`assets.site_js_enabled`) or controls stay hidden and the track is a plain scroller |
 | `section`, `container`, `box`, `button` | | convenience wrappers used by the make stub; built-ins hand-write the same markup |
-| `sheet`, `pills`, `skeleton` | | drawer, radio pills, loading placeholder |
+| `sheet` | `id` (required), `title`, `size` sm\|md\|lg, `side` bottom\|end, `locale`, `closeLabel`; slot `footer` | native `<dialog>` drawer with `wire:ignore.self`. Open with a `data-fc-sheet-open="{id}"` trigger, close with `data-fc-sheet-close`, or from script/Livewire with window events `filamentcraft:sheet-open` / `filamentcraft:sheet-close` (`detail: {id}`); it emits `filamentcraft:sheet-opened` / `-closed`. Keep open state **out** of Livewire properties (a morph would close it). Use it instead of hand-rolled `x-show` overlays, which transformed ancestors trap |
+| `pills` | `name`, `options` (value => label), `value`, `label`\|`labelledby` | radio group; forwards `wire:model*` / `x-model*` onto each radio |
+| `skeleton` | `lines`, `avatar`, `media` | loading placeholder; pair with `wire:loading.block` |
+| `toast-host` | `life`, `max`, `position` | needed when the host keeps its own Livewire cart (storefront skill) |
 | `island` | `name`, `section`, `props` | mount a React/Vue component inside a Blade section |
 
 ## CSS primitives
@@ -90,4 +93,4 @@ Theme variables: `--container-max`, `--box-radius`, `--box-padding`, `--button-r
 
 FilamentCraft wraps each section in `<div id="{anchor}" data-fc-section-id data-fc-section-type …>`. Look-knob classes (`fc-cards--bordered`, `fc-corners--round`) and per-section font overrides go on that wrapper, and `x-data` is added automatically when your markup uses Alpine. Your root element is its first child. Don't put `x-data` on your root yourself.
 
-Rendering errors don't break the page: the editor shows a failure card, the public page drops the section and records the error for `filamentcraft:doctor`.
+Rendering errors don't break the page: the editor shows a failure card, the public page drops the section and records the error for `filamentcraft:doctor` (`FILAMENTCRAFT_SHOW_RENDER_ERRORS=true` shows the card on staging). More traps (slug collisions, cache, canvas vs live CSS, h1 rule, bottom-bar offset, `data-fc-nav` links): [pitfalls.md](pitfalls.md).

@@ -18,14 +18,15 @@ Most content work belongs in the editor. Do it in code when the user asks for a 
 4. **Find the site safely.** Site slugs are only unique per owner. Use `Site::query()->forOwner($team)->live()->first()` in tenant apps, an id, or `ExportSiteCommand::findSite()` semantics (id, else a slug only one site uses). Use the model scopes (`forSite`, `published`, `draft`, `forOwner`, `live`) and `Model::query()`; models may be overridden by the host.
 5. **Back up before bulk changes**: `php artisan filamentcraft:export <site> --with-history` (a zip you can re-import), or a theme snapshot for settings changes (filamentcraft-theming).
 6. **Cache:** publishing (from the editor or `publishHead()`) and seeded publishes flush the site's cached sections and sitemap. After writing regions, SEO, site settings or locales in code, run `php artisan filamentcraft:clear-cache <site>`. Never use `php artisan cache:clear` for this: it also wipes everyone's unsaved editor drafts and undo history.
-7. **Public URLs need `filamentcraft.public_routes = true`** (off by default). Without it there is no sitemap, robots.txt, llms.txt, redirects or public page route, and `publicUrl()` returns the logged-in preview URL.
+7. **Host-level SEO files need `filamentcraft.public_routes = true`** (off by default; read when routes load, so `route:clear` after changing it). Without it there is no host `sitemap.xml`, `robots.txt`, `llms.txt`, IndexNow key file or fallback page route. Tenant path mounts (`Route::filamentCraftTenant()`) still serve pages, redirects and a per-tenant sitemap, and `publicUrl()` returns the tenant URL. Only without any public route does `publicUrl()` fall back to the logged-in preview URL.
+8. **Presets are not just copy.** `BlueprintSection::fromPreset()` brings effects (`backdrop`, `heading_effect`, `cta_style`), bundled stock photos and dummy links like `/start` onto the site. Blank or override them on a client's real pages.
 
 ## Find your task
 
 | Task | Read |
 |---|---|
 | Create a page, change sections on a page, publish/unpublish, duplicate, rename or move a page (with its redirect), set the homepage, delete a page, restore history, schedule or hide a section | [references/pages-and-revisions.md](references/pages-and-revisions.md) |
-| Add a language, copy or AI-translate pages and header/footer, RTL, language switcher, hreflang | [references/locales-and-translation.md](references/locales-and-translation.md) |
+| Add a language (and not leave it half-done), copy or AI-translate pages and header/footer, RTL, language switcher, hreflang, `/fr/...` URLs, locale links in host pages | [references/locales-and-translation.md](references/locales-and-translation.md) |
 | Header, footer, announcement bar, menu links | [references/regions-and-menus.md](references/regions-and-menus.md) |
 | Page titles, descriptions, social images, canonical, noindex, site-wide SEO, sitemap, robots.txt, llms.txt, IndexNow, redirects | [references/seo-and-redirects.md](references/seo-and-redirects.md) |
 | Contact and newsletter submissions, notification emails, media library, events to hook into, backups and restore | [references/forms-media-backups.md](references/forms-media-backups.md) |

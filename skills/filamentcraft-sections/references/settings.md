@@ -38,11 +38,11 @@ The editor picks the live mode itself. Toggles and selects update the canvas ins
 | `EnumButtons` | `enum(EnumClass::class)`: backed enum implementing `HasLabel`, `HasColor`, `HasIcon` | enum value | string; default with `->default(Enum::Case->value)` |
 | `Color` | `allowAlpha()`, `palette([...], allowCustom: false)` | `#hex` / `rgba()` | `?ColorValue` |
 | `Gradient` | `linearOnly()`, `allowRadial()`, `allowAlpha()`, `minStops()`, `maxStops()` | object | `?GradientValue` |
-| `ColorScheme` | `inheritable()` | scheme slug or `'__inherit'` | use `$section->colorScheme()` instead |
+| `ColorScheme` | `inheritable()` (**default true**: pass `false` to drop the "inherit" option) | scheme slug or `'__inherit'` | use `$section->colorScheme()` instead |
 | `ColorSchemeGroup` | | | theme panels only |
 | `Font` | `onlyCategory()`, `only([...slugs])`, `clearable()` | Bunny font slug | `?FontValue` |
-| `Image` | `accept([...])`, `maxSize(kb)`, `editor()`, `aspectRatios([...])`, `alt(bool)`, `altLabel()`, `disk()`, `directory()` | path string; alt text in sibling `{id}_alt` | `?ImageValue` |
-| `Icon` | `set('heroicons')` | e.g. `heroicon-o-bolt` (or a short emoji/glyph) | string; render with `<x-filamentcraft::icon :name>` |
+| `Image` | `accept([...])`, `maxSize(kb)`, `editor()`, `editorMode()`, `aspectRatios([...])`, `alt(bool)`, `altLabel()`, `altInfo()`, `disk()`, `directory()`, `visibility()` | path string; alt text in sibling `{id}_alt` | `?ImageValue` |
+| `Icon` | `set('heroicons')`; the raw `IconPicker::make()->sets()/styles()/gridColumns()/searchLimit()/clearable()` limits only the picker, rendering accepts any installed set | e.g. `heroicon-o-bolt` (or a short emoji/glyph) | string; render with `<x-filamentcraft::icon :name>` (blank, silently, if the set is not installed) |
 | `Link` | | href string | `?LinkValue` (unsafe schemes become null) |
 | `RichText` | `inline()` for a bold/italic/link-only toolbar | TipTap document (or HTML) | `?RichTextValue` (sanitised) |
 | `Spacing` | `min()`, `max()`, `step()`, `unit()`, `sides([...])` | `{top,right,bottom,left,linked}` | `?SpacingValue` |
@@ -55,7 +55,7 @@ All are `Stringable`, so `{{ $value }}` prints something sensible.
 
 | Object | Properties / methods | Prints |
 |---|---|---|
-| `ImageValue` | `path`, `url`, `width`, `height`, `alt`, `srcset()`, `small()`, `medium()`, `large()` | url |
+| `ImageValue` | `path`, `url`, `width`, `height`, `alt`, `srcset()`, `small()`, `medium()`, `large()` (all return the original URL unless a resolver is registered, see below) | url |
 | `LinkValue` | `href`, `label`, `external`, `target` | href |
 | `ColorValue` | `hex`, `alpha`, `rgba()` | hex |
 | `FontValue` | `family`, `weight`, `style`, `cssFamily()` | css family |
@@ -63,6 +63,10 @@ All are `Stringable`, so `{{ $value }}` prints something sensible.
 | `SpacingValue` | `css()`, `top()`, `right()`, `bottom()`, `left()` | css shorthand |
 | `RichTextValue` | `toHtml()`, `isEmpty()`; `Htmlable` | sanitised HTML |
 | `ColorSchemeValue` | `slug`, `attributes()`, `classes()`, `token($name)`, `background()`, `foreground()` | slug |
+
+### Image sizes
+
+`small()`, `medium()`, `large()` and `srcset()` return the **original URL** until the host registers `FilamentCraftPlugin::make()->imageSizesUsing(fn (ImageValue $image, string $size): string => …)` (`$size` is `small|medium|large`). The built-in `<x-filamentcraft::image>` never emits a `srcset`, so the resolver affects only views that call `$image->srcset()` themselves (and island props). The resolver is process-wide static: call `FilamentCraft\Settings\Values\ImageSizeResolver::reset()` in tests. Image values may also be absolute `http(s)://` or root-relative URLs, which pass through untouched. `TemplateUrlPicker` (`FilamentCraft\Filament\Forms\Components\TemplateUrlPicker`, `forSite()`, `forAllSites()`, `searchLimit()`) stores the public URL of a **published** page: use it in a section schema instead of free-text Link when the target is a page.
 
 ## Reading values: `$section->settings` / `$block->settings`
 

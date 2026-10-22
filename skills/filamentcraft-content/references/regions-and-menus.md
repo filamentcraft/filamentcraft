@@ -1,6 +1,6 @@
 # Header, footer, announcement bar and menus
 
-Regions are `FilamentCraft\Models\Region` rows: one per site and `name` (`RegionName::Header`, `Footer`, `Announcement`), holding the same per-locale section payload as a page (without page settings). They have **no draft and no history: saving is publishing**. Only names in `filamentcraft.regions.enabled` render (default header and footer; add `'announcement'` to show the bar).
+Regions are `FilamentCraft\Models\Region` rows: one per site and `name`, created lazily (a blueprint that declares the region, an import, or the editor opening it; a missing row renders nothing, so never `firstOrFail()`) (`RegionName::Header`, `Footer`, `Announcement`), holding the same per-locale section payload as a page (without page settings). They have **no draft and no history: saving is publishing**. Only names in `filamentcraft.regions.enabled` render (default header and footer; add `'announcement'` to show the bar).
 
 ## Edit a region
 
@@ -10,7 +10,10 @@ use FilamentCraft\Enums\RegionName;
 use FilamentCraft\Models\Region;
 use Illuminate\Support\Facades\Artisan;
 
-$region = $site->regions()->where('name', RegionName::Footer->value)->firstOrFail();
+$region = Region::query()->firstOrCreate(
+    ['site_id' => $site->getKey(), 'name' => RegionName::Footer->value],
+    ['sections_json' => ['version' => TemplateState::PAYLOAD_VERSION, 'locales' => []]],
+);
 $state = TemplateState::fromRegion($region, $site->default_locale);
 
 foreach ($state->locales as $locale => $bucket) {
@@ -43,4 +46,20 @@ The `footer` section: settings `brand`, `description`, `copyright` and more (`fi
 
 ## Announcement bar
 
-Enable the region in config, then give it a `banner` section (or any section) like any other region. Section scheduling (`_schedule_from` / `_schedule_until`) works here too for time-boxed promotions.
+1. Enable the region: `filamentcraft.regions.enabled` = `['announcement', 'header', 'footer']` (order is render order inside a placement; a disabled region keeps its content and `?region=` for it is ignored).
+2. `firstOrCreate` the row as above with `RegionName::Announcement->value`, then add a `banner` section (settings `text`, `cta_label`, `cta_url`; `filamentcraft:sections banner`):
+
+```php
+$state = TemplateState::fromRegion($region, $site->default_locale);
+
+foreach ($site->localeCodes() as $locale) {
+    $bucket = $state->ensureBucket($locale);
+    $id = LocaleBucket::newSectionId('banner');
+    $bucket->upsertSection($id, 'banner', ['text' => 'Free shipping over $50', 'cta_label' => 'Shop', 'cta_url' => '/shop']);
+}
+
+$region->sections_json = new \ArrayObject($state->toRegionPayload());
+$region->save();
+```
+
+Translate `text` and `cta_label` per locale before saving. Section scheduling (`_schedule_from` / `_schedule_until`) works here too for time-boxed promotions.
