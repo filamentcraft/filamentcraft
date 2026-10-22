@@ -13,7 +13,7 @@ use FilamentCraft\Models\Template;
 use FilamentCraft\Models\TemplateRevision;
 use Illuminate\Support\Facades\DB;
 
-$site = Site::query()->firstWhere('slug', 'acme');
+$site = Site::query()->forOwner($team)->live()->firstOrFail();   // slugs are unique per owner only
 $home = Template::query()->forSite($site->getKey())->findOrFail($site->homepage_template_id);
 $defaults = ProcessSection::defaults();
 

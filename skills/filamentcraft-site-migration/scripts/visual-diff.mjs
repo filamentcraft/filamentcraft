@@ -5,7 +5,15 @@ import { createRequire } from 'node:module';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
-const require = createRequire(join(process.cwd(), 'package.json'));
+// Dependencies live in the app or in .fc-migration (where the skill installs them).
+const require = (name) => {
+    for (const dir of [process.cwd(), join(process.cwd(), '.fc-migration')]) {
+        try {
+            return createRequire(join(dir, 'package.json'))(name);
+        } catch {}
+    }
+    throw new Error(`Cannot find ${name}`);
+};
 let chromium, PNG, pixelmatch;
 try {
     ({ chromium } = require('playwright'));

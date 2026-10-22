@@ -6,6 +6,16 @@ import { createRequire } from 'node:module';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 
+// Dependencies live in the app or in .fc-migration (where the skill installs them).
+const require = (name) => {
+    for (const dir of [process.cwd(), join(process.cwd(), '.fc-migration')]) {
+        try {
+            return createRequire(join(dir, 'package.json'))(name);
+        } catch {}
+    }
+    throw new Error(`Cannot find ${name}`);
+};
+
 const args = Object.fromEntries(process.argv.slice(2).map((arg) => {
     const [key, ...rest] = arg.replace(/^--/, '').split('=');
     return [key, rest.length ? rest.join('=') : 'true'];
@@ -66,7 +76,7 @@ function sniff(buffer) {
 
 let rasterize = null;
 try {
-    const { chromium } = createRequire(join(process.cwd(), 'package.json'))('playwright');
+    const { chromium } = require('playwright');
     const browser = await chromium.launch();
     rasterize = async (svg) => {
         const page = await browser.newPage({ deviceScaleFactor: 2 });

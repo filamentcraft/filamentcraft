@@ -25,12 +25,13 @@ Finish when: ownership confirmed, target app ready, scope written to `.fc-migrat
 ## Phase 1: discover
 
 ```bash
-mkdir -p .fc-migration && cd .fc-migration && npm init -y >/dev/null && npm i -D playwright pixelmatch pngjs && npx playwright install chromium && cd ..
+mkdir -p .fc-migration && echo '{"private": true}' > .fc-migration/package.json
+npm i -D --prefix .fc-migration playwright pixelmatch pngjs && npx --prefix .fc-migration playwright install chromium
 node <skill>/scripts/crawl.mjs --url=https://old-site.example --max-pages=60 --out=.fc-migration/crawl
 node <skill>/scripts/fetch-assets.mjs --crawl=.fc-migration/crawl --out=.fc-migration/assets
 ```
 
-`<skill>` is this skill's directory, e.g. `vendor/filamentcraft/filamentcraft/resources/boost/skills/filamentcraft-site-migration` or the copy your agent installed. Run the scripts with the working directory set to the folder that holds `node_modules`, or pass absolute paths.
+`<skill>` is this skill's directory, e.g. `vendor/filamentcraft/filamentcraft/resources/boost/skills/filamentcraft-site-migration` or the copy your agent installed. Run the scripts from the app root: they find Playwright in the app's own `node_modules` or in `.fc-migration`.
 
 You get:
 
@@ -122,7 +123,7 @@ Draft sites aren't served publicly. Preview them from the editor, mark the site 
 Serving the rebuild locally, check these before blaming the import:
 
 - **Images 404 or point at the wrong host:** `APP_URL` must match the host and port you browse, and `public/storage` must link to this app's `storage/app/public` (`php artisan storage:link --force`).
-- **Another site answers instead of yours:** with several live sites, the request host decides. Give the new site the host you serve it on rather than taking other sites down: `php artisan tinker --execute='FilamentCraft\Models\Site::query()->firstWhere("slug", "acme")->update(["domain" => "127.0.0.1"]);'`. Ask before changing any site you didn't create.
+- **Another site answers instead of yours:** with several live sites, the request host decides. Give the new site the host you serve it on rather than taking other sites down: `php artisan tinker --execute='FilamentCraft\Models\Site::query()->findOrFail(7)->update(["domain" => "127.0.0.1"]);'` (the id the import printed, `#7`). Ask before changing any site you didn't create.
 - **`/robots.txt` is Laravel's stock file:** a static `public/robots.txt` hides FilamentCraft's generated one (and its sitemap line). `filamentcraft:doctor` warns about it; ask before deleting it.
 
 Also check: every page at 390px wide (nav collapses, nothing overflows), RTL pages for Arabic or Hebrew, and that every header and footer link resolves.

@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.12] — 2026-10-22
+
+### Added
+
+- **`filamentcraft-content` agent skill.** A sixth skill for changing a live site from code or
+  artisan: pages and revisions (create, edit, publish, rename with a redirect, delete safely,
+  restore history), adding a language and translating pages and header/footer, menus, page and
+  site SEO, redirects, form submissions, the media library, events and backups. Every recipe in
+  it was run against a real app.
+- **`php artisan filamentcraft:clear-cache [site]`** clears one site's (or every site's) cached
+  sections and sitemap without touching editor drafts and undo history, which
+  `php artisan cache:clear` wipes.
+
+- **Agent Skills docs page** (`/reference/agent-skills`): installing with Laravel Boost or the
+  skills CLI step by step, checking what was installed, updating, what to ask each skill, the
+  migration tools setup and troubleshooting. Getting started now mentions it.
+
+### Fixed
+
+- The site migration skill's setup command failed (`npm init` rejects the `.fc-migration` folder
+  name), and its crawler, image downloader and visual check couldn't find Playwright when run
+  from the app root. The setup now works as written and the scripts look in the app and in
+  `.fc-migration`.
+- Publishing a page from your own code (`Template::publishHead()`) or seeding a blueprint as
+  published now flushes the site's cached sections, not only its sitemap, so menus and language
+  switchers refresh like they do after an editor publish.
+- The editor's empty Tabs and Sticky reveal sections showed a raw translation key instead of
+  "Add items to show them here".
+- `filamentcraft:install` no longer tells you to register the plugin when a panel already has it.
+- `filamentcraft:doctor` gave the wrong autosave fallback (1500 ms; it is 3000 ms).
+- Docs: about 35 corrections where the docs and the code disagreed, among them the model count,
+  autosave defaults, where the active color scheme is stored, site-scoped editor fonts, the
+  homepage section lists per starter family, `$settings->get()` for images, and section
+  metadata the editor doesn't enforce. Agent skills: SEO titles are used exactly as written,
+  and site lookups use `forOwner()`.
+
 ## [1.41.11] — 2026-10-22
 
 ### Added
