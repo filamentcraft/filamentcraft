@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.11] — 2026-10-22
+
+### Added
+
+- **Agent skills for AI coding agents.** The package now ships five skills and an always-on
+  guideline through Laravel Boost (`php artisan boost:install`): `filamentcraft-sections`,
+  `filamentcraft-theming`, `filamentcraft-site-migration`, `filamentcraft-storefront` and
+  `filamentcraft-setup`. They teach Claude Code, Cursor, Codex and other agents how
+  FilamentCraft is built: when a built-in section already fits, the house style for section
+  classes and views, how to rebrand every section (including the ones pinned to `modern`),
+  how to connect your own products, and how to append page revisions safely. Without Boost,
+  `npx skills add filamentcraft/filamentcraft`; they're also published at
+  `filamentcraft.dev/.well-known/agent-skills/`.
+- **Migrate an existing website with an agent.** The migration skill bundles a crawler,
+  an image downloader and a visual-diff checker (Node + Playwright), and walks the agent from
+  crawl to a section plan, theme match, site spec, import, visual check, redirects and SEO.
+- **Build a site from a JSON spec.** `php artisan filamentcraft:import site.json` creates a
+  whole site (pages, sections, blocks, header and footer, translations, SEO, redirects, theme
+  settings, local images with alt text) and validates it against your registered sections
+  first. `--dry-run` reports unknown types, presets, setting ids and option values without
+  writing; `--live` makes the new site live. Copy you don't set is stored empty, so no
+  placeholder text reaches the page.
+- **`php artisan filamentcraft:sections`** lists every registered section with its kind,
+  blocks and presets. Pass a slug for the full schema (setting ids, types, defaults and allowed
+  options) and `--json` for scripts.
+
+### Changed
+
+- The `make:filamentcraft-section` view stub now uses the `fc-title` / `fc-lede` type system
+  and keeps empty fields live-editable, like the built-ins.
+
 ## [1.41.10] — 2026-10-22
 
 ### Changed
