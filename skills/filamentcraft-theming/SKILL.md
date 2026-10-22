@@ -55,7 +55,7 @@ use FilamentCraft\Models\Theme;
 use FilamentCraft\Support\SiteColorSchemes;
 use FilamentCraft\Support\SiteThemeSettings;
 
-$site = Site::query()->where('slug', 'acme')->firstOrFail();
+$site = Site::query()->forOwner($team)->live()->firstOrFail();   // or by id; slugs are unique per owner only
 
 if ($site->theme === null) {
     $site->theme()->associate(Theme::forSlug('studio'))->save();

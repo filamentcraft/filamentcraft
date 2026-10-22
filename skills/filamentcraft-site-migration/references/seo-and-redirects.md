@@ -19,7 +19,7 @@ Carry into each page's `seo`:
 
 | From the crawl (`page.json` → `seo`) | Spec |
 |---|---|
-| `<title>` | `title` (drop the site suffix if `settings.seo.title_suffix` adds it) |
+| `<title>` | `title`, copied whole: it is used exactly as written (the site's `title_suffix` only applies to pages without an SEO title) |
 | meta description | `description` |
 | `og:image` | `og_image` (download it with the assets) |
 | canonical, if it pointed elsewhere on purpose | `canonical` |

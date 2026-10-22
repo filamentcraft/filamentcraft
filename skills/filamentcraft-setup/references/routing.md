@@ -62,5 +62,5 @@ Matching is exact and case-sensitive against the request path without the query 
 ## SEO pieces
 
 - Per page: `FilamentCraft\Seo\TemplateSeo::write($template, 'en', ['title' => …, 'description' => …, 'og_image' => …, 'canonical' => …, 'indexable' => true])`. `seo_json` isn't mass-assignable.
-- Site-wide defaults: `FilamentCraft\Seo\SiteSeoSettings::write($site, ['title_suffix' => ' | Acme', 'description' => …, 'og_image' => …, 'org_logo' => …, 'social' => [...], 'indexing' => true])`.
+- Site-wide defaults: `FilamentCraft\Seo\SiteSeoSettings::write($site, ['title_suffix' => true, 'description' => …, 'og_image' => …, 'org_logo' => …, 'social' => [...], 'indexing' => true])`.
 - Extra sitemap URLs: `SitemapBuilder::appendUsing(fn (Site $site): iterable => [['loc' => …, 'lastmod' => …]])`.
