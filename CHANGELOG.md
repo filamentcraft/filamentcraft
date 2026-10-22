@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.10] — 2026-10-22
+
+### Changed
+
+- **Simpler new pages.** New page is now the last item of the page switcher. The dialog asks
+  only for a name; the address fills itself in and shows where the page will live, and **Add to
+  the header menu** (on by default) links the page from every language of the header. The page
+  opens on an empty canvas instead of the "Start authoring" screen. Type defaults to Page and
+  stays editable in Page settings.
+- **Link fields pick your pages.** Every `Link` setting (header and footer links, hero and CTA
+  buttons) offers the site's pages first, drafts marked, with **Custom URL…** for anything else.
+  Stored values are still plain URLs, so existing links keep working.
+- Header and footer links to a draft page show in the editor but stay hidden from visitors until
+  the page is published.
+- The editor's "Set as homepage" button now asks for confirmation. One stray click used to swap
+  the live homepage with no warning.
+
 ## [1.41.9] — 2026-10-21
 
 ### Added
