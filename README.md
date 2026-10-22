@@ -44,6 +44,8 @@ Who uses it:
 
 ## What's new
 
+**1.41.11: Agent skills.** FilamentCraft now ships five skills for Claude Code, Cursor, Codex and other coding agents: sections, theming, site migration, storefront and setup. With Laravel Boost they install with `php artisan boost:install`; without it, `npx skills add filamentcraft/filamentcraft`. The migration skill crawls an existing site and rebuilds it as editable sections through the new `php artisan filamentcraft:import site.json`, then checks the result against the original. [Docs](https://filamentcraft.dev/reference/ai#agent-skills)
+
 **1.41.6: Export and import whole sites.** One `.zip` carries a site's pages, header and footer, theme, settings, languages, custom sections, fonts, redirects and images. Export or import from the editor's settings, or with `php artisan filamentcraft:export` / `filamentcraft:import` for staging-to-production moves. Bundles are validated before anything is written. [Docs](https://filamentcraft.dev/guide/export-import)
 
 **1.41.5: Theme presets that look like finished websites.** Modern, Editorial, Bold and Elegant now ship with real photography, product shots and wordmark logos instead of grey placeholders, and each starter home is composed for its style.
@@ -94,6 +96,10 @@ Colors, fonts and buttons, with 14 color schemes and every Bunny Font. Theme pre
 Every save is kept. Browse versions by day, see what changed, preview one in the canvas and restore it as your draft.
 
 <img src="https://raw.githubusercontent.com/filamentcraft/filamentcraft/main/art/readme/page-history.jpg" alt="Previewing an older version of a page from the History tab" width="100%">
+
+### Agent skills
+
+Five skills in [`skills/`](skills) teach coding agents how FilamentCraft is built: `filamentcraft-sections`, `filamentcraft-theming`, `filamentcraft-site-migration`, `filamentcraft-storefront` and `filamentcraft-setup`. Install with Laravel Boost (`php artisan boost:install`) or `npx skills add filamentcraft/filamentcraft`.
 
 ### AI: write and translate
 
