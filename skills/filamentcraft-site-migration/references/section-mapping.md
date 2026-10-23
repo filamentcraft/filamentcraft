@@ -231,6 +231,7 @@ address, hours and map for places people visit.
 - copy: eyebrow, title, intro, map_embed_url, map_image (image)
 - options: map_source=auto|map|embed|image|none; map_zoom=auto|world|country|region|city|district|street|building; map_ratio=wide|standard|square|tall; map_tone=natural|muted|tinted|night; map_interactive (checkbox); layout=split|cards; columns=2|3; align=start|center; shape=clean|contained|layered|wireframe; density=compact|comfortable|airy
 - blocks: location: name, address, lat, lng, phone, email, hours, map_url (link)
+- `phone` renders its raw value as the link text (the `tel:` href is derived), so never put `tel:+1603...` in it: use a plain display number. Its "Phone:"/"Email:" labels do not render; for inline-labelled contact details use a `rich-text` or text section that keeps the labels, and keep a plain `phone` only for the card.
 - `map_embed_url` must start with `https://www.google.com/maps/embed`, `https://maps.google.com/maps` or `https://www.openstreetmap.org/export/embed`, otherwise it is dropped (a pasted Google share link is not an embed URL). `lat`/`lng` accept pasted map URLs or `geo:` values; the section then draws a tile map (`maps.tile_url`, default tile.openstreetmap.org: not for busy production).
 
 ### `logo-cloud`
@@ -320,6 +321,7 @@ people with name, role and bio; needs real names from the brief.
 - copy: eyebrow, title, intro
 - options: layout=grid|carousel; style=cards|portraits|minimal; columns=2|3|4; align=start|center; show_socials (checkbox); shape=clean|contained|layered|wireframe; density=compact|comfortable|airy; effect=none|focus
 - blocks: member: photo (image), name, role, bio, x_url (link), linkedin_url (link), github_url (link)
+- A member with no photo: leave `photo` empty. The card renders an initials placeholder, not an empty box; check the rendered cards and tell the user which photos are missing.
 
 ### `testimonials`
 customer quotes with names; needs real quotes from the brief.

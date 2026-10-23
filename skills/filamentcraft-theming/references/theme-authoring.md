@@ -13,6 +13,8 @@ Write one only when the built-in `studio` theme lacks a knob you need (a new CSS
 php artisan make:filamentcraft-theme Acme   # app/Themes/AcmeTheme.php; --slug= --namespace= --path= --force
 ```
 
+The scaffold's default `brand_primary` Color setting (`--brand-primary`) is read by no section. Replace it with the variables `site.css` reads (`--font-default`, `--font-heading`, `--button-radius`, …; see tokens.md).
+
 ```php
 namespace App\Themes;
 
@@ -152,7 +154,7 @@ final class HarborPreset extends ThemePreset
 - Author all 22 tokens. Missing ones inherit from `modern` or the parent section, not from a complete scheme.
 - Auto-discovered from `app/Themes/Presets`. Or register via config `themes.presets` / `themes.preset_paths`, or plugin `->themePresets([...])` / `->discoverThemePresetsIn($path)`. `->withoutBuiltinThemePresets()` hides the four built-in families.
 - **`regions()` is empty by default, and `Full` apply replaces only the regions the preset declares.** A preset without `regions()` keeps the old header and footer, so the previous brand's nav and logo survive. Declare them: `BlueprintRegion::make(RegionName::Header)->sections([BlueprintSection::fromPreset(HeaderSection::class, 'modern')])`, and the same for the footer.
-- More API: `description()`, `previewImage()`, `screenshots()`; `PresetPage::make(…)->seal()` hides Add section on that page and `->ofType(TemplateType::…)`; `static provision(?Model $owner, ?string $name, ?string $slug): Site` provisions a new tenant's site from it. `make:filamentcraft-theme-preset --from-site=` skips no-code builder sections with a warning. Applying records a snapshot (10 restore points per site, needs the `filamentcraft_site_snapshots` migration); style-only apply resets all theme settings to defaults first (keeping SEO, AI settings and the site's own schemes).
+- More API: `description()`, `previewImage()`, `screenshots()`; `PresetPage::make(…)->seal()` hides Add section on that page and `->ofType(TemplateType::…)`; `static provision(?Model $owner, ?string $name, ?string $slug): Site` provisions a new tenant's site from it. `make:filamentcraft-theme-preset --from-site=` skips no-code builder sections with a warning. Applying records a snapshot (10 restore points per site, needs the `filamentcraft_site_snapshots` migration); style-only apply resets all theme settings to defaults first (keeping SEO, AI settings and the site's own schemes). A preset that omits `default_font` therefore silently changes the body font: always set `default_font` and `heading_font` explicitly in `style()`.
 - Apply in code: `app(\FilamentCraft\Theming\Presets\ThemePresetApplier::class)->apply($site, new HarborPreset, \FilamentCraft\Enums\ThemeApplyMode::Full)`. `Full` replaces pages and regions; the style-only mode resets style settings. The newest apply can be undone from a snapshot.
 - Test it: `\FilamentCraft\Testing\ThemePresetTester::for(HarborPreset::class)->assertValid()->assertRenders();`
 
@@ -175,10 +177,11 @@ use FilamentCraft\FilamentCraftPlugin;
 FilamentCraftPlugin::make()
     ->brandFonts(['inter', 'playfair-display'])          // every font picker becomes an allow-list
     ->brandPalette(['#0f766e' => 'Teal', '#f59e0b' => 'Amber'], locked: true)  // plain Color pickers become swatches
-    ->withoutBuiltinSchemes();                            // or ->withoutBuiltinSchemes(['cupcake', 'nord'])
+    ->withoutBuiltinSchemes(['cupcake', 'nord']);         // hide only these
 ```
 
 - Pass a whole kit with `->brandKit(BrandKit::make()->fonts([...])->palette([...]))`, or return one from a theme that implements `FilamentCraft\Theming\HasBrandKit`. Resolution order: theme kit, then panel plugin kit, then `config('filamentcraft.brand')`. `Font::only([...])` is an exact per-field list and hides "Add custom font". A kit blocks a preset in the UI (disabled card with the reason), enforced server-side too.
 - Brand schemes to keep visible belong on `Theme.tokens_json['schemes']` or the site.
+- Bare `->withoutBuiltinSchemes()` hides every built-in, including `modern`, which built-in sections pin. Pass the array form unless the site brands `modern` itself.
 - Hiding schemes never empties the picker completely.
 - Fonts added by editors in the font picker are scoped to that site. Fonts registered in code with `->registerFont(BrandFont …)` are available to every site.

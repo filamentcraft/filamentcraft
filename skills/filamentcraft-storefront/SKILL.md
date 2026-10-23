@@ -26,7 +26,13 @@ FilamentCraft never stores products. Products, prices, stock and orders stay in 
    ```
    There is no config key or plugin method for this binding.
 4. **Give products and categories URLs** with a dynamic template, so one published page serves every product ([references/dynamic-pages.md](references/dynamic-pages.md)):
+   In the panel provider, on `->plugin(FilamentCraftPlugin::make()->dynamicTemplates([...]))`. Without a panel, call `app(DynamicTemplateRegistry::class)->register($definition)`.
    ```php
+   use FilamentCraft\FilamentCraftPlugin;
+   use FilamentCraft\Models\Site;
+   use FilamentCraft\Routing\DynamicTemplateDefinition;
+   use FilamentCraft\Routing\DynamicTemplateRegistry;
+
    FilamentCraftPlugin::make()->dynamicTemplates([
        DynamicTemplateDefinition::make('product.show')
            ->path('shop/{product}')
@@ -34,8 +40,10 @@ FilamentCraft never stores products. Products, prices, stock and orders stay in 
            ->bind('product', fn (Site $site, string $slug): ?object => Product::query()->where('slug', $slug)->first()),
    ]);
    ```
-5. **Create the store pages**, each a normal page holding the matching section: `shop` (product-listing), `product` (product-detail; the template the definition above renders), `cart` (cart), `checkout` (checkout), plus product-carousel, category-grid and store-hero wherever they fit. Build them in the editor, or in code so they are reproducible: a page blueprint (a class extending `FilamentCraft\Blueprints\AbstractBlueprint` whose sections come from `BlueprintSection::fromPreset(ProductListingSection::class, 'modern')->settings([...])`) seeded with `app(\FilamentCraft\Blueprints\BlueprintSeeder::class)->seedOne($site, $blueprint, publish: true)`, skipping slugs that already exist. Add the shop and cart to the header with `app(\FilamentCraft\Support\HeaderMenu::class)->addPage($site, $page)`. A whole new site can instead come from a JSON site spec (`php artisan filamentcraft:import site.json`, see the filamentcraft-site-migration skill).
-   - The product template page is also reachable at its own slug and shows the first product. Pick a slug no existing link uses (check the header: starter sites link `/product` to a marketing page). The package already forces it noindex and keeps it out of the sitemap.
+   The adapter's `url('product')` must return the definition's `path()` (`/shop/{slug}` here); change both together when using `/products/{slug}`.
+5. **Create the store pages**, each a normal page holding the matching section: `shop` (product-listing), `product` (product-detail; the template the definition above renders), `cart` (cart), `checkout` (checkout), plus product-carousel, category-grid and store-hero wherever they fit. Build them in the editor, or in code so they are reproducible: a page blueprint ([references/blueprint.md](references/blueprint.md); a class extending `FilamentCraft\Blueprints\AbstractBlueprint` whose sections come from `BlueprintSection::fromPreset(ProductListingSection::class, 'modern')->settings([...])`) seeded with `app(\FilamentCraft\Blueprints\BlueprintSeeder::class)->seedOne($site, $blueprint, publish: true)`, skipping slugs that already exist. Add the shop and cart to the header with `app(\FilamentCraft\Support\HeaderMenu::class)->addPage($site, $page)`. A whole new site can instead come from a JSON site spec (`php artisan filamentcraft:import site.json`, see the filamentcraft-site-migration skill).
+   - The product template page is also reachable at its own slug and shows the first product. The default slug `product` collides with starter sites' marketing `/product` link: use `store-product` (match `templateSlug()`) or check the header first. The package already forces it noindex and keeps it out of the sitemap.
+   - Commerce sections all ship the preset slugs `modern`, `editorial`, `bold`, `elegant`.
    - `fromPreset()` then `->settings([...])` replaces the preset's settings (spread `getSettings()`); presets also bring effects, stock photos and dummy links, so blank those on a real shop.
 6. **Decide who owns checkout** ([references/cart-and-checkout.md](references/cart-and-checkout.md)). Either use the built-in session cart and cash-on-delivery checkout, which call your `placeOrder()`, or keep the host's checkout or payment provider and point `url('checkout')` at it.
 7. **Verify**: `php artisan filamentcraft:doctor` (it warns when published pages use commerce sections but no adapter is bound), unit-test the adapter, then in a browser open the shop, filter, open a product, add to cart, change the quantity and place an order. Confirm the order row exists in the host table.

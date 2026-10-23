@@ -81,6 +81,7 @@ $brand = [
 $schemes = SiteColorSchemes::forSite($site);   // start from the merged map so other schemes survive
 $schemes['brand'] = $brand;
 $schemes['modern'] = $brand;                    // built-in sections pin 'modern'
+foreach (['silk', 'velocity', 'neutral'] as $s) { $schemes[$s] = $brand; }   // family presets pin these; use light variants if the family is darker
 SiteColorSchemes::syncOverrides($site, $schemes);
 SiteColorSchemes::setActive($site, 'brand');    // only after the scheme exists
 
@@ -95,6 +96,8 @@ SiteThemeSettings::sync($site, $schema, [
 ]);
 ```
 
+Run PHP snippets with `php artisan tinker --execute="$(cat file.php)" </dev/null`; `tinker file.php` only echoes the file.
+
 Rules this recipe depends on:
 
 - **Author all 22 tokens.** A partial scheme is accepted, but missing tokens are not emitted and silently inherit from `modern` or the parent section. Work out every `on-*` color for contrast (4.5:1 for text). `FilamentCraft\Ai\Support\Contrast::foregroundFor($background)` returns a passing ink.
@@ -107,7 +110,7 @@ Rules this recipe depends on:
 
 ## Fonts
 
-- Font values are **Bunny Fonts slugs** (`inter`, `playfair-display`, `dm-sans`): the Google Fonts families under kebab-case ids. Each one adds a `fonts.bunny.net` link with weights 400–700 (no italics).
+- Font values are **Bunny Fonts slugs** (`inter`, `playfair-display`, `dm-sans`): the Google Fonts families under kebab-case ids. Each one adds a `fonts.bunny.net` link with weights 400–700 (no italics). Serif display fonts exist too (`fraunces`, `playfair-display`, `lora`); the check is `FontCatalog::find('<slug>')`.
 - A free-form CSS stack is also accepted (`'"Acme Serif", Georgia, serif'`). No link is emitted, so the font must already be loaded.
 - For licensed or self-hosted fonts, register a `BrandFont` and use its slug:
 
