@@ -5,6 +5,7 @@ Regions are `FilamentCraft\Models\Region` rows: one per site and `name`, created
 ## Edit a region
 
 ```php
+use FilamentCraft\Editor\State\LocaleBucket;
 use FilamentCraft\Editor\State\TemplateState;
 use FilamentCraft\Enums\RegionName;
 use FilamentCraft\Models\Region;
@@ -54,6 +55,11 @@ $state = TemplateState::fromRegion($region, $site->default_locale);
 
 foreach ($site->localeCodes() as $locale) {
     $bucket = $state->ensureBucket($locale);
+
+    if (collect($bucket->sections)->contains(fn (array $s): bool => $s['type'] === 'banner')) {
+        continue;
+    }
+
     $id = LocaleBucket::newSectionId('banner');
     $bucket->upsertSection($id, 'banner', ['text' => 'Free shipping over $50', 'cta_label' => 'Shop', 'cta_url' => '/shop']);
 }

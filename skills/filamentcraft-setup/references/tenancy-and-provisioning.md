@@ -94,9 +94,11 @@ EditorUrl::to($site, RegionName::Header);
 ## Provisioning a site for every tenant
 
 ```bash
-php artisan make:filamentcraft-blueprint ClientSite --site
+php artisan make:filamentcraft-blueprint Client --site
 php artisan make:filamentcraft-blueprint ClientHome
 ```
+
+The `--site` command appends `SiteBlueprint` to the name, so `Client` generates `ClientSiteBlueprint`. Its `pages()` stub lists `// HomeBlueprint::class`: replace that with `ClientHomeBlueprint::class` or the site gets no pages.
 
 ```php
 final class ClientHomeBlueprint extends AbstractBlueprint
