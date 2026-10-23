@@ -55,8 +55,9 @@ FilamentCraft never stores products. Products, prices, stock and orders stay in 
 - **Set `ProductData::$url`** for every product. Cards link with it, and the product page's canonical URL and JSON-LD use it.
 - **Set `currencyCode`** (ISO 4217) unless the shop is USD. JSON-LD otherwise guesses from the symbol and maps `$` to USD.
 - **`products()` must honour `collection`** (`all`, `featured`, `new`, and any custom collection you register), `categorySlug` and `limit`. Product listing filters also send `sort` (`price-asc`, `price-desc`, `rating`, else featured), `minMinor`/`maxMinor` and `search`. Unknown collections should behave like `all`.
-- **`variants` are option names only** (strings). There is no per-variant price, SKU or stock; the cart rejects a variant that isn't in the list.
+- **`variants` are option names only** (strings). There is no per-variant price, SKU or stock; the cart rejects a variant that isn't in the list, but a blank variant is accepted (stored as null), so require a choice in your own UI or `placeOrder()`.
 - **`placeOrder()` re-reads every price** from the database inside a transaction (never trust the cart), writes the host's order, and returns `OrderResult::failed()` when nothing resolves.
+- **One currency per cart.** The built-in cart and checkout take the first line's `currencySymbol`/`symbolPosition` for every line and the total, so mixed currencies show wrong symbols and a meaningless total. Run one store per currency, or return `OrderResult::failed()` from `placeOrder()` on mixed lines.
 - **Image URLs** must be absolute or root-relative. Resolve storage paths with `Storage::disk('public')->url($path)`.
 - Optional `meta` keys feed SEO: `sku`, `mpn` (dropped if they contain whitespace), `gtin` (only 8, 12, 13 or 14 digits), `brand`, `updated_at` (sitemap lastmod), `price_valid_until` (alias `sale_ends_at`). `JsonLd::offerDetailsUsing(fn (ProductData $p, Site $site): array => [...])` merges `shippingDetails` / `hasMerchantReturnPolicy` into every Offer.
 

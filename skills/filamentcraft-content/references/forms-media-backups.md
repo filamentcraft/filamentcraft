@@ -32,7 +32,7 @@ The contact and newsletter forms are Livewire components, so there is no plain P
 {"_token": "<csrf>", "components": [{"snapshot": "<decoded snapshot string>", "updates": {"name": "Ada", "email": "ada@example.test", "message": "Hello"}, "calls": [{"path": "", "method": "submit", "params": []}]}]}
 ```
 
-3. The response's new snapshot (`components[0].snapshot`) has `sent` true on success; validation failures appear under its `memo.errors`. Then check `Submission::query()->forSite($site)->latest()->first()`. The throttle (`forms.throttle`) applies, and a snapshot is single-use per page load, so re-fetch the page for each attempt.
+3. The response's new snapshot (`components[0].snapshot`) has the success flag true (contact: method `submit`, flag `sent`; newsletter: method `subscribe`, flag `subscribed`, `updates` only `email`); validation failures appear under its `memo.errors`. Then check `Submission::query()->forSite($site)->latest()->first()`. The throttle (`forms.throttle`) applies, and a snapshot is single-use per page load, so re-fetch the page for each attempt.
 
 ## Media library
 

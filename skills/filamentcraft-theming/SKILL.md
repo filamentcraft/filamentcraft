@@ -156,5 +156,5 @@ Token and setting tables (every scheme token, every Studio setting with its CSS 
 
 1. Open a published page and view the source of `<style id="fc-tokens">`. Confirm your scheme selector, `--font-default`, `--font-heading` and the radius variables are present.
 2. Open a page built from built-in sections. If the sections are still teal, you hit the pinned-scheme trap.
-3. Check mobile width and, for Arabic/Hebrew sites, `dir="rtl"`.
+3. Check mobile width and, for Arabic/Hebrew sites, add `ar` to `$site->locales` and view `/?locale=ar` (path-prefixed `/ar` 404s unless `localeUrlsUsing` is set) and confirm `dir="rtl"`.
 4. `php artisan filamentcraft:doctor` must stay green.
