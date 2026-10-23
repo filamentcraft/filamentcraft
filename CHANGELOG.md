@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.19] — 2026-10-23
+
+### Changed
+
+- **Agent skills: fixes from a third fresh-agent round.** Adding a field to a built-in section's
+  block, what `--copy-view` does not copy, the `--livewire` scaffold being a stub, why a theme
+  `cssVar()` on a scheme token has no effect, preset apply creating the theme row, the installer's
+  single-site `HasTenants` hint, the expected first-run doctor warnings, deleting the skeleton
+  `public/robots.txt`, what a signed-in or guest user sees at the editor home, `RestoreRevision`'s
+  return value, ownerless imports, and wrapping phone numbers in `<bdi>` on RTL pages.
+
 ## [1.41.18] — 2026-10-23
 
 ### Changed

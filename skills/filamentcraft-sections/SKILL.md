@@ -25,7 +25,7 @@ When a built-in fits a request worded as "build a section", use it and say which
 
 1. **Scaffold**: `php artisan make:filamentcraft-section Services` writes `app/Sections/ServicesSection.php` and `resources/views/sections/services.blade.php`. Add `--livewire` for an interactive section; use `make:filamentcraft-island Name --react|--vue` for a React/Vue one. `app/Sections` is auto-discovered, so nothing else needs registering there. The scaffold derives the slug from the class name and does not warn when it equals a built-in (`Faq` replaces the built-in `faq`): pick a distinct name or pin `slug()`, then confirm with `php artisan filamentcraft:sections <slug>` and `filamentcraft:doctor`.
 2. **Design the schema** before the markup. List every visible string, image, link and choice, and decide which repeat (those become a block). See "Schema rules".
-3. **Write the view** in house style (see "View rules" and the example below). The scaffolded stub wraps content in `<x-filamentcraft::section>` and `<x-filamentcraft::container>`; both exist and emit exactly the raw root below (scheme classes/attributes, density padding, `fc-container mx-auto`), so either form is fine. Adapt the stub's placeholder heading, button and `__SLUG__` class to your schema.
+3. **Write the view** in house style (see "View rules" and the example below). The scaffolded stub wraps content in `<x-filamentcraft::section>` and `<x-filamentcraft::container>`; both exist and emit exactly the raw root below (scheme classes/attributes, density padding, `fc-container mx-auto`), so either form is fine. Adapt the stub's placeholder heading, button and `__SLUG__` class to your schema. The `--livewire` scaffold reuses this same Blade stub (leading `{{-- --}}` comment, `<x-filamentcraft::section>` root, no `wire:` form), so it is not a valid Livewire view as written: replace it with a raw-root view containing a `wire:submit` form (references/interactive.md).
 4. **Add presets** slugged `modern`, `editorial`, `bold`, `elegant` with real-sounding copy. Four is the target, not a requirement (see "Presets").
 5. **Test it** with `SectionDataFactory` (see [references/testing.md](references/testing.md)).
 6. **Check the CSS**: `php vendor/filamentcraft/filamentcraft/resources/boost/skills/filamentcraft-sections/scripts/check-classes.php resources/views/sections/services.blade.php`. Or run it from wherever this skill is installed. It lists Tailwind utilities the shipped `site.css` doesn't contain.
@@ -219,7 +219,7 @@ A preset is a one-click starting point in the editor's preset browser. Ship four
 
 Read [references/interactive.md](references/interactive.md) before writing a `LivewireSection`, Alpine behaviour or an `IslandSection` (React/Vue island: scaffold with `make:filamentcraft-island`; app-level wiring for React/Inertia starter kits is in the setup skill's `references/inertia-react-vue.md`). The non-negotiables:
 
-- A `LivewireSection` view must **start with its single root element**; nothing (no `@if`, no comment) may print above it.
+- A `LivewireSection` view must **start with its single root element**; nothing (no `@if`, no comment) may print above it, so delete the scaffold's leading comment.
 - It must be **registered**: unregistered Livewire sections return 419 on every wire action on the live site, even though `Livewire::test()` passes.
 - Never add `@livewireScripts` or your own Alpine; FilamentCraft injects them on pages that need them.
 - Return `cacheable(): false` when output depends on the request, session, cart, time or CSRF.

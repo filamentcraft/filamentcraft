@@ -39,7 +39,7 @@ php artisan filamentcraft:install --no-interaction
 php artisan filamentcraft:install --standalone --owner="App\Models\Team" --path=site-editor --no-interaction
 ```
 
-This writes an editor-only panel provider. With `--owner`, the user model then needs `FilamentUser`, `HasTenants` and the `HasWebsiteEditor` trait, plus a `canUseWebsiteEditor()` override, which returns `false` until you change it, so nobody gets in. Without `--owner` (one site) tenancy is off and only `canUseWebsiteEditor()` matters. Order of work, `EditorUrl` props for Inertia/React/Vue pages, SPA route clashes and verification: [references/inertia-react-vue.md](references/inertia-react-vue.md). Kit-specific edits (the React, Vue, Livewire, site, store and multistore starter kits): [references/standalone-and-kits.md](references/standalone-and-kits.md). Tenancy: [references/tenancy-and-provisioning.md](references/tenancy-and-provisioning.md).
+This writes an editor-only panel provider. With `--owner`, the user model then needs `FilamentUser`, `HasTenants` and the `HasWebsiteEditor` trait, plus a `canUseWebsiteEditor()` override, which returns `false` until you change it, so nobody gets in. The installer's next-steps output lists `FilamentUser and HasTenants` even without `--owner`; for a single site skip `HasTenants` (tenancy is off, and `FilamentUser` plus `canUseWebsiteEditor()` are all that matter). Order of work, `EditorUrl` props for Inertia/React/Vue pages, SPA route clashes and verification: [references/inertia-react-vue.md](references/inertia-react-vue.md). Kit-specific edits (the React, Vue, Livewire, site, store and multistore starter kits): [references/standalone-and-kits.md](references/standalone-and-kits.md). Tenancy: [references/tenancy-and-provisioning.md](references/tenancy-and-provisioning.md).
 
 Install publishes config and migrations, runs the migrations (always pass `--no-interaction`; the prompt hangs in non-TTY shells), publishes assets, links storage, syncs themes and seeds a published example site. Useful flags: `--no-example`, `--family=modern|editorial|bold|elegant`, `--keys=int|uuid|ulid` (choose before the first migrate; it can't change later), `--folio`.
 
@@ -47,7 +47,8 @@ Then:
 
 1. **License**: `FILAMENTCRAFT_LICENSE_KEY=…` in `.env`. Without it, public pages carry a small "Built with FilamentCraft" link.
 2. **Serve public pages** (off by default): `'public_routes' => true` in `config/filamentcraft.php`, and delete the welcome `Route::get('/')` in `routes/web.php`, because host routes win over FilamentCraft's fallback route. The flag is read when routes load: `route:clear` after changing it, and set it before boot in tests. Set a correct `APP_URL` (scheme and host drive every canonical, sitemap and hreflang URL).
-3. **Check**: `php artisan filamentcraft:doctor`. It groups environment, database, panel, config, themes, sections, content, SEO, assets and license checks, and prints a fix for each problem (`--json` for CI, `--strict` to fail on warnings).
+3. **Delete Laravel's skeleton `public/robots.txt`** (it shadows FilamentCraft's per-site `robots.txt`; doctor: "Static SEO files"). Ask first if the user wrote their own.
+4. **Check**: `php artisan filamentcraft:doctor`. It groups environment, database, panel, config, themes, sections, content, SEO, assets and license checks, and prints a fix for each problem (`--json` for CI, `--strict` to fail on warnings). A fresh install normally shows about six warnings, all expected: AI assistant (`composer require laravel/ai`, PHP 8.3+, or `filamentcraft.ai.enabled=false`); Fragment cache (non-taggable store: use Redis/Memcached via `filamentcraft.cache.store`, or `filamentcraft.cache.enabled=false`); Upload size limits (raise `upload_max_filesize`/`post_max_size` or lower `uploads.max_size_kb`); Static SEO files (delete `public/robots.txt`); Social share image (set one in the editor, Search & AI); License key (`FILAMENTCRAFT_LICENSE_KEY`).
 
 ## Deploy
 
@@ -104,6 +105,7 @@ FilamentCraftPlugin::make()
 | `public_routes` change does nothing | routes are read at load: `route:clear` (tests: set it before boot) |
 | Editor opens but looks unstyled or broken after an update | `filamentcraft:upgrade` (or `filament:assets`) not run on deploy |
 | Nobody can open the standalone editor | `canUseWebsiteEditor()` still returns false |
+| Standalone editor root URL 404s, or a guest gets 500 `Route [login] not defined` | by design for the root: the editor-only panel has no home page, so a signed-in user hitting the panel path gets 404 (open `/{path}/filamentcraft/editor/{id}` or use `EditorUrl`). The panel has no login page, so guests go to the app's own `login` route: define one named `login` |
 | Interactive section 419s on the live site | the Livewire section isn't registered (see filamentcraft-sections) |
 | Custom section Tailwind classes do nothing | the package's prebuilt `site.css` lacks them; ship your own CSS (see filamentcraft-sections) |
 | Changes don't show on the live site | not published yet; or the fragment cache (taggable stores only, so never the cause on `file`/`database`): `php artisan filamentcraft:clear-cache`, which you also need after changing a section view or class |

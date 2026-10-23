@@ -65,6 +65,7 @@ final class QuoteRequestSection extends LivewireSection
 
 Rules, each one a real production failure:
 
+- **The `--livewire` scaffold is a stub.** Its view is the static Blade stub: a `{{-- --}}` comment above an `<x-filamentcraft::section>` root and no form. Overwrite the whole file with a raw-root view like the example above (comment removed, `wire:submit` form).
 - **Single root element first.** Nothing may print above the root tag: no `@if`, `@foreach`, HTML or Blade comment. Blade turns conditionals into `<!--[if BLOCK]>` markers, and a marker above the root leaves later-inserted controls inert with no error. Put conditions on the root (`<div @if ($hidden) hidden @endif>`) and computations in a `@php … @endphp` block, which prints nothing. With `APP_DEBUG=true` FilamentCraft throws naming the view.
 - **Register it.** Classes in `app/Sections` are discovered. Anywhere else, use `->registerSection()` or `filamentcraft.sections.register`. An unregistered Livewire section works in `Livewire::test()` but 419s on every wire action on the live site. Click through it in a browser once.
 - `$section` survives every round trip, so `$section->settings->get()` works after `wire:submit`. Extra state goes in public properties.

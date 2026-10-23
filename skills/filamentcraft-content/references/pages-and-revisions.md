@@ -126,8 +126,8 @@ Code has none of the editor's guards. Before `$page->revisions()->delete(); $pag
 
 ## History and restore
 
-- Revisions are never pruned; `$page->revisions()->latest('id')` lists them with `summary` and `user_id`.
-- `app(\FilamentCraft\Editor\Actions\RestoreRevision::class)($page, $revisionId)` copies an old revision into a new draft head (then publish if asked); `->undo($page, $restoredId)` reverts it while nobody saved on top.
+- Revisions are never pruned; list ids with `$page->revisions()->latest('id')->pluck('summary', 'id')` (also `user_id`).
+- `app(\FilamentCraft\Editor\Actions\RestoreRevision::class)($page, $revisionId)` copies an old revision into a new draft head (then publish if asked) and returns that new head `TemplateRevision`; pass its id as `$restoredId` to `->undo($page, $restoredId)`, which reverts it while nobody saved on top.
 
 ## Scheduling and hiding
 
