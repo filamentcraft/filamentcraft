@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.21] — 2026-10-23
+
+### Changed
+
+- **Agent skills: fixes from a fifth fresh-agent round.** Missing `use` lines in several snippets,
+  deploy notes (queue worker, no scheduler, cache commands), the product listing's URL filters
+  (`?q=`, `?category=`, `?sort=`, `?min=`, `?max=`), and a pattern for related and recently-viewed
+  product collections.
+
 ## [1.41.20] — 2026-10-23
 
 ### Changed

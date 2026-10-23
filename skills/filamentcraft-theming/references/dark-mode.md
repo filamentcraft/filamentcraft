@@ -30,6 +30,10 @@ Set them in the editor's Header or Footer section panel, or put `'show_scheme_to
 On an **existing** site, write it into each region's stored payload, in every locale bucket (region saves are live):
 
 ```php
+use FilamentCraft\Editor\State\TemplateState;
+use FilamentCraft\Enums\RegionName;
+use FilamentCraft\Models\Region;
+
 foreach ([RegionName::Header, RegionName::Footer] as $name) {
     $region = Region::query()->where('site_id', $site->getKey())->where('name', $name->value)->first();
     $state = TemplateState::fromRegion($region, $site->default_locale);

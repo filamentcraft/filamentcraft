@@ -225,6 +225,28 @@ it('prices orders from the database, not the cart', function (): void {
 });
 ```
 
+## Related and recently viewed
+
+`products()` receives only the `CatalogQuery`, never the section or `RenderContext`, so `$section->currentRecordKey()` is unreachable there. Bridge it through the request: the definition's `bind()` closure runs while the dynamic route is resolved, before sections render, in the same request.
+
+```php
+DynamicTemplateDefinition::make('product.show')
+    ->path('shop/{product}')
+    ->templateSlug('product')
+    ->bind('product', function (Site $site, string $slug): ?object {
+        $product = Product::query()->where('slug', $slug)->first();
+
+        if ($product) {
+            request()->attributes->set('current_product', $product);
+            session()->put('recent', collect([$slug, ...session('recent', [])])->unique()->take(8)->all());
+        }
+
+        return $product;
+    });
+```
+
+In `products()`, read `request()->attributes->get('current_product')` for `related` (same category, excluding it) and `session('recent', [])` for `recent`. Register the keys with `->catalogCollections(['related' => 'Related', 'recent' => 'Recently viewed'])`. Both are empty on pages without a bound product (the shop, the editor canvas), so return an empty list or fall back to `all`. Keep the carousel uncached (the built-in commerce sections already are).
+
 ## Extra catalogs
 
 For courses, events, rooms and similar: implement `FilamentCraft\Commerce\Contracts\Catalog`. It has `key()`, `label()`, `items(CatalogQuery)`, `item($slug)`, `categories()`, `category()` and `url()`, and no `placeOrder()`.
