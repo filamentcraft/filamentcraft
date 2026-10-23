@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.16] — 2026-10-23
+
+### Changed
+
+- **Agent skills: dark mode, Inertia/React/Vue usage, the no-code section builder and privacy.** New
+  references cover the visitor dark-mode toggle (it always targets the `dark` scheme), rendering
+  FilamentCraft alongside Inertia apps, section-builder limits and storage, and what the package
+  records about visitors. Docs corrected to match the code for section-builder caps, the HTML block,
+  `EditorUrl::to()` null cases and the editor-only panel 404s.
+
 ## [1.41.15] — 2026-10-23
 
 ### Changed
