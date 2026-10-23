@@ -20,7 +20,7 @@ Read standalone-and-kits.md for kit-specific edits (Team slug hook, permissions,
 | Published pages, sitemap, `robots.txt`, `llms.txt` | Laravel routes + Blade (`<x-filamentcraft::layout>`) | Server rendered. They are **not** Inertia pages and cannot be returned from an Inertia controller |
 | Site/page lists, "Edit" buttons, team UI | The app's own Inertia/React/Vue/Livewire pages | They receive editor URLs as props |
 
-`filamentcraft/filamentcraft` requires `filament/filament`, so Composer installs it. The editor-only panel has no dashboard, resources or Inbox, and its home and tenant-home URLs return 404 (there is nothing to land on); a host inbox is the app's own page over `Submission`.
+`filamentcraft/filamentcraft` requires `filament/filament`, so Composer installs it. The editor-only panel has no dashboard, resources or Inbox, and its home and tenant-home URLs return 404 for a signed-in user (Filament's `RedirectToHomeController` has nothing to redirect to). Guests are redirected to the app's own `login` route, because the panel has no login page; without a route named `login` they get a 500 `Route [login] not defined`; a host inbox is the app's own page over `Submission`.
 
 ## Wire it up (checklist)
 

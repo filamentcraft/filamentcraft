@@ -104,7 +104,7 @@ Rules this recipe depends on:
 - **`syncOverrides()` and `sync()` replace, they don't merge.** Always spread the current values in, as above, or other schemes and settings are wiped.
 - **Settings must exist on the site's theme.** `sync()` silently drops ids the theme doesn't declare.
 - **A Range value outside its min/max renders the default.** `box_radius => 40` renders 4, not 32.
-- **Set fonts explicitly.** The Studio theme's stock font value is a placeholder, so a migrated site should always store `default_font` and `heading_font`.
+- **Set fonts explicitly.** The Studio theme's stock font value is a placeholder, so set `default_font` and `heading_font` explicitly. Writing a value equal to the theme default (preset apply, `SiteThemeSettings::sync`) may leave nothing in `settings_json`; the render is the same, so verify the rendered font, not the stored key.
 - **If the site shows the visitor dark-mode toggle,** override the `dark` scheme with a branded dark palette too (the toggle always flips to `dark` from Header/Footer). Details, limits and verify commands: [references/dark-mode.md](references/dark-mode.md).
 - **Source sections that are deliberately dark** (a dark hero band) get their own scheme, e.g. `brand-dark`, set on those sections' `scheme` setting. Keep the site default light unless the source site is dark throughout.
 

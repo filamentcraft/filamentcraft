@@ -131,6 +131,8 @@ On a plain static source, `crawl.mjs` can return empty `repeatedItems` for card 
 
 Also check: every page at 390px wide (nav collapses, nothing overflows), RTL pages for Arabic or Hebrew, and that every header and footer link resolves.
 
+**Phone numbers in RTL rich text** render bidi-scrambled (`+1 (603) 555-0142` shows as `0142-555 (603)`) because the digits and punctuation reorder inside the Arabic paragraph. Wrap each number in `<bdi dir="ltr">…</bdi>` (or `<span dir="ltr">`), also inside `tel:` links. The rich-text sanitizer (Symfony `allowSafeElements`) keeps `<bdi>`, `<span>` and `dir`; plain text settings (Hero subheading, button labels) cannot hold markup, so write the number with the Unicode LRM/LRI isolates around it (`\u2066…\u2069`) there. Check the rendered page.
+
 ## Phase 7: SEO and go-live
 
 Work through [references/seo-and-redirects.md](references/seo-and-redirects.md): every old URL from the inventory must answer 200, or 301 to a 200, on the new site in one hop. Titles, descriptions, canonicals and hreflang must carry over, and the sitemap must list the new pages. Then hand over a go-live checklist: domain on the site, DNS, `markLive` or `--live`, the Search Console address change if the domain changes, and keeping the redirects for at least a year.

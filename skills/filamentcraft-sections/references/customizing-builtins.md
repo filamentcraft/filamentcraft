@@ -22,6 +22,7 @@ php artisan filamentcraft:customize-section hero AppHero --replace --copy-view -
 
 - The class lands in `app/Sections` (auto-discovered) and inherits settings, blocks, presets, defaults and the view. Other flags: `--slug=` (rejected with `--replace`), `--namespace`, `--path`, `--view-path`, `--force` (rolls back on failure). When the target is outside `app/Sections` it prints the exact `->registerSection()` line. After a change on a live site run `filamentcraft:clear-cache`.
 - `--copy-view` copies the Blade view into `resources/views/sections` so you own the markup. Without it, the class keeps following the package view on updates.
+- `--copy-view` copies only the top view. A view that does `@include('filamentcraft::sections.partials.*')` keeps rendering the package's partials: copy the partials you want to change into `resources/views/sections/partials` and repoint the `@include` paths (e.g. the testimonials `moving` layout includes `partials.fx.cards-moving`, which includes `partials.fx.cards-moving-card`; `grep -n '@include' <view>`).
 - **Replacement keeps the built-in slug.** Every stored page and region resolves to your class with no migration, so stay compatible: keep existing setting and block keys, give new settings defaults, and tolerate legacy values. Test pages and regions (header and footer are regions).
 - Contact and Newsletter stay Livewire components when subclassed.
 
@@ -39,6 +40,20 @@ public static function defaults(): array
     $defaults['settings']['campaign_label'] = 'Featured';
 
     return $defaults;
+}
+```
+
+Add a field to one block of a built-in (`Block::$settings` is public and mutable; give the new field a default and have your copied view read it):
+
+```php
+public static function blocks(): array
+{
+    return array_map(
+        fn (Block $block) => $block->slug === 'quote'
+            ? tap($block, fn (Block $b) => $b->settings = [...$b->settings, Image::make('company_logo')->label('Company logo')])
+            : $block,
+        parent::blocks(),
+    );
 }
 ```
 
