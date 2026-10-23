@@ -23,7 +23,7 @@ When a built-in fits a request worded as "build a section", use it and say which
 
 ## Workflow
 
-1. **Scaffold**: `php artisan make:filamentcraft-section Services` writes `app/Sections/ServicesSection.php` and `resources/views/sections/services.blade.php`. Add `--livewire` for an interactive section; use `make:filamentcraft-island Name --react|--vue` for a React/Vue one. `app/Sections` is auto-discovered, so nothing else needs registering there.
+1. **Scaffold**: `php artisan make:filamentcraft-section Services` writes `app/Sections/ServicesSection.php` and `resources/views/sections/services.blade.php`. Add `--livewire` for an interactive section; use `make:filamentcraft-island Name --react|--vue` for a React/Vue one. `app/Sections` is auto-discovered, so nothing else needs registering there. The scaffold derives the slug from the class name and does not warn when it equals a built-in (`Faq` replaces the built-in `faq`): pick a distinct name or pin `slug()`, then confirm with `php artisan filamentcraft:sections <slug>` and `filamentcraft:doctor`.
 2. **Design the schema** before the markup. List every visible string, image, link and choice, and decide which repeat (those become a block). See "Schema rules".
 3. **Write the view** in house style (see "View rules" and the example below).
 4. **Add four presets** slugged `modern`, `editorial`, `bold`, `elegant` with real-sounding copy.

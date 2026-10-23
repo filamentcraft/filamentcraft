@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.14] — 2026-10-23
+
+### Changed
+
+- **Agent skills: fixes from running them on real tasks.** The announcement-bar snippet is now
+  self-contained and idempotent, the locale skill names the full `FilamentCraft\Seo\TemplateSeo`
+  class, `tinker script.php` needs `</dev/null` outside a terminal, the section scaffold step warns
+  about built-in slug collisions, and the tenant blueprint recipe uses the real generated class name
+  and says to wire the home page into `pages()`.
+
 ## [1.41.13] — 2026-10-22
 
 ### Changed
