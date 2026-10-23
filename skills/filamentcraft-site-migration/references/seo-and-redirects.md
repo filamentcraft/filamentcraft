@@ -46,6 +46,7 @@ Then check the redirect targets themselves return 200, `/sitemap.xml` lists the 
 ## Go-live checklist for the user
 
 - Point the domain at the app and set it on the site (`domain` field), then mark the site live.
+- Delete a static `public/robots.txt` (Laravel's stock file) once the user agrees: it shadows FilamentCraft's generated robots.txt and its sitemap line. `filamentcraft:doctor` warns about it.
 - Keep the redirects for at least a year; ideally forever.
 - Same domain: submit the new sitemap in Search Console. New domain: also use Search Console's change-of-address tool.
 - Watch 404s in the server logs for a few weeks and add redirects for anything missed.

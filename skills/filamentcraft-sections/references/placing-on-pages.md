@@ -26,7 +26,8 @@ $revision = DB::transaction(function () use ($home, $defaults): TemplateRevision
         $bucket->upsertSection($id, ProcessSection::slug(), $defaults['settings'] ?? [], $defaults['blocks'] ?? []);
 
         $order = array_values(array_diff($bucket->order, [$id]));
-        $after = array_search(current(array_filter($order, fn (string $s): bool => $bucket->sections[$s]['type'] === 'hero')), $order, true);
+        $hero = current(array_filter($order, fn (string $s): bool => $bucket->sections[$s]['type'] === 'hero'));
+        $after = $hero === false ? false : array_search($hero, $order, true);
         array_splice($order, $after === false ? 0 : $after + 1, 0, [$id]);
         $bucket->order = $order;
     }

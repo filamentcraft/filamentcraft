@@ -79,7 +79,7 @@ Cast scalars for comparisons: `(string) $s->get('columns', '3') === '3'`.
 
 ## Raw Filament components
 
-Any Filament form component can sit in `settings()` or a block's settings: `Toggle`, `Repeater`, `KeyValue`, `TagsInput`, your own fields. The editor wires live preview for them. `FileUpload`, `RichEditor` and `ColorPicker` values are transformed like their DSL twins; everything else comes back raw. Use the DSL `Group`, not Filament's `Section`, for headers. Ids must be unique across DSL and raw fields.
+Any Filament form component can sit in `settings()` or a block's settings: `Toggle`, `Repeater`, `KeyValue`, `TagsInput`, your own fields. The editor wires live preview for them. `FileUpload`, `RichEditor` and `ColorPicker` values are transformed like their DSL twins; everything else comes back raw. Use the DSL `Group`, not Filament's `Section`, for headers. Ids must be unique across DSL and raw fields. A raw `Repeater` stores a plain list of row arrays (`[['text' => 'Fast'], ['text' => 'Safe']]`, no uuid keys) and `get()` returns it untouched, so read it with `(array) $b->get('features', [])` and `$row['text'] ?? ''`. Prefer blocks for anything editors reorder.
 
 ## Blocks
 

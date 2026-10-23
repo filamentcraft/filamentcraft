@@ -21,6 +21,19 @@ $rows = Submission::query()->forSite($site)->ofType(SubmissionType::Contact)->la
 - The recorder ignores events whose `$site` is null: a custom form dispatching `ContactFormSubmitted` must pass the real `Site` and a `sectionId`, or nothing is stored or mailed.
 - To push to a CRM: `Event::listen(ContactFormSubmitted::class, …)` in the host; it fires whether or not rows are stored.
 
+## Smoke-test a form over HTTP
+
+The contact and newsletter forms are Livewire components, so there is no plain POST route. Replay what the browser sends (Livewire 3; the same shape works on 4):
+
+1. GET the page with a cookie jar (`curl -c jar`). From the HTML take `data-csrf` and `data-update-uri` off the Livewire `<script>`, and the `wire:snapshot="..."` attribute of the form's component (HTML-decode it: `&quot;` to `"`).
+2. POST JSON to the update URI with the same jar (`curl -b jar`), header `X-Livewire: 1` and `X-CSRF-TOKEN`:
+
+```json
+{"_token": "<csrf>", "components": [{"snapshot": "<decoded snapshot string>", "updates": {"name": "Ada", "email": "ada@example.test", "message": "Hello"}, "calls": [{"path": "", "method": "submit", "params": []}]}]}
+```
+
+3. The response's new snapshot (`components[0].snapshot`) has `sent` true on success; validation failures appear under its `memo.errors`. Then check `Submission::query()->forSite($site)->latest()->first()`. The throttle (`forms.throttle`) applies, and a snapshot is single-use per page load, so re-fetch the page for each attempt.
+
 ## Media library
 
 Images are per site (`FilamentCraft\Models\Media`: `disk`, `path`, `alt`, `title`, size and dimensions; scope `forSite($site)`). Sections store the image's **path** in their setting and the alt text next to it in `{setting}_alt`; the library's alt is only the default the picker copies in.

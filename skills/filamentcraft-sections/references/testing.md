@@ -27,11 +27,11 @@ it('renders every preset', function (string $slug): void {
     );
 
     expect($html)->toContain(e($preset->settings['title']));
-})->with(['modern', 'editorial', 'bold', 'elegant']);
+})->with(['modern', 'editorial', 'bold', 'elegant']); // list only the slugs this section ships
 
-it('ships the four style-family presets', function (): void {
+it('ships only valid style-family presets', function (): void {
     expect(array_map(fn ($preset) => $preset->slug, ServicesSection::presets()))
-        ->toBe(['modern', 'editorial', 'bold', 'elegant']);
+        ->each->toBeIn(['modern', 'editorial', 'bold', 'elegant']);
 });
 
 it('hides an empty grid from visitors but hints in the editor', function (): void {
@@ -42,6 +42,45 @@ it('hides an empty grid from visitors but hints in the editor', function (): voi
         ->and($editor)->toContain('Add a service');
 });
 ```
+
+## Without Pest
+
+Same factory calls in a PHPUnit class:
+
+```php
+final class ServicesSectionTest extends Tests\TestCase
+{
+    public function test_renders_the_defaults(): void
+    {
+        $defaults = ServicesSection::defaults();
+
+        $html = ServicesSection::renderToHtml(
+            SectionDataFactory::for(ServicesSection::class)->settings($defaults['settings'])->blocks($defaults['blocks'])->make(),
+        );
+
+        $this->assertStringContainsString('What we do', $html);
+    }
+
+    #[DataProvider('presetSlugs')]
+    public function test_renders_every_preset(string $slug): void
+    {
+        $preset = collect(ServicesSection::presets())->firstWhere('slug', $slug);
+
+        $html = ServicesSection::renderToHtml(
+            SectionDataFactory::for(ServicesSection::class)->settings($preset->settings)->blocks($preset->blocks)->make(),
+        );
+
+        $this->assertStringContainsString(e($preset->settings['title']), $html);
+    }
+
+    public static function presetSlugs(): array
+    {
+        return [['modern'], ['editorial'], ['bold'], ['elegant']];
+    }
+}
+```
+
+Use `#[DataProvider]` from `PHPUnit\Framework\Attributes`. Run with `php artisan test --parallel`.
 
 Builder methods: `for($class)`, `id()`, `settings([...])`, `blocks([...])`, `designMode()`, `withSite($site)` (needed when the view reads `$section->site`), `locale('fr')`, `pageColorScheme('modern')`, `context(RenderContext)`, `make()`, and for Livewire sections `test($params)`.
 

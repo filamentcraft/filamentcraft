@@ -27,6 +27,28 @@ Only the built-in **Header** and **Footer** sections render it. Settings (group 
 
 Set them in the editor's Header or Footer section panel, or put `'show_scheme_toggle' => true, 'scheme_toggle_placement' => 'floating'` in the header/footer section settings of a blueprint.
 
+On an **existing** site, write it into each region's stored payload, in every locale bucket (region saves are live):
+
+```php
+foreach ([RegionName::Header, RegionName::Footer] as $name) {
+    $region = Region::query()->where('site_id', $site->getKey())->where('name', $name->value)->first();
+    $state = TemplateState::fromRegion($region, $site->default_locale);
+
+    foreach ($state->locales as $bucket) {
+        foreach ($bucket->order as $id) {
+            if ($bucket->sections[$id]['type'] === $name->value) {
+                $bucket->applySettings($id, ['show_scheme_toggle' => true, 'scheme_toggle_placement' => 'floating']);
+            }
+        }
+    }
+
+    $region->sections_json = new \ArrayObject($state->toRegionPayload());
+    $region->save();
+}
+```
+
+Usually enable only one of the two (two buttons otherwise), then `php artisan filamentcraft:clear-cache <site>`. The stored shape is `sections_json['locales'][<locale>]['sections'][<id>]['settings']`; see the filamentcraft-content skill, `regions-and-menus.md`.
+
 The Header and Footer toggle always targets the scheme slug `dark`. They cannot point at another scheme; a different target needs the partial below.
 
 ## Make the dark scheme on-brand
@@ -73,4 +95,4 @@ curl -s https://site.test/ | grep -o 'html\[data-fc-scheme-override="dark"\]' | 
 curl -s https://site.test/ | grep -o 'data-fc-scheme-key="[^"]*"'
 ```
 
-Then in a browser: click the button, confirm `document.documentElement.dataset.fcSchemeOverride === 'dark'`, `localStorage.getItem('fc-scheme-override-<siteId>') === 'dark'`, reload and confirm the page paints dark with no flash, and check `aria-pressed="true"`. Run `php artisan filamentcraft:doctor` after changing scheme overrides.
+Then in a browser: click the button, wait about half a second (or reload) before reading computed colors, (the swap animates ~250ms, so an immediate read returns the old colors), then confirm `document.documentElement.dataset.fcSchemeOverride === 'dark'`, `localStorage.getItem('fc-scheme-override-<siteId>') === 'dark'`, reload and confirm the page paints dark with no flash, and check `aria-pressed="true"`. Run `php artisan filamentcraft:doctor` after changing scheme overrides.
