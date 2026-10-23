@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.15] — 2026-10-23
+
+### Changed
+
+- **Agent skills: fixes from running the theming, storefront and migration skills on real tasks.**
+  Rebrand recipe now brands the family schemes too, Brand Kit and preset caveats, a minimal commerce
+  blueprint reference, dynamic-product-URL and adapter alignment, contact-detail mapping,
+  redirect-aware link checks and a page-height warning in the migration visual diff
+  (`--redirects=<site.json>`), plus macOS-safe snippets.
+
 ## [1.41.14] — 2026-10-23
 
 ### Changed

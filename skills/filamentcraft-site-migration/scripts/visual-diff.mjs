@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Compare an original page with its FilamentCraft rebuild: text/heading/link parity (gated) plus a pixel diff (reported).
-// Usage: node visual-diff.mjs --before=<original url> --after=<rebuilt url> [--viewports=1440,390] [--text-gate=0.9] [--threshold=0.15] [--hide=.cookie-banner]
+// Usage: node visual-diff.mjs --before=<original url> --after=<rebuilt url> [--viewports=1440,390] [--text-gate=0.9] [--threshold=0.15] [--hide=.cookie-banner] [--redirects=.fc-migration/site.json]
 import { createRequire } from 'node:module';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -39,6 +39,15 @@ const viewports = String(args.viewports ?? '1440,390').split(',').map(Number).fi
 const threshold = Number(args.threshold ?? 0.15);
 const textGate = Number(args['text-gate'] ?? 0.9);
 const outDir = resolve(args.out ?? '.fc-migration/diff');
+const redirects = new Map();
+if (args.redirects) {
+    try {
+        for (const r of JSON.parse(readFileSync(resolve(args.redirects), 'utf8')).redirects ?? []) redirects.set(r.from.replace(/\/$/, '') || '/', r.to.replace(/\/$/, '') || '/');
+    } catch {
+        console.error(`Cannot read redirects from ${args.redirects}`);
+    }
+}
+const stripHtml = (l) => l.replace(/\/index\.html?$/, '').replace(/\.html?$/, '') || '/';
 const hide = String(args.hide ?? '').split(',').filter(Boolean);
 const label = (args.name ?? new URL(args.after).pathname.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '')) || 'home';
 mkdirSync(outDir, { recursive: true });
@@ -126,7 +135,9 @@ for (const width of viewports) {
     const textParity = dice(original.content.text, rebuilt.content.text);
     const rebuiltHeadings = rebuilt.content.headings.map(norm);
     const missingHeadings = original.content.headings.filter((h) => !rebuiltHeadings.includes(norm(h)));
-    const missingLinks = [...new Set(original.content.links)].filter((l) => !rebuilt.content.links.includes(l));
+    const rebuiltLinks = new Set(rebuilt.content.links);
+    const missingLinks = [...new Set(original.content.links)].filter((l) => ![l, stripHtml(l), redirects.get(l), redirects.get(stripHtml(l))].some((c) => c && rebuiltLinks.has(c)));
+    const heightRatio = Number((after.height / Math.max(before.height, 1)).toFixed(2));
     const pass = textParity >= textGate && missingHeadings.length === 0 && !rebuilt.content.overflow;
     results.push({
         width,
@@ -138,14 +149,16 @@ for (const width of viewports) {
         horizontalOverflow: rebuilt.content.overflow,
         pixelMismatch: Number(ratio.toFixed(4)),
         pixelWithinThreshold: ratio <= threshold,
-        height: { before: before.height, after: after.height, delta: Number(heightDelta.toFixed(3)) },
+        height: { before: before.height, after: after.height, delta: Number(heightDelta.toFixed(3)), ratio: heightRatio },
+        heightWarning: heightRatio > 1.4,
     });
 }
 
 await browser.close();
 writeFileSync(join(outDir, `${label}.json`), JSON.stringify({ before: args.before, after: args.after, threshold, results }, null, 2));
 for (const r of results) {
-    console.log(`${r.pass ? 'PASS' : 'FAIL'} ${r.width}px  text ${(r.textParity * 100).toFixed(0)}%  pixels ${(r.pixelMismatch * 100).toFixed(1)}%  height ${r.height.before} -> ${r.height.after}${r.horizontalOverflow ? '  HORIZONTAL OVERFLOW' : ''}`);
+    console.log(`${r.pass ? 'PASS' : 'FAIL'} ${r.width}px  text ${(r.textParity * 100).toFixed(0)}%  pixels ${(r.pixelMismatch * 100).toFixed(1)}%  height ${r.height.before} -> ${r.height.after} (${r.height.ratio}x)${r.horizontalOverflow ? '  HORIZONTAL OVERFLOW' : ''}`);
+    if (r.heightWarning) console.log('  WARNING: rebuilt page is >1.4x taller than the original; compare spacing and section density even though text parity passes');
     if (r.missingHeadings.length) console.log(`  missing headings: ${r.missingHeadings.slice(0, 8).join(' | ')}`);
     if (r.missingLinks.length) console.log(`  missing links: ${r.missingLinks.slice(0, 8).join(' ')}`);
 }

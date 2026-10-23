@@ -36,9 +36,8 @@ With the new site reachable (live locally or on staging):
 
 ```bash
 # every old path answers 200, or one redirect to a 200
-jq -r '.pages[].url' .fc-migration/crawl/inventory.json | while read -r old; do
-  path=$(node -e 'console.log(new URL(process.argv[1]).pathname + new URL(process.argv[1]).search)' "$old")
-  curl -s -o /dev/null -w "%{http_code} %{redirect_url} $path\n" "http://app.test$path"
+node -e 'for (const p of require("./.fc-migration/crawl/inventory.json").pages) { const u = new URL(p.url); console.log(u.pathname + u.search); }' | while read -r pp; do
+  curl -s -o /dev/null -w "%{http_code} %{redirect_url} $pp\n" "http://app.test$pp"
 done
 ```
 

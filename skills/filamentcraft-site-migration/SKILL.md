@@ -113,18 +113,21 @@ php artisan filamentcraft:import .fc-migration/site.json --owner="App\Models\Tea
 For each representative page, compare the original with the rebuild:
 
 ```bash
-node <skill>/scripts/visual-diff.mjs --before=https://old-site.example/about --after=http://app.test/about --viewports=1440,390 --out=.fc-migration/diff
+node <skill>/scripts/visual-diff.mjs --before=https://old-site.example/about --after=http://app.test/about --viewports=1440,390 --redirects=.fc-migration/site.json --out=.fc-migration/diff
 ```
 
-It gates on **text parity** (90% by default), **missing headings** and **horizontal overflow**, and reports links that disappeared plus a pixel-mismatch figure. The pixel number is informational, because the FilamentCraft theme deliberately renders the same content with its own components. **Look at the before, after and diff images yourself.** Then fix the biggest gap first: wrong section type, missing items, wrong layout option, wrong scheme, missing image. Fix it in `site.json` and re-import into a fresh draft, or edit the imported pages in the editor. Repeat until every page passes or the remaining differences are deliberate and written down.
+It gates on **text parity** (90% by default), **missing headings** and **horizontal overflow**, and reports links that disappeared (old `.html` hrefs and paths covered by the spec's `redirects` count as present with `--redirects`), the page height ratio and a pixel-mismatch figure. A rebuilt page more than 1.4x taller than the original is a warning even when text parity passes: tighten `section_spacing` or section density. The pixel number is informational, because the FilamentCraft theme deliberately renders the same content with its own components. **Look at the before, after and diff images yourself.** Then fix the biggest gap first: wrong section type, missing items, wrong layout option, wrong scheme, missing image. Fix it in `site.json` and re-import into a fresh draft, or edit the imported pages in the editor. Repeat until every page passes or the remaining differences are deliberate and written down.
 
 Draft sites aren't served publicly. Preview them from the editor, mark the site live on a local or staging copy (`--live`), or point the diff at a staging URL.
 
 Serving the rebuild locally, check these before blaming the import:
 
 - **Images 404 or point at the wrong host:** `APP_URL` must match the host and port you browse, and `public/storage` must link to this app's `storage/app/public` (`php artisan storage:link --force`).
-- **Another site answers instead of yours:** with several live sites, the request host decides. Give the new site the host you serve it on rather than taking other sites down: `php artisan tinker --execute='FilamentCraft\Models\Site::query()->findOrFail(7)->update(["domain" => "127.0.0.1"]);'` (the id the import printed, `#7`). Ask before changing any site you didn't create.
+- **Another site answers instead of yours:** with several live sites, the request host decides. Give the new site the host you serve it on rather than taking other sites down: `php artisan tinker --execute='FilamentCraft\Models\Site::query()->findOrFail(ID)->update(["domain" => "127.0.0.1"]);' </dev/null` (`ID` is the id the import printed, `#N`). `--live` only marks the new site live; it does not set a domain and does not take other live sites down.
+- **Canonical and sitemap URLs lose the port** when `domain` is `127.0.0.1` (they are built as `scheme://domain`). Browse through `APP_URL` with the port, or use a hosts entry (`shop.test`) as the domain. Ask before changing any site you didn't create.
 - **`/robots.txt` is Laravel's stock file:** a static `public/robots.txt` hides FilamentCraft's generated one (and its sitemap line). `filamentcraft:doctor` warns about it; ask before deleting it.
+
+On a plain static source, `crawl.mjs` can return empty `repeatedItems` for card rows; read the cards from `paragraphs` and `headings` then.
 
 Also check: every page at 390px wide (nav collapses, nothing overflows), RTL pages for Arabic or Hebrew, and that every header and footer link resolves.
 
