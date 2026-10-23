@@ -16,7 +16,7 @@ Pick the cheapest option that works, in this order:
 
 1. **A built-in already does it.** There are 38 (hero, features, testimonials, pricing, faq, stats, team, gallery, cta, tabs, timeline, logo-cloud, bento, showcase, image-text, rich-text, contact, newsletter, video, countdown, locations, comparison, steps, marquee, portfolio, articles, banner, scroll-showcase, sticky-reveal, header, footer, plus the commerce sections). Run `php artisan filamentcraft:sections` to see what is registered in this app, and `php artisan filamentcraft:sections <slug>` (`--json` for scripts: includes defaults and full presets) for one section's settings, blocks and presets.
 2. **A built-in is close.** `php artisan filamentcraft:customize-section` creates a subclass, either as a separate variant or replacing the built-in everywhere while keeping stored content. See [references/customizing-builtins.md](references/customizing-builtins.md).
-3. **It is copy, images and layout, and editors should own it.** The no-code section builder in the editor (Add section, then "Create your own") makes reusable section types without a deploy (stored as `custom::<slug>`; config `section_definitions`).
+3. **It is copy, images and layout, and editors should own it.** The no-code section builder in the editor (Add section, then "Create your own") makes reusable section types without a deploy (stored as `custom::<slug>`; config `section_definitions`). Per-site, flat generated settings, no blocks, presets or logic; limits, config, seeding from code, pitfalls: [references/section-builder.md](references/section-builder.md).
 4. **It needs logic, data, interactivity or exact design control.** Write a section class (this skill).
 
 When a built-in fits a request worded as "build a section", use it and say which one and why; a near-duplicate custom section splits the team's content across two types.
@@ -217,7 +217,7 @@ A preset is a one-click starting point in the editor's preset browser. Ship exac
 
 ## Interactive sections
 
-Read [references/interactive.md](references/interactive.md) before writing a `LivewireSection`, Alpine behaviour or an `IslandSection`. The non-negotiables:
+Read [references/interactive.md](references/interactive.md) before writing a `LivewireSection`, Alpine behaviour or an `IslandSection` (React/Vue island: scaffold with `make:filamentcraft-island`; app-level wiring for React/Inertia starter kits is in the setup skill's `references/inertia-react-vue.md`). The non-negotiables:
 
 - A `LivewireSection` view must **start with its single root element**; nothing (no `@if`, no comment) may print above it.
 - It must be **registered**: unregistered Livewire sections return 419 on every wire action on the live site, even though `Livewire::test()` passes.

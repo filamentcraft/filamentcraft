@@ -1,6 +1,6 @@
 ---
 name: filamentcraft-theming
-description: "Style FilamentCraft sites: color schemes, fonts, radius, spacing, theme classes, theme presets, Brand Kit and custom CSS. Use this whenever the task touches how a FilamentCraft site looks: matching an existing brand or website, changing colors or fonts in code, adding a self-hosted font, writing a theme (`make:filamentcraft-theme`, `ThemeContract`, `settingsSchema`, `cssVar`), shipping a theme preset, locking a palette with Brand Kit, or debugging why a color, font or token does not apply (\"sections stay teal\", \"font not loading\", \"my CSS variable is ignored\"). Not for writing section markup; use filamentcraft-sections for that."
+description: "Style FilamentCraft sites: color schemes, fonts, radius, spacing, theme classes, theme presets, Brand Kit and custom CSS. Use this whenever the task touches how a FilamentCraft site looks: matching an existing brand or website, the visitor dark-mode toggle (`show_scheme_toggle`), changing colors or fonts in code, adding a self-hosted font, writing a theme (`make:filamentcraft-theme`, `ThemeContract`, `settingsSchema`, `cssVar`), shipping a theme preset, locking a palette with Brand Kit, or debugging why a color, font or token does not apply (\"sections stay teal\", \"font not loading\", \"my CSS variable is ignored\"). Not for writing section markup; use filamentcraft-sections for that."
 license: MIT
 metadata:
   author: filamentcraft
@@ -105,7 +105,7 @@ Rules this recipe depends on:
 - **Settings must exist on the site's theme.** `sync()` silently drops ids the theme doesn't declare.
 - **A Range value outside its min/max renders the default.** `box_radius => 40` renders 4, not 32.
 - **Set fonts explicitly.** The Studio theme's stock font value is a placeholder, so a migrated site should always store `default_font` and `heading_font`.
-- **If the site shows the visitor dark-mode toggle,** override the `dark` scheme with a branded dark palette too. The toggle switches to `dark` unless the element has `data-fc-scheme-dark="nord"`. Enable it with the Header/Footer settings `show_scheme_toggle` and `scheme_toggle_placement` (`inline` or `floating`); custom sections can `@include('filamentcraft::sections.partials.scheme-toggle', ['floating' => true, 'darkScheme' => 'dark'])`.
+- **If the site shows the visitor dark-mode toggle,** override the `dark` scheme with a branded dark palette too (the toggle always flips to `dark` from Header/Footer). Details, limits and verify commands: [references/dark-mode.md](references/dark-mode.md).
 - **Source sections that are deliberately dark** (a dark hero band) get their own scheme, e.g. `brand-dark`, set on those sections' `scheme` setting. Keep the site default light unless the source site is dark throughout.
 
 ## Fonts
@@ -147,6 +147,8 @@ Read [references/theme-authoring.md](references/theme-authoring.md) when you nee
 - add new design knobs with `cssVar()` (custom theme class, `make:filamentcraft-theme`),
 - package a look as a one-click **theme preset** (`make:filamentcraft-theme-preset --from-site=`),
 - lock fonts and palette for an agency's editors with **Brand Kit**.
+
+The visitor **dark-mode toggle** (Header/Footer `show_scheme_toggle`, `localStorage` key, why `dark:` variants don't follow it, custom partial) is in [references/dark-mode.md](references/dark-mode.md).
 
 Token and setting tables (every scheme token, every Studio setting with its CSS variable and range, the 14 built-in schemes) are in [references/tokens.md](references/tokens.md).
 
