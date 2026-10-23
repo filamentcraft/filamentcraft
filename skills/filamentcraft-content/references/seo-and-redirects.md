@@ -49,9 +49,12 @@ With `public_routes` on: `/sitemap.xml` (published, indexable pages per locale w
 `FilamentCraft\Models\Redirect`: `site_id`, `from_path`, `to_path`, `status` (`RedirectStatus::Permanent` 301 or `Temporary` 302); scope `forSite($site)`; unique per site and `from_path`.
 
 ```php
+use FilamentCraft\Enums\RedirectStatus;
+use FilamentCraft\Models\Redirect;
+
 Redirect::query()->updateOrCreate(
     ['site_id' => $site->getKey(), 'from_path' => 'old-page.html'],
-    ['to_path' => '/classes', 'status' => \FilamentCraft\Enums\RedirectStatus::Permanent],
+    ['to_path' => '/classes', 'status' => RedirectStatus::Permanent],
 );
 ```
 

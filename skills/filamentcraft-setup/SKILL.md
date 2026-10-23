@@ -54,6 +54,10 @@ Then:
 
 Add `php artisan filamentcraft:upgrade` after `migrate`, then `php artisan filamentcraft:clear-cache`, in every deploy script. Upgrade publishes migrations added by a package update, runs them, syncs themes and refreshes the editor assets; skipping it is the most common cause of a broken editor after `composer update`. Clear-cache matters because the fragment cache key ignores your Blade views and section classes, so a changed view keeps serving old HTML for up to an hour. Details, and what the cache needs to exist at all: [references/config-pitfalls.md](references/config-pitfalls.md).
 
+- **Queue:** form-submission notification emails (`SubmissionReceived`) are queued, so run a worker in production; with `QUEUE_CONNECTION=sync` they send inline.
+- **Scheduler:** FilamentCraft registers no scheduled tasks, so the package needs no cron entry.
+- **Caches:** `config:cache`, `route:cache` and `view:cache` are fine after `filamentcraft:upgrade`; re-run `route:clear` (then `route:cache`) after toggling `public_routes`.
+
 ## Pick the tenancy shape
 
 | Shape | Configuration |

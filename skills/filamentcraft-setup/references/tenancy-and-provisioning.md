@@ -101,6 +101,13 @@ php artisan make:filamentcraft-blueprint ClientHome
 The `--site` command appends `SiteBlueprint` to the name, so `Client` generates `ClientSiteBlueprint`. Its `pages()` stub lists `// HomeBlueprint::class`: replace that with `ClientHomeBlueprint::class` or the site gets no pages.
 
 ```php
+use FilamentCraft\Blueprints\AbstractBlueprint;
+use FilamentCraft\Blueprints\BlueprintRegion;
+use FilamentCraft\Blueprints\BlueprintSection;
+use FilamentCraft\Blueprints\SiteBlueprint;
+use FilamentCraft\Enums\RegionName;
+use FilamentCraft\Sections\Builtin\{CtaSection, FeaturesSection, FooterSection, HeaderSection, HeroSection};
+
 final class ClientHomeBlueprint extends AbstractBlueprint
 {
     public function name(): string { return 'Home'; }
@@ -135,6 +142,10 @@ final class ClientSiteBlueprint extends SiteBlueprint
 ```
 
 ```php
+use FilamentCraft\Concerns\HasSite;
+use FilamentCraft\Contracts\SiteOwner;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+
 #[ObservedBy(WorkspaceObserver::class)]
 class Workspace extends Model implements SiteOwner { use HasSite; }
 

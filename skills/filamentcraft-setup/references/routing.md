@@ -51,6 +51,9 @@ Editor "view live" links, sitemaps, canonicals and hreflang all ask the plugin f
 `FilamentCraft\Models\Redirect` (`site_id`, `from_path` **without** a leading slash, `to_path` with a leading `/` or an absolute URL, `status` `RedirectStatus::Permanent`/`Temporary`). They're created when an editor renames a page slug, on import, or in code:
 
 ```php
+use FilamentCraft\Enums\RedirectStatus;
+use FilamentCraft\Models\Redirect;
+
 Redirect::query()->updateOrCreate(
     ['site_id' => $site->getKey(), 'from_path' => 'old/about.html'],
     ['to_path' => '/about', 'status' => RedirectStatus::Permanent],
