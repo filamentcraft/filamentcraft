@@ -31,7 +31,7 @@ Read standalone-and-kits.md for kit-specific edits (Team slug hook, permissions,
 5. Provider hooks: `exitUrl(Template $template)` returns the app's page list (`null` hides "All pages"), `ownerModel()`, `isDefault()` returns `false` when a Filament admin panel also exists, `configureEditor(FilamentCraftPlugin $plugin)` registers sections, themes, blueprints. Re-running install with `--force` rewrites the provider only while it is exactly as generated.
 6. Provision a site per owner: `StarterSiteBlueprint::seed(StarterFamily::Modern, owner: $team, name: $team->name, slug: $team->slug)` (or your own blueprint) in a team-created action. Theme rows are synced on demand, so no `filamentcraft:sync-themes` is needed first.
 7. Keep the owner slug stable; editor and public URLs contain it.
-8. Deploy: `post-autoload-dump` runs `filamentcraft:upgrade --no-migrate` so editor assets exist in CI/Docker.
+8. Deploy: add `@php artisan filamentcraft:upgrade --no-migrate` to the host `composer.json` `post-autoload-dump` (the kits already do; the installer does not) so editor assets exist in CI/Docker.
 
 ## Editor links as props
 
@@ -72,7 +72,8 @@ Interactive widgets inside FilamentCraft pages are islands, not Inertia componen
 ## Verify
 
 ```bash
-php artisan route:list --name=filamentcraft          # editor route and, with the macro, the tenant public route
+php artisan route:list --name=filamentcraft          # editor route `filament.{panelId}.pages.filamentcraft.editor`
+php artisan route:list --name=website                # tenant public routes; use your `name:` (default `filamentcraft.tenant.public`)
 php artisan filamentcraft:doctor
 ```
 
@@ -81,7 +82,7 @@ php artisan filamentcraft:doctor
 $u = \App\Models\User::first();
 $u->canUseWebsiteEditor();                          // true for an allowed user
 $u->editableWebsiteOwners()->pluck('id');           // the owners they may edit
-\FilamentCraft\Editor\EditorUrl::to(\FilamentCraft\Models\Site::first());   // string, not null
+\FilamentCraft\Editor\EditorUrl::to(\FilamentCraft\Models\Site::query()->forOwner(\App\Models\Team::first())->first());   // string, not null (an owner-less site returns null in a tenant panel)
 ```
 
 Then sign in as an allowed user, open the page that lists pages, click Edit, confirm the editor opens full screen, and that "All pages" returns to the app. Open `/s/{team-slug}` in a private window and confirm the published page, a `view-source` with no Inertia `data-page`, and `/s/{team-slug}/sitemap.xml`.
@@ -90,6 +91,7 @@ Then sign in as an allowed user, open the page that lists pages, click Edit, con
 
 | Symptom | Cause |
 |---|---|
+| Signed-out visitor to the editor gets a 500 `Route [login] not defined` | the host app has no route named `login` (the editor panel redirects guests there); define it |
 | Nobody can open the editor | `canUseWebsiteEditor()` still `false`, or user lacks `FilamentUser`/`HasTenants` |
 | Editor 404 for one team | `editableWebsiteOwners()` does not include it (the tenant gate) |
 | `EditorUrl::to()` null | site has no pages, or owner-less site in a tenant panel |

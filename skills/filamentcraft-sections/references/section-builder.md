@@ -111,4 +111,4 @@ $site = \FilamentCraft\Models\Site::query()->first();
 app(\FilamentCraft\Sections\SectionDefinitionRegistry::class)->definition('custom::team-intro', $site);   // array, not null
 ```
 
-Then open the editor, Add section, find "Team intro" under Custom sections, insert it and change the field; the canvas must update. Publish and `curl` the page for the heading text. Tests of your own: render through `DynamicSectionRenderer::render($sectionData, $layout)`, the way the package's `tests/Feature/Rendering/DynamicSectionRenderTest.php` does.
+Then open the editor, Add section, find "Team intro" under Custom sections, insert it and change the field; the canvas must update. Publish and `curl` the page for the heading text. Tests of your own: render through `app(\FilamentCraft\Rendering\DynamicSectionRenderer::class)->render($sectionData, $layout)` (an instance method), the way the package's `tests/Feature/Rendering/DynamicSectionRenderTest.php` does.

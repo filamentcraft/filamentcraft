@@ -65,7 +65,7 @@ A host layout that does not use `<x-filamentcraft::layout>` must copy two things
 ## Verify
 
 ```bash
-# toggle rendered on a published page
+# toggle rendered on a published page (0 = toggle not enabled on Header/Footer)
 curl -s https://site.test/ | grep -c 'data-fc-scheme-toggle'
 # override layer for the dark scheme is compiled
 curl -s https://site.test/ | grep -o 'html\[data-fc-scheme-override="dark"\]' | head -1
