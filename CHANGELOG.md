@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.20] — 2026-10-23
+
+### Changed
+
+- **Agent skills: fixes from a fourth fresh-agent round.** `--replace` resets the target site's
+  settings and redirects (partial import into a live site is not supported), the island scaffold needs
+  `react`/`react-dom` installed, an island fallback example, keeping Studio's settings in a CSS-only
+  theme, how to verify a Brand Kit, the newsletter form's method and flag, and the built-in cart
+  pricing a mixed-currency cart in the first line's currency.
+
 ## [1.41.19] — 2026-10-23
 
 ### Changed

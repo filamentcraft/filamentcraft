@@ -5,8 +5,10 @@
 ```bash
 php artisan filamentcraft:import .fc-migration/site.json --dry-run      # validate only
 php artisan filamentcraft:import .fc-migration/site.json --owner="App\Models\Team:1" [--live] [--slug=acme]
-php artisan filamentcraft:import .fc-migration/site.json --replace=acme --force   # overwrite an existing site's matching pages (undo in the Themes panel)
+php artisan filamentcraft:import .fc-migration/site.json --replace=acme --force   # overwrite an existing site (undo in the Themes panel)
 ```
+
+`--replace` replaces the target's `settings_json` with this file's `settings` and deletes its redirects, so partial import into a live site is not supported. Import into a new draft and copy pages across, or back up `settings_json` and redirects and re-apply after.
 
 ## Top level
 

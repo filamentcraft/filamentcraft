@@ -86,6 +86,7 @@ Rules, each one a real production failure:
 
 ```bash
 php artisan make:filamentcraft-island PricingCalculator --react   # or --vue
+npm i react react-dom   # or: npm i vue. The scaffold does not touch package.json
 npm run build
 ```
 
@@ -96,4 +97,15 @@ This writes the section class, `resources/js/islands/PricingCalculator.tsx`, the
 - No `liveUpdate`; a settings change re-renders the island and keeps its state.
 - Config `islands.entries`, `build_directory`, `hot_file`, `react_refresh` locate the Vite entry. The island's CSS layer must come after the package's (pitfalls.md). Next.js components need `next/image` swapped for `<img>`.
 - Needs `filamentcraft.assets.site_js_enabled`, and `filamentcraft:doctor` checks the islands entry is in the Vite build.
-- Search engines only see `$fallback`, so give content-heavy islands a real fallback view.
+- Search engines only see `$fallback`, so give content-heavy islands a real fallback view:
+
+```php
+protected static ?string $fallback = 'sections.stats-counter-fallback';
+```
+
+```blade
+{{-- resources/views/sections/stats-counter-fallback.blade.php --}}
+@foreach ($section->blocks as $block)
+    <p>{{ $block->settings->get('value') }} {{ $block->settings->get('label') }}</p>
+@endforeach
+```

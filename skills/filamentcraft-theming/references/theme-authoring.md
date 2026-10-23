@@ -9,6 +9,8 @@
 
 Write one only when the built-in `studio` theme lacks a knob you need (a new CSS variable the editor should control) or you must ship a stylesheet with the theme. Otherwise configure `studio` through settings and schemes.
 
+A theme added only to ship CSS drops Studio's knobs (a site's stored overrides are kept only for ids the new theme declares, and `StudioTheme` is `final`). Keep them with `return (new \FilamentCraft\Theming\Themes\StudioTheme)->settingsSchema();` in your `settingsSchema()`.
+
 ```bash
 php artisan make:filamentcraft-theme Acme   # app/Themes/AcmeTheme.php; --slug= --namespace= --path= --force
 ```
@@ -181,7 +183,9 @@ FilamentCraftPlugin::make()
     ->withoutBuiltinSchemes(['cupcake', 'nord']);         // hide only these
 ```
 
-- Pass a whole kit with `->brandKit(BrandKit::make()->fonts([...])->palette([...]))`, or return one from a theme that implements `FilamentCraft\Theming\HasBrandKit`. Resolution order: theme kit, then panel plugin kit, then `config('filamentcraft.brand')`. `Font::only([...])` is an exact per-field list and hides "Add custom font". A kit blocks a preset in the UI (disabled card with the reason), enforced server-side too.
+- `->brandFonts()` limits the options, but "Add custom font" stays visible; only a per-field `Font::only([...])` hides it.
+- Pass a whole kit with `->brandKit(BrandKit::make()->fonts([...])->palette([...]))`, or return one from a theme that implements `FilamentCraft\Theming\HasBrandKit`. Resolution order: theme kit, then panel plugin kit, then `config('filamentcraft.brand')`. `Font::only([...])` is an exact per-field list. A kit blocks a preset in the UI (disabled card with the reason), enforced server-side too.
+- Verify: `app(\FilamentCraft\Support\BrandKitResolver::class)->configuredKits()` in tinker lists the kits per panel id (and `config`). `fontAllowlist()` returns null outside a panel request, so check the editor side by opening the Themes pickers.
 - Brand schemes to keep visible belong on `Theme.tokens_json['schemes']` or the site.
 - Bare `->withoutBuiltinSchemes()` hides every built-in, including `modern`, which built-in sections pin. Pass the array form unless the site brands `modern` itself.
 - Hiding schemes never empties the picker completely.

@@ -108,6 +108,8 @@ php artisan filamentcraft:import .fc-migration/site.json --owner="App\Models\Tea
 
 `--dry-run` lists unknown section or block types, setting ids that aren't in the schema, option values that aren't allowed, and missing images. Fix every error and warning. The import creates a **new draft site** and never touches existing sites. Pages whose `publish` isn't false are published within it. Add `--live` only when the user wants it served immediately. To redo, re-import and delete the old draft (ask first), or use `--replace=<site>` after confirming.
 
+`--replace` is not a partial import: it also overwrites the target site's `settings_json` (fonts, scheme, SEO) with the spec's `settings` (only the AI key survives) and deletes its existing redirects. Into a live site, import to a new draft and copy pages over with the content skill, or back up `settings_json` and redirects first and re-apply them after. The Themes panel undo snapshot is whole-site: it captures and restores pages, regions, settings and redirects.
+
 ## Phase 6: verify and repair
 
 For each representative page, compare the original with the rebuild:
