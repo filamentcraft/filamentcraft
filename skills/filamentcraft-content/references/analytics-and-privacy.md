@@ -68,7 +68,7 @@ Tag managers and analytics belong in the layout, not in sections. Migrated sites
 php artisan config:show filamentcraft.assets.extra_scripts
 php artisan config:show filamentcraft.forms
 curl -s https://site.test/ | grep -o '<script src="[^"]*" defer>'     # the tracker URL is present
-php artisan filamentcraft:doctor                                      # warns when forms.store is off with no listener
+php artisan filamentcraft:doctor                                      # warns when forms.store is off with no listener, only if a Contact/Newsletter section is on a live page
 ```
 
 Submit the contact form once, then in tinker `Submission::query()->latest()->first()` must show `ip` and `user_agent`; the Inbox shows the row. Open the editor canvas and confirm in the browser network tab whether the tracker fires there.

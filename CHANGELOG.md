@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.17] — 2026-10-23
+
+### Changed
+
+- **Agent skills: the dark-mode, Inertia/React/Vue, section-builder and visitor-data references were
+  run command by command** on a fresh app and corrected where they failed: the installer does not add
+  the `post-autoload-dump` upgrade hook, tenant routes renamed with `name:` need a different
+  `route:list` filter, `EditorUrl::to()` needs a site with an owner in a tenant panel, a guest hitting
+  the editor needs a `login` route, and `DynamicSectionRenderer::render()` is an instance method.
+
 ## [1.41.16] — 2026-10-23
 
 ### Changed
