@@ -147,6 +147,7 @@ final class WorkspaceObserver
 }
 ```
 
+- `provision()` takes no host or subdomain. Set it afterwards, validating user-supplied input with `HostClaimRule::subdomain()` (host-matching-and-urls.md): `$site = ClientSiteBlueprint::provision($workspace, name: $workspace->name); $site->update(['subdomain' => $workspace->slug]);` (the setter normalises it to a host label).
 - `provision()` runs in one transaction: site, theme, pages (published, and the site live, unless `publish()` returns false), homepage, regions. `app(SiteProvisioner::class)->provision($class, $owner, name:, slug:)` picks a blueprint dynamically.
 - Overridable: `themeSlug()`, `locales()` (first entry is the default), `publish()`, `siteSettings()` (initial `settings_json`: scheme, fonts, theme knobs).
 - `provision()` syncs missing Theme rows itself. It throws only when no theme is registered or `themeSlug()` names an unregistered slug; fix the registration (config `themes.register` or the plugin's `registerTheme()`), not `sync-themes`.

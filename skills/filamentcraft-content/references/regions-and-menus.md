@@ -36,14 +36,14 @@ Because it goes live at once: export the site first for anything bigger than a l
 
 The `header` section's nav is its `nav-link` blocks: settings `label`, `url`, `placement` (`everywhere`, `header` only, or `bottom_bar`, the phone bottom bar), `icon`. Header settings include `brand_text`, `brand_logo`, `cta_label`, `cta_url`, `show_locale_switcher`.
 
-- Add a page: `app(\FilamentCraft\Support\HeaderMenu::class)->addPage($site, $page)`. It appends `{label: page name, url}` to the first header section in every locale and saves. It returns null (doing nothing) when there is no header section, and skips a URL that is already there. The label is the page name in every locale, so translate the labels afterwards, and note the URL is absolute (from the site's domain, or `app.url`).
+- Add a page: `app(\FilamentCraft\Support\HeaderMenu::class)->addPage($site, $page)`. It appends `{label: page name, url}` to the first header section in each locale bucket that **already exists** in the header region, and saves. A locale with no bucket gets nothing (copy the default bucket into it first, e.g. `CopyLocaleContent`, then add the link). It returns null (doing nothing) when there is no header section, and skips a URL that is already there. The label is the page name in every locale, so translate the labels afterwards. The URL is **absolute**, baked from the site's domain or `app.url`: on a dev box that is the dev host and it breaks on a domain change. Rewrite it to relative after the call: for each header `nav-link` block whose `url` starts with the absolute base, set `url` to `parse_url($url, PHP_URL_PATH)` (keep any `?query`) and write back with `applyBlocks($id, $blocks)` in the same region save as the edit recipe above.
 - Pure version for your own write: `HeaderMenu::withLink($payload, $url, $label, $site)`.
 - Reorder, rename or remove links by rewriting the blocks with `applyBlocks($id, $blocks)`.
 - Prefer relative URLs (`/pricing`) when writing links yourself; they survive a domain change.
 
 ## Footer
 
-The `footer` section: settings `brand`, `description`, `copyright` and more (`filamentcraft:sections footer`); links are `link` blocks with `column` (the heading they group under), `label`, `description`, `url`. A new site's footer says "FilamentCraft" until you set brand and copyright.
+The `footer` section: settings `brand`, `description`, `copyright` and more (`filamentcraft:sections footer`); links are `link` blocks with `column` (the heading they group under), `label`, `description`, `url`. Omit `column` for links with no heading: they render as one unlabelled group. A new site's footer says "FilamentCraft" until you set brand and copyright.
 
 ## Announcement bar
 

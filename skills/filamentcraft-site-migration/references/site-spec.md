@@ -102,6 +102,8 @@ The dry run reports unknown setting ids and invalid option values as warnings, a
 
 A region is a section list, or `{ "sections": [...], "translations": {...} }`. Header and footer content is shared by every page. Always set the footer's brand and copyright; its defaults name FilamentCraft.
 
+Header and hero CTAs: set `cta_enabled` explicitly (`true` with `cta_label`/`cta_url`, `false` to hide the button). Footer `link` blocks with no column heading: omit `column`; they render as one unlabelled group.
+
 ## After importing
 
 - `php artisan filamentcraft:doctor` must stay green.

@@ -25,11 +25,11 @@ When a built-in fits a request worded as "build a section", use it and say which
 
 1. **Scaffold**: `php artisan make:filamentcraft-section Services` writes `app/Sections/ServicesSection.php` and `resources/views/sections/services.blade.php`. Add `--livewire` for an interactive section; use `make:filamentcraft-island Name --react|--vue` for a React/Vue one. `app/Sections` is auto-discovered, so nothing else needs registering there. The scaffold derives the slug from the class name and does not warn when it equals a built-in (`Faq` replaces the built-in `faq`): pick a distinct name or pin `slug()`, then confirm with `php artisan filamentcraft:sections <slug>` and `filamentcraft:doctor`.
 2. **Design the schema** before the markup. List every visible string, image, link and choice, and decide which repeat (those become a block). See "Schema rules".
-3. **Write the view** in house style (see "View rules" and the example below).
-4. **Add four presets** slugged `modern`, `editorial`, `bold`, `elegant` with real-sounding copy.
+3. **Write the view** in house style (see "View rules" and the example below). The scaffolded stub wraps content in `<x-filamentcraft::section>` and `<x-filamentcraft::container>`; both exist and emit exactly the raw root below (scheme classes/attributes, density padding, `fc-container mx-auto`), so either form is fine. Adapt the stub's placeholder heading, button and `__SLUG__` class to your schema.
+4. **Add presets** slugged `modern`, `editorial`, `bold`, `elegant` with real-sounding copy. Four is the target, not a requirement (see "Presets").
 5. **Test it** with `SectionDataFactory` (see [references/testing.md](references/testing.md)).
 6. **Check the CSS**: `php vendor/filamentcraft/filamentcraft/resources/boost/skills/filamentcraft-sections/scripts/check-classes.php resources/views/sections/services.blade.php`. Or run it from wherever this skill is installed. It lists Tailwind utilities the shipped `site.css` doesn't contain.
-7. **Look at it in the editor**: add the section to a page, change every setting and confirm the canvas follows, check mobile width, then publish and view the **published URL**: the canvas can show classes the live page lacks. On a live site run `php artisan filamentcraft:clear-cache` after changing a view or class (the fragment cache key ignores your code).
+7. **Look at it in the editor**: add the section to a page, change every setting and confirm the canvas follows, check mobile width, then publish and view the **published URL**: the canvas can show classes the live page lacks. On a live site run `php artisan filamentcraft:clear-cache` after changing a view or class (the fragment cache key ignores your code). On a non-taggable cache store (`file`, `database`) it prints "Nothing to clear": FilamentCraft caches nothing there, so that is expected, not a failure.
 8. **Place it on a page** only if the user asked: append a revision, never edit one, and leave it as a draft unless they asked for it live. Recipe: [references/placing-on-pages.md](references/placing-on-pages.md). The same applies when a built-in covered the request.
 
 ## Schema rules
@@ -213,7 +213,7 @@ final class ServicesSection extends BladeSection
 
 ## Presets
 
-A preset is a one-click starting point in the editor's preset browser. Ship exactly four, slugged `modern`, `editorial`, `bold`, `elegant`. Starter sites, blueprints (`BlueprintSection::fromPreset(ServicesSection::class, 'bold')`) and the AI assistant pick sections by these family slugs. If a preset sets `scheme`, use that family's scheme: `modern`, `silk`, `velocity`, `neutral`. Never default to `dark`. Write copy that sounds like a real business, not lorem ipsum.
+A preset is a one-click starting point in the editor's preset browser. Ship four, slugged `modern`, `editorial`, `bold`, `elegant`; fewer (even none) is valid for an app-local section. A missing family falls back to the section's `defaults()` in `BlueprintSection::fromPreset()` and to its first preset (else defaults) in the AI assistant, so that family just gets less polished output. Starter sites, blueprints (`BlueprintSection::fromPreset(ServicesSection::class, 'bold')`) and the AI assistant pick sections by these family slugs. If a preset sets `scheme`, use that family's scheme: `modern`, `silk`, `velocity`, `neutral`. Never default to `dark`. Write copy that sounds like a real business, not lorem ipsum.
 
 ## Interactive sections
 
@@ -227,7 +227,7 @@ Read [references/interactive.md](references/interactive.md) before writing a `Li
 ## Done means
 
 - `php artisan filamentcraft:sections <slug>` shows the schema you intended.
-- A Pest test renders the section from its defaults and from a preset ([references/testing.md](references/testing.md)).
+- A test (Pest, or a PHPUnit class where the app has no Pest) renders the section from its defaults and from a preset ([references/testing.md](references/testing.md)).
 - The class checker passes, and the section looks right in the editor at desktop and mobile widths, in its default scheme and one other.
 - Every setting visibly changes the canvas, and no visitor-facing string is hardcoded.
 - `php artisan filamentcraft:doctor` is green.

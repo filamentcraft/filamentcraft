@@ -110,7 +110,7 @@ Rules this recipe depends on:
 
 ## Fonts
 
-- Font values are **Bunny Fonts slugs** (`inter`, `playfair-display`, `dm-sans`): the Google Fonts families under kebab-case ids. Each one adds a `fonts.bunny.net` link with weights 400–700 (no italics). Serif display fonts exist too (`fraunces`, `playfair-display`, `lora`); the check is `FontCatalog::find('<slug>')`.
+- Font values are **Bunny Fonts slugs** (`inter`, `playfair-display`, `dm-sans`): the Google Fonts families under kebab-case ids. Each one adds a `fonts.bunny.net` link with weights 400–700 (no italics). Serif display fonts exist too (`fraunces`, `playfair-display`, `lora`); the check is `FontCatalog::find('<slug>')`, which returns an array (`slug`, `name`, `category`, `remote`, `stack`, `popular`) or `null`.
 - A free-form CSS stack is also accepted (`'"Acme Serif", Georgia, serif'`). No link is emitted, so the font must already be loaded.
 - For licensed or self-hosted fonts, register a `BrandFont` and use its slug:
 
@@ -128,7 +128,7 @@ FilamentCraftPlugin::make()->registerFont(
 
 The `@font-face` rules are emitted at the top of fc-tokens. Only bundle a commercial font after the user confirms the license covers the new site. `BrandFont::make(…)->stack('Arial, sans-serif')` registers a web-safe stack; `->face($url, $weight, FontStyle::Italic)` adds italics (Bunny links have none).
 
-**A slug that is not in the catalog loads nothing**: the value renders as a bare `font-family: playfair-display` with no `<link>`. Verify with `app(\FilamentCraft\Support\FontCatalog::class)->find($slug)` (null means it will not load). The catalog is fetched from Bunny once and cached for 24 h, **including a 4-font fallback (inter, roboto, merriweather, jetbrains-mono) when the fetch fails** (sandbox, CI, deploy script, no network). After a failed fetch run `app(\FilamentCraft\Support\FontCatalog::class)->flush()`. Registering a `BrandFont` also fixes fonts you control.
+**A slug that is not in the catalog loads nothing**: the value renders as a bare `font-family: playfair-display` with no `<link>`. Verify with `app(\FilamentCraft\Support\FontCatalog::class)->find($slug)` (an array when found, null means it will not load). The catalog is fetched from Bunny once and cached for 24 h, **including a 4-font fallback (inter, roboto, merriweather, jetbrains-mono) when the fetch fails** (sandbox, CI, deploy script, no network). After a failed fetch run `app(\FilamentCraft\Support\FontCatalog::class)->flush()`. Registering a `BrandFont` also fixes fonts you control.
 
 ## Custom CSS
 

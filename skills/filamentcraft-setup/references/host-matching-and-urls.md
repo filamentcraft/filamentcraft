@@ -59,6 +59,7 @@ Route::prefix('s')->group(fn () => Route::filamentCraftTenant(Team::class, name:
 ## APP_URL and APP_DEBUG
 
 - The scheme for **every** public URL (custom domain and subdomain included) comes from `config('app.url')`; the fallback host is the `APP_URL` host. A production `.env` with `APP_URL=http://localhost` gives canonicals, sitemap, `og:url`, hreflang and the editor's "open live" link the wrong scheme or host. Fix it before blaming routing.
+- Canonicals, sitemap and hreflang are built as `scheme://domain` (or subdomain host) with no port, so locally they omit `:8000`. Browse through `APP_URL`, or give the site a hosts-entry domain (`shop.test`) instead of `127.0.0.1`.
 - `publicUrl()` is null for a page that is not published.
 - The helpful 404 text (names the site and lists its unpublished pages) shows only when `APP_DEBUG=true`. `SiteContext` aborts with `no Site resolved for host [x]`. For "page 404s", set `APP_DEBUG=true` locally and read the message.
 - `publicUrlsViaNamedRoute($name, tenantParameter:, homepagePath:, extraParameters:)` covers routes that need a literal homepage segment or a locale parameter. Resolvers are keyed per panel with a global default as fallback.

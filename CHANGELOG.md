@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.18] — 2026-10-23
+
+### Changed
+
+- **Agent skills: fixes from a second fresh-agent round on new tasks** (pricing section, bakery
+  rebrand with dark mode, static-site migration, books storefront, subdomain tenancy, bilingual
+  contact page). PHPUnit equivalent for section tests, presets may be fewer than four, the existing-site
+  dark-mode toggle recipe, `FontCatalog::find()` returns an array, how to set a provisioned site's
+  subdomain, why menu additions need existing locale buckets, an HTTP smoke test for forms, and
+  several migration notes (short-page parity, `cta_enabled`, unlabelled footer links, `robots.txt`).
+
 ## [1.41.17] — 2026-10-23
 
 ### Changed

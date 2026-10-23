@@ -209,6 +209,7 @@ grid of photos with captions.
 site header.
 
 - copy: brand_text, brand_logo (image), cta_label, cta_url (link)
+- Set `cta_enabled: true` whenever you fill the CTA fields, and `false` to hide the button (the schema default and presets are `true`, but an explicit value survives a later preset or default change).
 - options: cta_enabled (Toggle); show_locale_switcher (Toggle); show_scheme_toggle (Toggle); scheme_toggle_placement=inline|floating; alignment=split|centered|compact; sticky (Toggle); show_border (Toggle); show_mobile_nav (Toggle); mobile_nav_style=docked|floating; mobile_nav_labels=always|active|hidden; mobile_nav_hide_on_scroll (checkbox); mobile_nav_menu (checkbox); mobile_nav_cta (checkbox); mobile_nav_cta_icon (icon); shape=clean|contained|layered|wireframe; density=compact|comfortable|airy
 - blocks: nav-link: label, url (link), placement, icon
 
@@ -216,6 +217,7 @@ site header.
 opening statement: headline, subheading, buttons, up to three proof facts.
 
 - copy: eyebrow, heading, subheading, cta_url (link), cta_label, cta_secondary_url (link), cta_secondary_label, supporting_text, bg_image (image), bg_video, heading_highlight, rotating_words
+- Same for the hero: set `cta_enabled: true` with `cta_label`/`cta_url`; `false` hides the buttons.
 - options: cta_enabled (Toggle); media_mode=none|background|start|end|below; overlay_opacity (range); layout=spotlight|editorial|compact; content_align=start|center; density=compact|comfortable|airy; shape=clean|contained|layered|wireframe; surface_style=glass|solid|none; use_accent_override (Toggle); accent_color (ColorPicker); backdrop=none|aurora|spotlight|spotlights|beams|meteors|grid|dots|lamp|stars; heading_effect=none|generate|highlight; cta_style=default|moving-border|glow-border
 - blocks: proof: value, label
 
