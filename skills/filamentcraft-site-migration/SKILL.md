@@ -49,7 +49,7 @@ Get the installed catalog: `php artisan filamentcraft:sections --json > .fc-migr
 - **Prefer a built-in section with the matching role** (hero, features, testimonials, pricing, faq, stats, logo-cloud, team, gallery, image-text, cta, contact, rich-text…). A small visual difference is fine; the theme handles color, type and radius.
 - **Repeated cards or items become blocks** of that section, never separate sections and never numbered fields.
 - **Only when nothing fits** (a distinctive layout the site is known for, or data-driven content) write a custom section with the filamentcraft-sections skill, schema first and every string a setting. Expect zero to three per site.
-- **Header and footer** become the `header` and `footer` regions: nav links as `nav-link` blocks, footer links as `link` blocks.
+- **Header and footer** become the `header` and `footer` regions: nav links as `nav-link` blocks, footer columns as `column` blocks.
 - **Repeated content types** (blog posts, products, team members, locations) stay data. Products go through the Storefront adapter. A blog or directory with hundreds of entries belongs in host models with a dynamic template, not hundreds of hand-made pages; migrate the representative pages and ask before bulk-creating.
 - **Third-party embeds** (Calendly, Typeform, chat widgets) are listed for the user, not rebuilt. Video and map embeds are allow-listed (YouTube, Vimeo, direct files; Google/OSM embed URLs): anything else renders empty, so check [references/section-mapping.md](references/section-mapping.md) `video` and `locations`.
 

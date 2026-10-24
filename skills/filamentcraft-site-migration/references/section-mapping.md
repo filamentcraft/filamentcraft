@@ -45,13 +45,14 @@ Run `php artisan filamentcraft:sections <slug>` for the exact, installed schema.
 | Addresses, hours, map | `locations` | |
 | Closing call to action band | `cta` | |
 | Email signup | `newsletter` | stored as submissions |
-| Contact form (name, email, message) | `contact` | other fields: custom Livewire section, or keep the host's form |
+| Contact form (name, email, message) | `contact` | |
+| Any other form (booking, quote, application, upload) | `form` | one field block per input; payment or multi-step forms stay the host's |
 | Thin announcement bar | `banner` (on the page) or the `announcement` region (site-wide) | |
 | Sticky image with scrolling points | `sticky-reveal` | |
 | Product screenshot that tilts on scroll | `scroll-showcase` | |
 | Product grid, product page, categories, cart, checkout | `product-listing`, `product-detail`, `category-grid`, `cart`, `checkout`, `product-carousel` | catalog stays in host models |
-| Site navigation | `header` region, `nav-link` blocks | |
-| Footer columns | `footer` region, `link` blocks with a `column` name | |
+| Site navigation | `header` region, `nav-link` blocks (`nav-dropdown` for a submenu) | |
+| Footer columns | `footer` region, one `column` block per column (`heading` + `links`), `text` blocks for addresses | |
 
 ## Platform aliases
 
@@ -196,7 +197,14 @@ site footer.
 
 - copy: brand, description, copyright
 - options: show_scheme_toggle (Toggle); scheme_toggle_placement=inline|floating; density=compact|comfortable|airy; shape=clean|contained|layered|wireframe
-- blocks: link: column, label, description, url (link)
+- blocks: column: heading, links (link_list) · menu: menu=main, heading · text: heading, text
+
+### `form`
+form with chosen fields (booking, quote, application, return); use contact for plain name/email/message.
+
+- copy: heading, subheading, form_name, button_label, success_message, redirect_url (link)
+- options: after_submit=message|redirect; density=compact|comfortable|airy
+- blocks (all take label, required, help, width=full|half): text, email, phone, textarea (+ placeholder) · number (+ min, max) · date · select, radio, checkboxes (+ options, one per line) · consent (label, policy_label, policy_url; always required) · file (kinds=images|documents|any, max_mb=1|2|5|10)
 
 ### `gallery`
 grid of photos with captions.
@@ -211,7 +219,7 @@ site header.
 - copy: brand_text, brand_logo (image), cta_label, cta_url (link)
 - Set `cta_enabled: true` whenever you fill the CTA fields, and `false` to hide the button (the schema default and presets are `true`, but an explicit value survives a later preset or default change).
 - options: cta_enabled (Toggle); show_locale_switcher (Toggle); show_scheme_toggle (Toggle); scheme_toggle_placement=inline|floating; alignment=split|centered|compact; sticky (Toggle); show_border (Toggle); show_mobile_nav (Toggle); mobile_nav_style=docked|floating; mobile_nav_labels=always|active|hidden; mobile_nav_hide_on_scroll (checkbox); mobile_nav_menu (checkbox); mobile_nav_cta (checkbox); mobile_nav_cta_icon (icon); shape=clean|contained|layered|wireframe; density=compact|comfortable|airy
-- blocks: nav-link: label, url (link), placement, icon
+- blocks: nav-link: label, url (link), placement=everywhere|header|bottom_bar, icon (icon) · nav-dropdown: label, links (link_list), url (link) · nav-categories: label, depth=1|2|3, url (link)
 
 ### `hero`
 opening statement: headline, subheading, buttons, up to three proof facts.

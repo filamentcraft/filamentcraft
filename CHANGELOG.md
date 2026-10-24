@@ -7,6 +7,78 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.22] — 2026-10-24
+
+### Added
+
+- **Header menus.** The header takes three kinds of item in one list: **Nav link**,
+  **Dropdown** (a label with its own ordered links) and **Category menu** (the store's categories,
+  one to three levels deep, updating on their own). Either can add a **View all** link. On desktop
+  dropdowns open on hover or click, work with the arrow keys and `Escape`, and only one is open at
+  a time; category trees lay out as columns. Dropdowns open from the item's start edge in right-to-left languages. On phones they become expandable groups in the menu
+  and the bottom bar's **More** sheet.
+- **`LinkList` setting type** (`link_list` in no-code definitions): an ordered list of labelled
+  links using the searchable link picker. Reads back as `list<LinkValue>`.
+- **`CategoryData::$children`** so a storefront can hand the category menu a tree.
+- **Searchable link picker.** Every link field opens a search box that suggests the site's pages,
+  the store's categories and products, and anything a host adds with
+  `FilamentCraftPlugin::linkSources()` (blog posts, brands, events), grouped by kind. Arrow keys
+  and `Enter` pick a result; a pasted path, URL, `#anchor`, `mailto:` or `tel:` link is one
+  `Enter` away. The field shows the chosen target's name and where it lives, not a bare URL.
+  Stored links stay plain URL strings.
+- **Menus from your app.** Bind a `FilamentCraft\Navigation\Contracts\MenuSource` and the
+  header can show one of its menus (items with children become dropdowns) while the footer's new
+  **Menu** block lists them next to **Main menu (header)**. Menus are read on every render, so
+  edits appear without republishing; a menu that disappears or a source that fails renders
+  nothing instead of an error. See the new **Menus & links** guide.
+- **Footer columns.** The footer takes **Link column** (a heading with its own links), **Menu**
+  (a menu's items become columns) and **Text** blocks in one ordered list, so a three-column
+  footer no longer needs a column name typed on every link. Footers saved in the old shape open
+  as link columns and render unchanged.
+- **Form section.** Build any form from eleven field blocks (short and long text, email, phone,
+  number, date, dropdown, single and multiple choice, consent, file upload) in one ordered list,
+  with four ready forms: contact, booking, quote and return request. Answers are validated on the
+  server against the published fields, with messages in the visitor's language and an error
+  summary that links to each field. Uploads are type- and size-checked, stored on a private disk,
+  attached to the notification mail and downloadable from the inbox. Submissions land in the
+  inbox as **Form submission** and fire `FormSubmitted`. New config: `forms.uploads.disk` and
+  `forms.uploads.max_kb`.
+
+### Changed
+
+- **One navigation list behind the header.** Desktop links, the phone menu and the bottom bar
+  now read the same resolved list, so a dropdown's link or a host menu shows the same way in all
+  three. A dropdown or category menu with no items but a link now shows as a plain link.
+- **One list for mixed block types.** A section that declares more than one block type now
+  edits them in a single **Items** list: **Add item** asks which type to add, and items of any
+  type can be dragged into any order (a link after a dropdown). The page renders them in that
+  order. Each type's `limit` and the section's `maxBlocks()` total are enforced in the list.
+  Stored blocks keep their `{id, type, settings}` shape, so existing pages render unchanged;
+  sections with a single block type keep their per-type list.
+- **Clearer block lists.** Rows in a mixed list name their type next to the title, and a block
+  can show an icon with `Block::icon('heroicon-o-link')`. Clone and delete appear on hover or
+  keyboard focus, the open item lifts from the list, and dragging shows where the item will
+  land. An empty list says what to do, a full one says it is full, and **Add item** has a plus
+  icon in every block list.
+
+### Fixed
+
+- **Header resilience.** A store whose categories fail to load no longer removes the header, a
+  dropdown whose **View all** page is still a draft keeps its links, and category or host-menu
+  links with unsafe schemes are dropped. The header and footer skip the fragment cache while a
+  catalog or menu source supplies live data.
+- **Undo after a block edit.** One block edit recorded two undo steps, so the first **Undo**
+  appeared to do nothing. Block edits now record one step.
+- **Form rate limit under load.** Two submissions arriving at the same moment could both pass
+  the per-minute limit of the contact, newsletter and form sections. The limit is now counted
+  atomically, and a submission over it stores no files.
+- **Hand-edited footers and headers.** A footer or header whose stored settings hold the wrong
+  kind of value (a list where text belongs, say) now renders and opens in the editor instead of
+  failing.
+- **Agent skills, JSON import and `filamentcraft:sections`** know the new footer blocks and the
+  Form section. Importing a spec with old footer `link` blocks stores them as columns, and the
+  retired block no longer appears in `filamentcraft:sections`.
+
 ## [1.41.21] — 2026-10-23
 
 ### Changed
