@@ -96,7 +96,7 @@ The dry run reports unknown setting ids and invalid option values as warnings, a
   ],
   "footer": {
     "sections": [ { "type": "footer", "settings": { "brand": "Harbor Bakery", "description": "…", "copyright": "© 2026 Harbor Bakery" },
-      "blocks": [ { "type": "link", "settings": { "column": "Visit", "label": "Opening hours", "url": "/hours" } } ] } ],
+      "blocks": [ { "type": "column", "settings": { "heading": "Visit", "links": [ { "label": "Opening hours", "url": "/hours" } ] } } ] } ],
     "translations": { "fr": [ /* … */ ] }
   }
 }
@@ -104,7 +104,7 @@ The dry run reports unknown setting ids and invalid option values as warnings, a
 
 A region is a section list, or `{ "sections": [...], "translations": {...} }`. Header and footer content is shared by every page. Always set the footer's brand and copyright; its defaults name FilamentCraft.
 
-Header and hero CTAs: set `cta_enabled` explicitly (`true` with `cta_label`/`cta_url`, `false` to hide the button). Footer `link` blocks with no column heading: omit `column`; they render as one unlabelled group.
+Header and hero CTAs: set `cta_enabled` explicitly (`true` with `cta_label`/`cta_url`, `false` to hide the button). A footer `column` block with an empty `heading` renders its links as an unlabelled column.
 
 ## After importing
 

@@ -33,6 +33,17 @@ The contact and newsletter forms are Livewire components, so there is no plain P
 ```
 
 3. The response's new snapshot (`components[0].snapshot`) has the success flag true (contact: method `submit`, flag `sent`; newsletter: method `subscribe`, flag `subscribed`, `updates` only `email`); validation failures appear under its `memo.errors`. Then check `Submission::query()->forSite($site)->latest()->first()`. The throttle (`forms.throttle`) applies, and a snapshot is single-use per page load, so re-fetch the page for each attempt.
+## Form section submissions
+
+The `form` section builds any form from field blocks (`text`, `email`, `phone`, `number`, `date`, `textarea`, `select`, `radio`, `checkboxes`, `consent`, `file`). It fires `FilamentCraft\Events\FormSubmitted(formName, answers, files, ?site, sectionId)` and stores a `SubmissionType::Form` row: `payload.form` is the form name, `answers` is a list of `{id, label, type, value}` in field order (checkbox answers joined with commas), `files` is a list of `{label, disk, path, name}`, and `email` / `message` copy the first email and long-text answers so `sender()` and reply-to work.
+
+```php
+$rows = Submission::query()->forSite($site)->ofType(SubmissionType::Form)->latest()->get()
+    ->map(fn (Submission $s): array => ['form' => $s->payload['form'] ?? '', ...collect($s->answers())->pluck('value', 'label')->all()]);
+```
+
+- Uploads go to the private `forms.uploads.disk` (env `FILAMENTCRAFT_FORMS_DISK`, default `local`) under `filamentcraft/forms/`, capped by `forms.uploads.max_kb` (default 10240). Read them with `Storage::disk($file['disk'])->get($file['path'])`; never move them to a public disk. Deleting a submission deletes its files.
+- Uploads are stored only when `forms.store` is on and the form is on a site.
 
 ## Media library
 

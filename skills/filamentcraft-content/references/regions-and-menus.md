@@ -34,16 +34,34 @@ Because it goes live at once: export the site first for anything bigger than a l
 
 ## Menu links
 
-The `header` section's nav is its `nav-link` blocks: settings `label`, `url`, `placement` (`everywhere`, `header` only, or `bottom_bar`, the phone bottom bar), `icon`. Header settings include `brand_text`, `brand_logo`, `cta_label`, `cta_url`, `show_locale_switcher`.
+The `header` section's nav is one ordered list of blocks: `nav-link` (`label`, `url`, `placement`: `everywhere`, `header` only, or `bottom_bar`, the phone bottom bar; `icon`), `nav-dropdown` (`label`, `links`: a list of `{label, url}`, optional `url` for a "view all" link) and `nav-categories` (the store's category tree, `depth` 1-3). Header settings include `brand_text`, `brand_logo`, `cta_label`, `cta_url`, `show_locale_switcher`.
 
 - Add a page: `app(\FilamentCraft\Support\HeaderMenu::class)->addPage($site, $page)`. It appends `{label: page name, url}` to the first header section in each locale bucket that **already exists** in the header region, and saves. A locale with no bucket gets nothing (copy the default bucket into it first, e.g. `CopyLocaleContent`, then add the link). It returns null (doing nothing) when there is no header section, and skips a URL that is already there. The label is the page name in every locale, so translate the labels afterwards. The URL is **absolute**, baked from the site's domain or `app.url`: on a dev box that is the dev host and it breaks on a domain change. Rewrite it to relative after the call: for each header `nav-link` block whose `url` starts with the absolute base, set `url` to `parse_url($url, PHP_URL_PATH)` (keep any `?query`) and write back with `applyBlocks($id, $blocks)` in the same region save as the edit recipe above.
 - Pure version for your own write: `HeaderMenu::withLink($payload, $url, $label, $site)`.
 - Reorder, rename or remove links by rewriting the blocks with `applyBlocks($id, $blocks)`.
 - Prefer relative URLs (`/pricing`) when writing links yourself; they survive a domain change.
 
+### Menus from the host app
+
+When the host already keeps its menus (a CMS table, a config file), bind `FilamentCraft\Navigation\Contracts\MenuSource` instead of copying links into regions:
+
+```php
+$this->app->singleton(MenuSource::class, AppMenuSource::class);
+```
+
+`menus(Site $site): array<string, string>` returns `key => label`; `items(Site $site, string $key): list<MenuItem>` returns `FilamentCraft\Navigation\MenuItem` entries (children render as dropdowns). The menus are read at render time, so changing them needs no publish. The header's `menu` setting (shown only when a source returns menus) picks one in place of its own items, and footer `menu` blocks list them. `main` is reserved for the header's own items. Unsafe URLs (`javascript:` and similar) are dropped.
+
+The link picker in the editor also searches pages, store categories and products. Add your own results (blog posts, docs) with `FilamentCraftPlugin::make()->linkSources([PostLinkSource::class])`, where each class implements `FilamentCraft\Links\Contracts\LinkSource`.
+
 ## Footer
 
-The `footer` section: settings `brand`, `description`, `copyright` and more (`filamentcraft:sections footer`); links are `link` blocks with `column` (the heading they group under), `label`, `description`, `url`. Omit `column` for links with no heading: they render as one unlabelled group. A new site's footer says "FilamentCraft" until you set brand and copyright.
+The `footer` section: settings `brand`, `description`, `copyright` and more (`filamentcraft:sections footer`). Its columns are blocks, one column each, in order:
+
+- `column`: `heading` and `links`, a list of `{label, url}`.
+- `menu`: `menu` (`main` repeats the header's links, or a host menu key) and an optional `heading`. A menu whose items have children becomes one column per parent.
+- `text`: `heading` and `text` (an address, opening hours).
+
+Older footers hold `link` blocks with a `column` name; they render and open as `column` blocks and save in the new shape on the next edit. Write new footers with `column` blocks. A new site's footer says "FilamentCraft" until you set brand and copyright.
 
 ## Announcement bar
 

@@ -48,6 +48,6 @@ Golden rule: take **content** from the best structured source available, and the
 
 ## Forms, embeds, scripts
 
-- Contact forms map to the `contact` section only when they're name/email/message. Anything richer stays the host's own form or a custom Livewire section. List the fields for the user.
+- Name/email/message forms map to `contact`; other forms map to `form` with one field block per input. Payment, multi-step or logic-heavy forms stay the host's own. List the fields for the user.
 - Calendly, Typeform, HubSpot forms, maps and chat widgets: list them, don't rebuild them. A custom section can embed them if the user wants.
 - Analytics and tag managers belong in the layout (`fc-head` stack or `filamentcraft.assets.extra_scripts`), not in sections.
