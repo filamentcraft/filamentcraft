@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.24] — 2026-10-27
+
+### Fixed
+
+- **Test suite on newer Filament and Livewire.** The suite now passes on Filament 4.16 /
+  Livewire 3.8 and Filament 5.11 / Livewire 4.4 as well as the locked versions. The failures were
+  in the tests only: Filament 4.16 moved notifications into a mailbox and unmounts an action once it
+  succeeds, Livewire 4 renamed its component registry and answers a missing record with a 404, and
+  newer Livewire serves `livewire.min.js`. The package itself works unchanged on these versions.
+
+### Breaking
+
+- None.
+
 ## [1.41.23] — 2026-10-27
 
 ### Fixed
