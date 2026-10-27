@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.23] — 2026-10-27
+
+### Fixed
+
+- **AI assistant on laravel/ai 1.x.** Every request failed with "The assistant couldn't finish
+  this" because 1.x renamed the usage fields (`promptTokens`/`completionTokens` became
+  `inputTokens`/`outputTokens`). Usage is now read from either shape, and the suite runs against
+  laravel/ai 1.3 as well as 0.10.
+- **Section names in the editor canvas.** The hover and selection chip showed the section's
+  English slug ("Store hero") instead of its translated name; the canvas now gets the same label
+  as the sidebar, custom sections included.
+- **Page links survive a domain change.** Picking one of the site's own pages in the link picker
+  stored the full URL with the current host, so links pointed at the old domain after a move and
+  at production from a staging copy. Pages are now stored as root-relative paths (`/about`, `/`).
+  Links saved before keep working and can be re-picked to make them relative.
+- **Optional consent in the Form section.** A Consent field was always required; it now has a
+  **Required** toggle (on by default, so saved forms are unchanged) for a "keep me posted" box.
+- **Removed hero gradient is flagged.** `filamentcraft:doctor` now lists published pages whose
+  hero still stores the Background gradient removed in 1.41.9, which no longer renders.
+
+### Breaking
+
+- None. From this release on, any change to a public or protected method's signature, or to what
+  a built-in section's `blocks()` returns, is listed here.
+
 ## [1.41.22] — 2026-10-24
 
 ### Added

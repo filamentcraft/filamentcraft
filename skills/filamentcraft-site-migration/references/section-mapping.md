@@ -204,7 +204,7 @@ form with chosen fields (booking, quote, application, return); use contact for p
 
 - copy: heading, subheading, form_name, button_label, success_message, redirect_url (link)
 - options: after_submit=message|redirect; density=compact|comfortable|airy
-- blocks (all take label, required, help, width=full|half): text, email, phone, textarea (+ placeholder) · number (+ min, max) · date · select, radio, checkboxes (+ options, one per line) · consent (label, policy_label, policy_url; always required) · file (kinds=images|documents|any, max_mb=1|2|5|10)
+- blocks (all take label, required, help, width=full|half): text, email, phone, textarea (+ placeholder) · number (+ min, max) · date · select, radio, checkboxes (+ options, one per line) · consent (label, policy_label, policy_url; required unless `required: false`) · file (kinds=images|documents|any, max_mb=1|2|5|10)
 
 ### `gallery`
 grid of photos with captions.
