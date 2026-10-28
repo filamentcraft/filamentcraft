@@ -14,7 +14,7 @@
 | Assets | `stylesheet($url)`, `script($url)`, `viteBuild($dir, [$entries])`, `viteManifest($path, [$entries])`, `mirrorEditorStyles()`, `imageSizesUsing(Closure)` |
 | Editor chrome | `editorExitUrlUsing(...)`, `editorDocumentTitleUsing(...)`, `editorPrimaryColor(...)`, `usePanelPrimaryColor()`, `navigationGroup()`, `navigationLabel()` and the other `*NavigationLabel()` methods |
 | Forms | `withSubmissionsInbox(bool)`, `formRecipientsUsing(Closure(Site, SubmissionType))` |
-| AI assistant | `ai(bool)`, `aiProvider()`, `aiModels()`, `aiDefaultTier()`, `aiSiteKeys()`, `aiUsage()`, `aiLimits()`, `aiInstructions()`, `aiVoice()`, `aiAccess()`, `aiModel(AiTier, string)`, `aiProviderOptions([...])`, `aiPromptUsing(Closure(AiRequest): AiRequest)` (needs `laravel/ai`, PHP 8.3+) |
+| AI assistant | `ai(bool)`, `aiProvider(Lab|string)`, `aiModels()`, `aiDefaultTier()`, `aiSiteKeys()`, `aiUsage()`, `aiLimits()` (rate and budget also take `Closure(Site)`), `aiInstructions()`, `aiVoice()`, `aiAccess()`, `aiModel(AiTier, string)`, `aiProviderOptions([...], ?provider)`, `aiPromptUsing(Closure(AiRequest): AiRequest)` (needs `laravel/ai`, PHP 8.3+) |
 | License | `softLicense(bool)` |
 
 Plugin-level `stylesheet()`, `script()`, `viteBuild()` and `viteManifest()` reach public pages only when the plugin is on the default panel (config-pitfalls.md). `mirrorEditorStyles()` affects the editor canvas only. Pitfalls for assets, cache, key types, model overrides and licence tiers: [config-pitfalls.md](config-pitfalls.md).
