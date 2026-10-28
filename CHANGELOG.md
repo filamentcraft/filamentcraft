@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.25] — 2026-10-28
+
+### Fixed
+
+- **AI assistant on Gemini with laravel/ai 1.x.** laravel/ai 1.0 moved Gemini to the Interactions
+  API, which rejects the default `thinkingConfig` option ("Unknown parameter 'thinkingConfig' at
+  'generation_config'"), so every Gemini request failed. Gemini's thinking options are now sent in
+  the shape the installed laravel/ai speaks: `thinking_level` on 1.x, `thinkingConfig` on 0.x.
+  Verified against the live Gemini API on laravel/ai 0.10 and 1.3.
+- **AI assistant on Anthropic, OpenAI and other non-Gemini providers.** The default provider
+  options (Gemini's `thinkingConfig`) were sent to whichever provider was configured, and
+  `laravel/ai` merges them into the request body, so other providers could reject every request
+  as having an unknown field. Provider options are now resolved per driver: each provider receives
+  only its own. A flat `provider_options` array from an older published config keeps working,
+  and its `thinkingConfig` still reaches Gemini only.
+
+### Added
+
+- **Per-site AI limits.** `aiLimits()` takes a closure for `monthlyTokens` and
+  `requestsPerMinute`. It receives the site, so the budget and rate can follow a shop's plan or
+  add-on; a budget closure that returns `null` gives that site no budget. The assistant's usage
+  line and `filamentcraft:doctor` use the same values.
+- **`Lab` enum for the provider.** `aiProvider()` accepts a `Laravel\Ai\Enums\Lab` case as well
+  as a name, and `aiProviderOptions($options, Lab::Anthropic)` sets options for one provider
+  without touching the others.
+
+### Changed
+
+- The shipped config now keys `provider_options` by driver
+  (`'gemini' => ['thinkingConfig' => ...]`). Code that reads that config value directly sees the
+  new shape.
+
+### Breaking
+
+- None.
+
 ## [1.41.24] — 2026-10-27
 
 ### Fixed
