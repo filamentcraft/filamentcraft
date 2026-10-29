@@ -7,6 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.26] — 2026-10-29
+
+### Added
+
+- **Type on the canvas.** Click a heading, label or paragraph in the editor preview and type.
+  Enter or clicking away saves it, Shift+Enter adds a line break in multi-line fields, and Escape
+  cancels. The sidebar stays where you left it, each edit is one undo step, and it works for
+  blocks, custom sections and the header and footer, in every language. Set
+  `filamentcraft.editor.inline_text` (`FILAMENTCRAFT_EDITOR_INLINE_TEXT`) to `false` to turn it off.
+- **Ask AI from the canvas.** When the AI assistant is available, each section's toolbar in the
+  preview has a sparkle button: say what to change, press Enter, and the assistant edits that
+  section and closes once it's applied.
+- **Empty pages start on the canvas.** A page, header or footer with no sections shows
+  **Add section** in the preview, plus **Generate this page with AI** when the assistant is
+  available. Visitors never see it.
+- **Copy in every language.** Blueprints, starter sites and theme presets now seed each site
+  language with that language's copy. Each language is built with it active, so text written with
+  `__()` comes out translated: a new `nl` site opens in Dutch, and applying **Full theme** from the
+  Arabic editor no longer turns the English pages Arabic.
+  When a preset builds page slugs from translated names, a page is matched to the same position in
+  the other language's list only if both have the same sections; otherwise it keeps its own copy.
+- **`LocalizedBlueprint`** (`sectionsForLocale()`) and **`BlueprintRegion::sectionsUsing()`** for
+  copy that comes from your own data.
+- **`BindsToSite`** (`forSite()`): page blueprints, site blueprints and theme presets get the site
+  before they build.
+- **`ThemePresetApplied` and `ThemePresetRestored` events**, dispatched after the surrounding
+  transaction commits; the page cache is cleared after listeners run.
+- **Checkout hand-off.** `Storefront::placeOrder()` can return `OrderResult::redirect($number, $url)`
+  to send the shopper to a payment provider (Mollie, Stripe Checkout…) after the order is
+  recorded. See the e-commerce example.
+- **Renaming a page keeps its links working.** Links to the page's old address in every page's
+  draft and live version and in regions are updated to the new one, keeping their `#anchor` and
+  `?query`. Typed and percent-encoded addresses (`/من-نحن`) both follow, and each changed page
+  gets a new version in its history, so an editor with unsaved changes is warned before saving.
+
+### Fixed
+
+- Saving a header, footer or announcement draft over a version saved after you opened it now
+  asks first, as pages do. Your own changes (renaming a page, adding a page to the menu) don't
+  count as a conflict, and undo after a rename restores links to the new address.
+- Under reduced motion the marquee track wrapped without a width and pushed the page sideways
+  (in right-to-left pages the content opened shifted off-screen).
+- The AI assistant's send bar no longer floats above a blank band at the bottom of the window.
+- Tapping a section in the editor preview on iPad and iPhone Safari now selects it.
+
 ## [1.41.25] — 2026-10-28
 
 ### Fixed
@@ -751,7 +796,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the preview page, so the links they build and their cart `return` values match the page.
 - `data-fc-nav` links resolve by their real `href` before falling back to the section-based
   page-kind lookup, so hosts with custom checkout/cart sections still navigate.
-
 
 ## [1.40.22] — 2026-10-03
 
@@ -2558,7 +2602,6 @@ php artisan vendor:publish --tag=filamentcraft-migrations && php artisan migrate
   the editor are skinned with the builder's own design tokens (scoped to the editor only, so the
   rest of the panel is untouched), so changing a theme or editing site settings no longer drops
   you into a differently-styled dialog. The skin tracks the editor's light/dark scheme.
-
 
 
 ### Changed
