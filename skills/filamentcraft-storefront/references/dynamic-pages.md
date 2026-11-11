@@ -22,7 +22,7 @@ FilamentCraftPlugin::make()->dynamicTemplates([
         ->sitemap(fn (Site $site): iterable => /* SitemapEntry objects */ []),
 ]);
 
-// RecordSeo(title, description, image, url, ogType: OgType, author, publishedAt, modifiedAt, authorUrl); OgType::Article also emits BlogPosting JSON-LD
+// RecordSeo(title, description, image, url, ogType: OgType, author, publishedAt, modifiedAt, authorUrl, exactTitle); OgType::Article also emits BlogPosting JSON-LD
 // SitemapEntry(url, lastmod, images[]); a relative url is mounted on the site root
 ```
 

@@ -5,7 +5,49 @@ All notable changes to FilamentCraft are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.41.27] — 2026-11-11
+
+### Breaking
+
+- **The header root is now a `<header>`.** The built-in header renders `<header data-fc-header>`
+  instead of `<div data-fc-header>` so assistive tech finds the banner landmark. Host CSS or
+  JS targeting `div[data-fc-header]` must use `[data-fc-header]`.
+
+### Added
+
+- **Page hooks.** `FilamentCraftPlugin::pageHook(PageHook::…, fn (Site $site) => …)` fills
+  `BodyStart`, `ChromeTopStart`, `ChromeTopEnd` and `BodyEnd` in the page shell, for site-wide
+  notices (a holiday banner under the header) without copying a view. Never cached, and left out
+  of the editor canvas. [30]
+- **Header logo size.** Logo height on desktop and phones (24 to 96px, default 32px) and a
+  **Show brand name next to the logo** toggle. [36]
+- **Logo cloud size.** Small, medium (default) or large logos; a row with fewer logos than
+  columns is now centred. [34]
+- **Footer image and rich text blocks.** New `image` (with link and size) and `rich-text` blocks,
+  and every footer block can be set to show under the previous column, so several images form a
+  logo row. [29b]
+- **Footer text links.** E-mail addresses and phone numbers in footer text become `mailto:` and
+  `tel:` links. [33]
+- `RecordSeo(exactTitle: true)` uses a record's SEO title as written, without the site suffix. [17]
+
+### Changed
+
+- The header's desktop and phone menus are lists (`<ul>` / `<li>`), and the phone menu has its
+  own `Menu` label so the two navigations are told apart. [18]
+
+### Fixed
+
+- Pages 2 and up of a paginated record keep `?page=N` in their canonical URL when its `RecordSeo` sets `paginated: true`. [28]
+- Sections in the header and footer now use the site's heading font and type scale. [35]
+- A section whose title is left blank no longer prints an empty `<h2>` (Features, CTA, Gallery,
+  Pricing, Stats, Team, Testimonials, Timeline and the other titled sections). [35]
+- Headings inside rich text use the site's heading font. [37]
+- Long words and addresses wrap inside footer columns instead of overflowing. [33]
+
+### Upgrade
+
+- Run `php artisan filamentcraft:clear-cache` after updating so cached headers and footers pick up
+  the new markup.
 
 ## [1.41.26] — 2026-10-29
 
