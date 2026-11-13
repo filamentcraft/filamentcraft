@@ -5,6 +5,50 @@ All notable changes to FilamentCraft are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.41.28] — 2026-11-13
+
+### Added
+
+- **Per-visitor menu visibility.** `menuAudiences()` names visitor groups, header links,
+  dropdown links and the header button get a **Show to** field, and `menuItemVisibleUsing()`
+  decides per request. Hidden items are never rendered, and the header and footer skip fragment
+  caching while the hook is set. [19]
+- **Render-time link resolver.** `resolveLinkUsing()` rewrites stored links as they render
+  (page links, link lists, menus, header links), so a record URL that moved shows its current
+  address without a redirect or a content rewrite. Links to hidden pages stay hidden.
+  `PageLinkRewriter::rewrite()` is now documented public API. [21]
+- **Custom code policy.** `allowCustomCode(html:, scripts:, siteCss:)` (booleans or per-site
+  closures) and the `allow_custom_html` / `allow_custom_scripts` config keys let a host give
+  tenants HTML and CSS without JavaScript. `allow_custom_code` stays as the alias for both. [2]
+- **Site-wide custom CSS.** A Custom CSS field in the theme's General settings, output after the
+  design tokens. Hosts opt in with `allowCustomCode(siteCss: true)`; values that try `@import`,
+  `expression(` or a `</style>` breakout are dropped. [2]
+- **AI usage hooks.** An `AiUsageRecorded` event, `aiUsageLabel()` to reword or hide the
+  assistant's usage line, and `aiPreflight()` to refuse a call before it reaches the provider,
+  for hosts running their own credit balance. [20]
+- **`RobotsTxt::rulesUsing()`** adds `Allow`, `Disallow` and `Crawl-delay` lines per site. [27]
+- **`homeUrlUsing()`** sets the header logo's home address per site and locale. [logo]
+- **Image with text** body is now rich text (paragraphs, lists, links, bold). [40]
+- **Guide: build your own theme presets**, covering the preset engine, a workflow for a set of
+  presets with screenshots, turning an AI-generated site into a preset, and building presets
+  with Claude Code through the agent skills.
+
+### Fixed
+
+- **The header logo links to the homepage.** It linked to the current page (`/cart` on the
+  cart). It now follows the site's homepage URL, stays inside the tenant prefix on
+  `Route::filamentCraftTenant()` sites, and no longer follows `localeUrlsUsing()`. [logo]
+- Plain-text Image with text bodies keep their line breaks in the editor and live preview. [40]
+- Empty card titles in Features, Pricing, Stats and Timeline are hidden like the other sections.
+- A per-section font on a header or footer section now loads its stylesheet.
+- The header and footer regions are read once per page render.
+- Dutch AI brief copy now asks "Waar gaat je bedrijf over?". [nl]
+
+### Upgrade
+
+Run `php artisan filamentcraft:clear-cache` after updating so cached headers pick up the new
+logo link.
+
 ## [1.41.27] — 2026-11-11
 
 ### Breaking

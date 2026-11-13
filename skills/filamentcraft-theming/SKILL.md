@@ -1,6 +1,6 @@
 ---
 name: filamentcraft-theming
-description: "Style FilamentCraft sites: color schemes, fonts, radius, spacing, theme classes, theme presets, Brand Kit and custom CSS. Use this whenever the task touches how a FilamentCraft site looks: matching an existing brand or website, the visitor dark-mode toggle (`show_scheme_toggle`), changing colors or fonts in code, adding a self-hosted font, writing a theme (`make:filamentcraft-theme`, `ThemeContract`, `settingsSchema`, `cssVar`), shipping a theme preset, locking a palette with Brand Kit, or debugging why a color, font or token does not apply (\"sections stay teal\", \"font not loading\", \"my CSS variable is ignored\"). Not for writing section markup; use filamentcraft-sections for that."
+description: "Style FilamentCraft sites: color schemes, fonts, radius, spacing, theme classes, theme presets, Brand Kit and custom CSS. Use this whenever the task touches how a FilamentCraft site looks: matching an existing brand or website, the visitor dark-mode toggle (`show_scheme_toggle`), changing colors or fonts in code, adding a self-hosted font, writing a theme (`make:filamentcraft-theme`, `ThemeContract`, `settingsSchema`, `cssVar`), shipping a theme preset, building a set of presets (one per business type) with screenshots and tests, turning an AI-generated site into a preset, locking a palette with Brand Kit, or debugging why a color, font or token does not apply (\"sections stay teal\", \"font not loading\", \"my CSS variable is ignored\"). Not for writing section markup; use filamentcraft-sections for that."
 license: MIT
 metadata:
   author: filamentcraft
@@ -132,7 +132,7 @@ The `@font-face` rules are emitted at the top of fc-tokens. Only bundle a commer
 
 ## Custom CSS
 
-There is no custom-CSS field. Ship CSS through one of these:
+By default there is no custom-CSS field. A host can switch on a site-wide one with `FilamentCraftPlugin::make()->allowCustomCode(siteCss: true)` (bool or per-site closure; the host must opt in): the Studio theme's General settings then shows a Custom CSS textarea (`custom_css`), emitted as `<style id="fc-custom-css">` after fc-tokens. While it is off the field is hidden and stored CSS is not rendered. Values containing `<` are dropped; `@import`/`expression(` are stripped, and the value is dropped whole when they are disguised with CSS escapes or comments. A theme class can mark its own setting with `->requiresSiteCss()` so it follows the same gate. Otherwise ship CSS through one of these:
 
 - the theme class's `stylesheets()`,
 - the plugin's `->stylesheet($url)` or `->viteBuild(...)`,
@@ -147,6 +147,8 @@ Read [references/theme-authoring.md](references/theme-authoring.md) when you nee
 - add new design knobs with `cssVar()` (custom theme class, `make:filamentcraft-theme`),
 - package a look as a one-click **theme preset** (`make:filamentcraft-theme-preset --from-site=`),
 - lock fonts and palette for an agency's editors with **Brand Kit**.
+
+To build a whole **set** of presets (a parameterized class, the screenshot route and Playwright script, tests, exporting an AI-generated site and its limits), follow [references/theme-presets.md](references/theme-presets.md). There is no FilamentCraft MCP server: use `php artisan filamentcraft:sections --json` to discover real section ids.
 
 The visitor **dark-mode toggle** (Header/Footer `show_scheme_toggle`, `localStorage` key, why `dark:` variants don't follow it, custom partial) is in [references/dark-mode.md](references/dark-mode.md).
 
