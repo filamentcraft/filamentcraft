@@ -34,7 +34,7 @@ The canvas can show classes the public page lacks. `mirrorEditorStyles()` and a 
 
 ## No-code builder sections
 
-Config `section_definitions`: `enabled` (env `FILAMENTCRAFT_SECTION_DEFINITIONS`), `max_per_site` 50, `max_nodes` 100, `allow_custom_code` false (raw `<script>` for the html element; a developer decision, never expose to tenants). They are stored per site as type `custom::<slug>`, exported with the site, and need the `filamentcraft_section_definitions` migration. Deleting a definition blanks every placed instance. `withoutSections()` limits built-in and PHP sections; the builder is governed by `section_definitions.enabled` (false stops resolving builder sections). When writing site specs or revisions by hand, builder sections appear as `custom::name`.
+Config `section_definitions`: `enabled` (env `FILAMENTCRAFT_SECTION_DEFINITIONS`), `max_per_site` 50, `max_nodes` 100, `allow_custom_code` false (alias for the next two; a developer decision, never expose to tenants), `allow_custom_html` and `allow_custom_scripts` (null follows it; the same split per site via `allowCustomCode(html:, scripts:, siteCss:)`, scripts never run without HTML). They are stored per site as type `custom::<slug>`, exported with the site, and need the `filamentcraft_section_definitions` migration. Deleting a definition blanks every placed instance. `withoutSections()` limits built-in and PHP sections; the builder is governed by `section_definitions.enabled` (false stops resolving builder sections). When writing site specs or revisions by hand, builder sections appear as `custom::name`.
 
 ## Catalog curation
 

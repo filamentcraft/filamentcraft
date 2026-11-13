@@ -28,7 +28,9 @@ Constraints that decide it:
     'enabled' => env('FILAMENTCRAFT_SECTION_DEFINITIONS', true),
     'max_per_site' => 50,        // saved (published) definitions per site; 0 = unlimited
     'max_nodes' => 100,          // blocks per section; also enforced when rendering
-    'allow_custom_code' => false, // adds the HTML block to the palette and lets its JS run
+    'allow_custom_code' => false, // alias: adds the HTML block to the palette and lets its JS run
+    'allow_custom_html' => null,    // the HTML block alone; null follows allow_custom_code
+    'allow_custom_scripts' => null, // its JS field; null follows allow_custom_code, never allowed without HTML
 ],
 ```
 
@@ -36,7 +38,7 @@ The table comes from the `create_filamentcraft_section_definitions` migration (`
 
 `enabled=false` only stops `custom::` types from resolving (placed instances stop resolving and render empty). The editor's "Create your own" card is not gated by it, so hide the feature with `enabled=false` only if you accept that card still appearing.
 
-`allow_custom_code=true` is a trust decision: it exposes raw JS to anyone who can edit a site. Never enable it where tenants are untrusted. The HTML block's markup and CSS are sanitised either way (CSS containing `<` is dropped, `@import` stripped), and JS containing `</script` is dropped.
+`allow_custom_code=true` is a trust decision: it exposes raw JS to anyone who can edit a site. Never enable it where tenants are untrusted. To give tenants HTML and CSS but never JS, call `FilamentCraftPlugin::make()->allowCustomCode(html: true, scripts: false)` (or set `allow_custom_html=true`, `allow_custom_scripts=false`); each argument also takes a closure receiving the `?Site`, so it can be decided per site. The plugin value wins over config. A third argument, `siteCss:` (bool or per-site closure, default off), unlocks the Studio theme's site-wide Custom CSS field (`custom_css`); the host must opt in, otherwise the field is hidden and stored CSS is not rendered. When scripts are denied the editor hides the JS field, and stored JS is not output. When HTML is denied the block leaves the palette but stored blocks still render, sanitised. The HTML block's markup and CSS are sanitised either way (CSS containing `<`, `@import`/`expression(` are stripped, and the value is dropped whole when they are disguised with CSS escapes or comments), and JS containing `</script` is dropped.
 
 ## How a definition is stored and resolved
 

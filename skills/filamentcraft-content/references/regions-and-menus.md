@@ -53,6 +53,10 @@ $this->app->singleton(MenuSource::class, AppMenuSource::class);
 
 The link picker in the editor also searches pages, store categories and products. Add your own results (blog posts, docs) with `FilamentCraftPlugin::make()->linkSources([PostLinkSource::class])`, where each class implements `FilamentCraft\Links\Contracts\LinkSource`.
 
+To show a moved record's current URL without rewriting stored content, use `FilamentCraftPlugin::make()->resolveLinkUsing(fn (string $href, Site $site): string => ...)`. It runs at render time, must be deterministic per site (output is cached), and falls back to the stored link on an empty, unsafe or throwing result. It does not resolve catalog category URLs, the link picker preview, the sitemap or rich-text links. `PageLinkRewriter::rewrite($site, $from, $to)` rewrites stored links after a page moves and is public API.
+
+To show header links to some visitors only, name the groups with `FilamentCraftPlugin::make()->menuAudiences(['members' => 'Members'])` (the editor then shows **Show to** on links, dropdowns and the header button) and decide per request with `->menuItemVisibleUsing(fn (MenuItem $item, Site $site, Request $request): bool => ...)`. The hook also sees items with no audience and dropdown or category children. A throw shows the item. Header and footer skip fragment caching while a hook is set. It hides links only and is not access control: protect the page itself with auth.
+
 ## Footer
 
 The `footer` section: settings `brand`, `description`, `copyright` and more (`filamentcraft:sections footer`). Its columns are blocks, one column each, in order:
