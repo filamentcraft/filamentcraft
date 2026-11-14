@@ -5,6 +5,32 @@ All notable changes to FilamentCraft are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [1.41.29] — 2026-11-14
+
+### Upgrade
+
+No action needed: existing presets register, validate and apply as before. To catch silent
+mistakes in your own presets, swap `assertValid()` for `assertStrict()` in their tests or run
+`php artisan filamentcraft:presets`.
+
+### Changed
+
+- The Themes panel reads each registered preset's `style()` once per render instead of once per preset card.
+
+### Added
+
+- `ProvidesThemePresets`: one class (for example one driven by an enum) registers every preset it returns, from discovery or `->themePresets([...])`. A discovered preset class that needs constructor arguments is now skipped with a log warning instead of failing boot.
+- `filamentcraft:presets {preset?} {--json} {--strict}` lists registered theme presets with their problems and strict warnings; `filamentcraft:doctor` reports them under a new Theme presets group.
+- `ThemePresetTester::assertStrict()` and `ThemePresetValidator::warnings()` flag unregistered sections, missing section presets, unknown setting and block ids, pinned header/footer schemes, empty regions, `heading_font` without `default_font` and style keys the theme lacks, in every preset locale. `assertRendersEveryLocale()` renders each page in each locale.
+- `BlueprintSection::for()`, `set()` and fluent setting calls (`->heading('x')->ctaLabel('Go')`) merge settings onto a preset; `requestedPreset()` and `presetMissing()` report a `fromPreset()` slug that did not match.
+- `filamentcraft:sections --json` lists hidden presets under a new `hidden_presets` key; `presets` now includes presets added with `addPresets()`.
+
+### Removed
+
+- The unused `primary_url` setting from the Store hero presets and defaults (stored sites are unaffected).
+
 ## [1.41.28] — 2026-11-13
 
 ### Added
