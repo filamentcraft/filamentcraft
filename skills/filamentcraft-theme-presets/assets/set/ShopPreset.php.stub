@@ -1,0 +1,108 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Shop;
+
+use App\Shop\Pages\ContactPage;
+use FilamentCraft\Blueprints\BlueprintRegion;
+use FilamentCraft\Blueprints\BlueprintSection;
+use FilamentCraft\Blueprints\Contracts\BindsToSite;
+use FilamentCraft\Enums\RegionName;
+use FilamentCraft\Models\Site;
+use FilamentCraft\Sections\Builtin\FooterSection;
+use FilamentCraft\Sections\Builtin\HeaderSection;
+use FilamentCraft\Support\ColorSchemes;
+use FilamentCraft\Theming\Presets\Contracts\ProvidesThemePresets;
+use FilamentCraft\Theming\Presets\ThemePreset;
+
+final class ShopPreset extends ThemePreset implements BindsToSite, ProvidesThemePresets
+{
+    private ?Site $site = null;
+
+    public function __construct(private readonly ShopType $type) {}
+
+    /**
+     * Registration order is the order of the cards in the Themes panel.
+     *
+     * @return list<self>
+     */
+    public static function themePresets(): array
+    {
+        return array_map(static fn (ShopType $type): self => new self($type), ShopType::cases());
+    }
+
+    public function forSite(Site $site): static
+    {
+        $clone = clone $this;
+        $clone->site = $site;
+
+        return $clone;
+    }
+
+    public function slug(): string
+    {
+        return $this->type->value;
+    }
+
+    public function name(): string
+    {
+        return $this->type->label();
+    }
+
+    public function description(): ?string
+    {
+        return $this->type->description();
+    }
+
+    public function screenshots(): array
+    {
+        return is_file(public_path($this->type->screenshot())) ? [$this->type->screenshot()] : [];
+    }
+
+    public function style(): array
+    {
+        return [
+            'color_scheme' => $this->type->value,
+            'schemes' => [$this->type->value => $this->type->tokens()],
+            ...$this->type->style(),
+        ];
+    }
+
+    public function pages(): array
+    {
+        $home = $this->type->homePage();
+
+        return [
+            new $home($this->type),
+            new ContactPage($this->type),
+        ];
+    }
+
+    public function regions(): array
+    {
+        $brand = $this->site?->name ?? $this->type->label();
+        $inherit = ['scheme' => ColorSchemes::INHERIT];
+
+        return [
+            BlueprintRegion::make(RegionName::Header)->sections([
+                BlueprintSection::make(HeaderSection::class)
+                    ->settings(['brand_text' => $brand, 'cta_label' => __('shop-presets.nav.contact'), 'cta_url' => '/contact', ...$inherit])
+                    ->blocks([
+                        ['id' => 'nav-1', 'type' => 'nav-link', 'settings' => ['label' => __('shop-presets.nav.home'), 'url' => '/']],
+                        ['id' => 'nav-2', 'type' => 'nav-link', 'settings' => ['label' => __('shop-presets.nav.contact'), 'url' => '/contact']],
+                    ]),
+            ]),
+            BlueprintRegion::make(RegionName::Footer)->sections([
+                BlueprintSection::make(FooterSection::class)
+                    ->settings(['brand' => $brand, 'description' => $this->type->description(), 'copyright' => '', ...$inherit])
+                    ->blocks([
+                        ['id' => 'col-1', 'type' => 'column', 'settings' => ['heading' => $brand, 'links' => [
+                            ['label' => __('shop-presets.nav.home'), 'url' => '/'],
+                            ['label' => __('shop-presets.nav.contact'), 'url' => '/contact'],
+                        ]]],
+                    ]),
+            ]),
+        ];
+    }
+}

@@ -1,8 +1,8 @@
-# Theme classes, theme presets and Brand Kit
+# Theme classes and Brand Kit
 
 ## Contents
 - Theme class: when you need one, scaffold, schema, registration, assigning it to a site
-- Theme presets: one-click looks (and whole starter sites)
+- Theme presets: moved to the filamentcraft-theme-presets skill
 - Brand Kit: locking fonts and colors for an agency's editors
 
 ## Theme class
@@ -103,63 +103,10 @@ Host CSS that wants Tailwind shade utilities (`bg-primary-600`) maps the variabl
 
 ## Theme presets
 
-A theme preset is a named look (scheme + theme settings) that can also carry pages and header/footer, applied from the editor's Themes panel. It extends `ThemePreset`, which is a site blueprint, so the same class can also provision a new tenant's site.
+Building presets (one look or a set per business type, pages and regions, exporting a site with `make:filamentcraft-theme-preset --from-site=`, screenshots, tests, registration) is the **filamentcraft-theme-presets** skill. Two facts that matter from the theming side:
 
-Fastest path: style a site in the editor, then export it:
-
-```bash
-php artisan make:filamentcraft-theme-preset Harbor --from-site=harbor-demo
-```
-
-By hand:
-
-```php
-use FilamentCraft\Theming\Presets\PresetPage;
-use FilamentCraft\Theming\Presets\ThemePreset;
-use FilamentCraft\Blueprints\BlueprintSection;
-use FilamentCraft\Sections\Builtin\HeroSection;
-
-final class HarborPreset extends ThemePreset
-{
-    public function slug(): string
-    {
-        return 'harbor';
-    }
-
-    public function name(): string
-    {
-        return 'Harbor';
-    }
-
-    public function style(): array
-    {
-        return [
-            'color_scheme' => 'harbor',
-            'schemes' => ['harbor' => [/* all 22 tokens */]],
-            'heading_font' => 'lora',
-            'default_font' => 'work-sans',
-            'button_radius' => 6,
-        ];
-    }
-
-    public function pages(): array
-    {
-        return [
-            PresetPage::make('Home')->homepage()->withSections([
-                BlueprintSection::make(HeroSection::class)->settings(['heading' => 'Stay by the water', 'scheme' => '__inherit']),
-            ]),
-        ];
-    }
-}
-```
-
-- `style()` is keyed like `Site.settings_json`: `color_scheme`, `schemes` (merged onto the site's), and any theme setting id. Ids the site's theme doesn't declare are ignored, so one preset works across themes. Override `themeSlug()` to switch theme too.
-- Author all 22 tokens. Missing ones inherit from `modern` or the parent section, not from a complete scheme.
-- Auto-discovered from `app/Themes/Presets`. Or register via config `themes.presets` / `themes.preset_paths`, or plugin `->themePresets([...])` / `->discoverThemePresetsIn($path)`. `->withoutBuiltinThemePresets()` hides the four built-in families.
-- **`regions()` is empty by default, and `Full` apply replaces only the regions the preset declares.** A preset without `regions()` keeps the old header and footer, so the previous brand's nav and logo survive. Declare them: `BlueprintRegion::make(RegionName::Header)->sections([BlueprintSection::fromPreset(HeaderSection::class, 'modern')])`, and the same for the footer.
-- More API: `description()`, `previewImage()`, `screenshots()`; `PresetPage::make(…)->seal()` hides Add section on that page and `->ofType(TemplateType::…)`; `static provision(?Model $owner, ?string $name, ?string $slug): Site` provisions a new tenant's site from it. `make:filamentcraft-theme-preset --from-site=` skips no-code builder sections with a warning. Applying records a snapshot (10 restore points per site, needs the `filamentcraft_site_snapshots` migration); style-only apply resets all theme settings to defaults first (keeping SEO, AI settings and the site's own schemes). A preset that omits `default_font` therefore silently changes the body font: always set `default_font` and `heading_font` explicitly in `style()`. Applying stores only values that differ from the theme's setting default, so a font equal to the default is not written to `settings_json` (it still renders correctly). A preset whose `themeSlug()` names a custom theme needs that class registered, not `filamentcraft:sync-themes`: the applier creates the missing Theme row itself via `Theme::forSlug()`.
-- Apply in code: `app(\FilamentCraft\Theming\Presets\ThemePresetApplier::class)->apply($site, new HarborPreset, \FilamentCraft\Enums\ThemeApplyMode::Full)`. `Full` replaces pages and regions; the style-only mode resets style settings. The newest apply can be undone from a snapshot.
-- Test it: `\FilamentCraft\Testing\ThemePresetTester::for(HarborPreset::class)->assertValid()->assertRenders();`
+- A preset's `style()` is keyed like `Site.settings_json`, so every scheme, font and range rule in this skill applies to it. Ids the site's theme doesn't declare are ignored.
+- A preset whose `themeSlug()` names a custom theme needs that theme class registered (not `filamentcraft:sync-themes`): the applier creates the missing Theme row itself via `Theme::forSlug()`.
 
 The four built-in families, for reference:
 

@@ -1,6 +1,6 @@
 ---
 name: filamentcraft-theming
-description: "Style FilamentCraft sites: color schemes, fonts, radius, spacing, theme classes, theme presets, Brand Kit and custom CSS. Use this whenever the task touches how a FilamentCraft site looks: matching an existing brand or website, the visitor dark-mode toggle (`show_scheme_toggle`), changing colors or fonts in code, adding a self-hosted font, writing a theme (`make:filamentcraft-theme`, `ThemeContract`, `settingsSchema`, `cssVar`), shipping a theme preset, building a set of presets (one per business type) with screenshots and tests, turning an AI-generated site into a preset, locking a palette with Brand Kit, or debugging why a color, font or token does not apply (\"sections stay teal\", \"font not loading\", \"my CSS variable is ignored\"). Not for writing section markup; use filamentcraft-sections for that."
+description: "Style FilamentCraft sites: color schemes, fonts, radius, spacing, theme classes, Brand Kit and custom CSS. Use this whenever the task touches how one FilamentCraft site looks: matching an existing brand or website, the visitor dark-mode toggle (`show_scheme_toggle`), changing colors or fonts in code, adding a self-hosted font, writing a theme (`make:filamentcraft-theme`, `ThemeContract`, `settingsSchema`, `cssVar`), locking a palette with Brand Kit, or debugging why a color, font or token does not apply (\"sections stay teal\", \"font not loading\", \"my CSS variable is ignored\"). Not for writing section markup (use filamentcraft-sections) or for building theme presets, packaged looks or per-industry site templates (use filamentcraft-theme-presets)."
 license: MIT
 metadata:
   author: filamentcraft
@@ -140,15 +140,14 @@ By default there is no custom-CSS field. A host can switch on a site-wide one wi
 
 Unlayered host CSS beats every package rule (site.css lives in `@layer theme, base, components, utilities, filamentcraft`), so `.fc-btn { … }` overrides work; a host bundle's **layered** utilities lose to the package's same-named ones. Variables on `:root` do not win (see above). Plugin-level `->stylesheet()` / `->viteBuild()` reach public pages only through the default panel, and a wrong `viteManifest()` path registers nothing without error: prefer `filamentcraft.assets.*` config (setup skill). Page order: package, plugin, `extra_styles`, `vite_builds`, theme `stylesheets()` (later wins). `mirrorEditorStyles()` affects the editor canvas only. Prefer settings and schemes, because those stay editable in the editor; CSS is for what the knobs can't express.
 
-## Writing a theme class, a theme preset, or a Brand Kit
+## Writing a theme class or a Brand Kit
 
 Read [references/theme-authoring.md](references/theme-authoring.md) when you need to:
 
 - add new design knobs with `cssVar()` (custom theme class, `make:filamentcraft-theme`),
-- package a look as a one-click **theme preset** (`make:filamentcraft-theme-preset --from-site=`),
 - lock fonts and palette for an agency's editors with **Brand Kit**.
 
-To build a whole **set** of presets (a parameterized class, the screenshot route and Playwright script, tests, exporting an AI-generated site and its limits), follow [references/theme-presets.md](references/theme-presets.md). There is no FilamentCraft MCP server: use `php artisan filamentcraft:sections --json` to discover real section ids.
+**Theme presets** (a packaged look with pages, header and footer; a set of them per business type; `make:filamentcraft-theme-preset --from-site=`; preset screenshots and tests) have their own skill: **filamentcraft-theme-presets**. The scheme, font and token rules above apply inside a preset's `style()` too.
 
 The visitor **dark-mode toggle** (Header/Footer `show_scheme_toggle`, `localStorage` key, why `dark:` variants don't follow it, custom partial) is in [references/dark-mode.md](references/dark-mode.md).
 

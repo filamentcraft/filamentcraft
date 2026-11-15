@@ -1,0 +1,118 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Shop;
+
+use App\Shop\Pages\HomePage;
+use App\Shop\Pages\Homes\BakeryHome;
+use App\Shop\Pages\Homes\FashionHome;
+use App\Shop\Pages\Homes\ServicesHome;
+
+enum ShopType: string
+{
+    case Bakery = 'bakery';
+    case Fashion = 'fashion';
+    case Services = 'services';
+
+    public function label(): string
+    {
+        return __("shop-presets.{$this->value}.name");
+    }
+
+    public function description(): string
+    {
+        return __("shop-presets.{$this->value}.description");
+    }
+
+    /**
+     * All 22 tokens: a missing one silently falls back to the stock `modern` value.
+     *
+     * @return array<string, string>
+     */
+    public function tokens(): array
+    {
+        return match ($this) {
+            self::Bakery => [
+                'background' => '#fff8f0', 'on-background' => '#3b2417',
+                'surface' => '#ffffff', 'on-surface' => '#3b2417',
+                'surface-alt' => '#f6e7d4', 'on-surface-alt' => '#3b2417',
+                'primary' => '#9a4419', 'on-primary' => '#ffffff',
+                'secondary' => '#f3d9b8', 'on-secondary' => '#3b2417',
+                'accent' => '#4f6619', 'on-accent' => '#ffffff',
+                'neutral' => '#6b5a4d', 'on-neutral' => '#ffffff',
+                'info' => '#1d4ed8', 'on-info' => '#ffffff',
+                'success' => '#2f6b2b', 'on-success' => '#ffffff',
+                'warning' => '#92400e', 'on-warning' => '#ffffff',
+                'danger' => '#b91c1c', 'on-danger' => '#ffffff',
+            ],
+            self::Fashion => [
+                'background' => '#ffffff', 'on-background' => '#111111',
+                'surface' => '#f7f7f5', 'on-surface' => '#111111',
+                'surface-alt' => '#ecebe7', 'on-surface-alt' => '#111111',
+                'primary' => '#111111', 'on-primary' => '#ffffff',
+                'secondary' => '#e9e4dc', 'on-secondary' => '#111111',
+                'accent' => '#8a3b2e', 'on-accent' => '#ffffff',
+                'neutral' => '#5f5f5f', 'on-neutral' => '#ffffff',
+                'info' => '#1d4ed8', 'on-info' => '#ffffff',
+                'success' => '#166534', 'on-success' => '#ffffff',
+                'warning' => '#92400e', 'on-warning' => '#ffffff',
+                'danger' => '#b91c1c', 'on-danger' => '#ffffff',
+            ],
+            self::Services => [
+                'background' => '#f7f9fc', 'on-background' => '#0f1b2d',
+                'surface' => '#ffffff', 'on-surface' => '#0f1b2d',
+                'surface-alt' => '#e8eef7', 'on-surface-alt' => '#0f1b2d',
+                'primary' => '#1d4ed8', 'on-primary' => '#ffffff',
+                'secondary' => '#dbe6fb', 'on-secondary' => '#0f1b2d',
+                'accent' => '#0f766e', 'on-accent' => '#ffffff',
+                'neutral' => '#475569', 'on-neutral' => '#ffffff',
+                'info' => '#1d4ed8', 'on-info' => '#ffffff',
+                'success' => '#166534', 'on-success' => '#ffffff',
+                'warning' => '#92400e', 'on-warning' => '#ffffff',
+                'danger' => '#b91c1c', 'on-danger' => '#ffffff',
+            ],
+        };
+    }
+
+    /**
+     * Studio theme setting ids. Ranges: heading_scale 1-2, button_radius 0-24, box_radius 0-32.
+     *
+     * @return array<string, mixed>
+     */
+    public function style(): array
+    {
+        return match ($this) {
+            self::Bakery => ['heading_font' => 'fraunces', 'default_font' => 'work-sans', 'heading_scale' => 1.3, 'button_radius' => 14, 'box_radius' => 16],
+            self::Fashion => ['heading_font' => 'playfair-display', 'default_font' => 'inter', 'heading_scale' => 1.5, 'button_radius' => 0, 'box_radius' => 0, 'button_uppercase' => true],
+            self::Services => ['heading_font' => 'plus-jakarta-sans', 'default_font' => 'inter', 'heading_scale' => 1.25, 'button_radius' => 8, 'box_radius' => 12],
+        };
+    }
+
+    /**
+     * @return class-string<HomePage>
+     */
+    public function homePage(): string
+    {
+        return match ($this) {
+            self::Bakery => BakeryHome::class,
+            self::Fashion => FashionHome::class,
+            self::Services => ServicesHome::class,
+        };
+    }
+
+    /**
+     * Root-relative URL of a fixed photo role (hero, feature), or '' when the file is not there yet.
+     */
+    public function photo(string $role): string
+    {
+        $path = "images/themes/{$this->value}/{$role}.webp";
+
+        return is_file(public_path($path)) ? "/{$path}" : '';
+    }
+
+    public function screenshot(): string
+    {
+        return "images/themes/{$this->value}/home.webp";
+    }
+}

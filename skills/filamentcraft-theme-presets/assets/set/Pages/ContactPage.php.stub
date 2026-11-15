@@ -1,0 +1,37 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Shop\Pages;
+
+use App\Shop\ShopType;
+use FilamentCraft\Blueprints\AbstractBlueprint;
+use FilamentCraft\Blueprints\BlueprintSection;
+use FilamentCraft\Sections\Builtin\ContactSection;
+use FilamentCraft\Support\ColorSchemes;
+
+final class ContactPage extends AbstractBlueprint
+{
+    public function __construct(private readonly ShopType $type) {}
+
+    public function name(): string
+    {
+        return __('shop-presets.nav.contact');
+    }
+
+    public function slug(): string
+    {
+        return 'contact';
+    }
+
+    public function sections(): array
+    {
+        return [
+            BlueprintSection::make(ContactSection::class)->settings([
+                'heading' => __("shop-presets.{$this->type->value}.contact.heading"),
+                'subheading' => __("shop-presets.{$this->type->value}.contact.subheading"),
+                'scheme' => ColorSchemes::INHERIT,
+            ]),
+        ];
+    }
+}

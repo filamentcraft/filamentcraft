@@ -1,0 +1,38 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Shop\ShopPreset;
+use App\Shop\ShopType;
+use FilamentCraft\Ai\Support\Contrast;
+use FilamentCraft\Support\ColorSchemes;
+use FilamentCraft\Testing\ThemePresetTester;
+use FilamentCraft\Theming\Presets\ThemePresetRegistry;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
+
+it('ships a valid preset that renders every page', function (ShopType $type): void {
+    ThemePresetTester::for(new ShopPreset($type))->assertStrict()->assertRendersEveryLocale();
+})->with(ShopType::cases());
+
+it('authors every color token with readable text', function (ShopType $type): void {
+    $tokens = $type->tokens();
+
+    expect(array_keys($tokens))->toEqualCanonicalizing(ColorSchemes::REQUIRED_TOKENS);
+
+    foreach ($tokens as $name => $color) {
+        if (str_starts_with($name, 'on-')) {
+            expect(Contrast::ratio($color, $tokens[substr($name, 3)]))->toBeGreaterThanOrEqual(4.5, "{$type->value}: {$name}");
+        }
+    }
+})->with(ShopType::cases());
+
+it('registers the set without the built-ins', function (): void {
+    expect(array_keys(app(ThemePresetRegistry::class)->all()))
+        ->toBe(array_map(static fn (ShopType $type): string => $type->value, ShopType::cases()));
+});
+
+it('has a screenshot for every preset', function (ShopType $type): void {
+    expect(public_path($type->screenshot()))->toBeFile();
+})->with(ShopType::cases());

@@ -1,0 +1,20 @@
+<?php
+
+// Append to routes/web.php. Local only: it renders any registered preset without saving anything.
+
+use FilamentCraft\Enums\ThemeApplyMode;
+use FilamentCraft\Models\Site;
+use FilamentCraft\Theming\Presets\ThemePresetPreview;
+use FilamentCraft\Theming\Presets\ThemePresetRegistry;
+use Illuminate\Support\Facades\Route;
+
+if (app()->isLocal()) {
+    Route::get('/_presets', fn () => array_keys(app(ThemePresetRegistry::class)->all()));
+
+    Route::get('/_presets/{slug}/{locale?}', function (string $slug, ?string $locale = null) {
+        $preset = app(ThemePresetRegistry::class)->find($slug) ?? abort(404, "No preset [{$slug}] is registered.");
+        $site = Site::query()->orderBy('id')->first() ?? abort(404, 'Create a site first, for example: php artisan filamentcraft:starter');
+
+        return response(app(ThemePresetPreview::class)->render($site, $preset, ThemeApplyMode::Full, null, null, $locale));
+    })->where('slug', '[a-z0-9-]+');
+}
