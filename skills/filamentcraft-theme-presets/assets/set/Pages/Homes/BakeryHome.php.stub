@@ -1,0 +1,21 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Shop\Pages\Homes;
+
+use App\Shop\Pages\HomePage;
+
+final class BakeryHome extends HomePage
+{
+    public function sections(): array
+    {
+        return [
+            $this->hero(['layout' => 'editorial', 'content_align' => 'start']),
+            $this->features(['columns' => '3']),
+            $this->story(),
+            $this->faq(),
+            $this->cta(),
+        ];
+    }
+}

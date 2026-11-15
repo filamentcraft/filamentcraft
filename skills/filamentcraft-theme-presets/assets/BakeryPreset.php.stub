@@ -1,0 +1,174 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Themes\Presets;
+
+use FilamentCraft\Blueprints\BlueprintRegion;
+use FilamentCraft\Blueprints\BlueprintSection;
+use FilamentCraft\Enums\RegionName;
+use FilamentCraft\Sections\Builtin\ContactSection;
+use FilamentCraft\Sections\Builtin\CtaSection;
+use FilamentCraft\Sections\Builtin\FaqSection;
+use FilamentCraft\Sections\Builtin\FeaturesSection;
+use FilamentCraft\Sections\Builtin\FooterSection;
+use FilamentCraft\Sections\Builtin\HeaderSection;
+use FilamentCraft\Sections\Builtin\HeroSection;
+use FilamentCraft\Sections\Builtin\ImageTextSection;
+use FilamentCraft\Support\ColorSchemes;
+use FilamentCraft\Theming\Presets\PresetPage;
+use FilamentCraft\Theming\Presets\ThemePreset;
+
+final class BakeryPreset extends ThemePreset
+{
+    private const SLUG = 'bakery';
+
+    private const INHERIT = ['scheme' => ColorSchemes::INHERIT];
+
+    public function slug(): string
+    {
+        return self::SLUG;
+    }
+
+    public function name(): string
+    {
+        return 'Bakery';
+    }
+
+    public function description(): ?string
+    {
+        return 'Warm and handmade, for bakeries, patisseries and cafes.';
+    }
+
+    public function screenshots(): array
+    {
+        $cover = 'images/themes/'.self::SLUG.'/home.webp';
+
+        return is_file(public_path($cover)) ? [$cover] : [];
+    }
+
+    public function style(): array
+    {
+        return [
+            'color_scheme' => self::SLUG,
+            'schemes' => [
+                self::SLUG => [
+                    'background' => '#fff8f0', 'on-background' => '#3b2417',
+                    'surface' => '#ffffff', 'on-surface' => '#3b2417',
+                    'surface-alt' => '#f6e7d4', 'on-surface-alt' => '#3b2417',
+                    'primary' => '#9a4419', 'on-primary' => '#ffffff',
+                    'secondary' => '#f3d9b8', 'on-secondary' => '#3b2417',
+                    'accent' => '#4f6619', 'on-accent' => '#ffffff',
+                    'neutral' => '#6b5a4d', 'on-neutral' => '#ffffff',
+                    'info' => '#1d4ed8', 'on-info' => '#ffffff',
+                    'success' => '#2f6b2b', 'on-success' => '#ffffff',
+                    'warning' => '#92400e', 'on-warning' => '#ffffff',
+                    'danger' => '#b91c1c', 'on-danger' => '#ffffff',
+                ],
+            ],
+            'heading_font' => 'fraunces',
+            'default_font' => 'work-sans',
+            'heading_scale' => 1.3,
+            'button_radius' => 14,
+            'input_border_radius' => 10,
+            'box_radius' => 16,
+        ];
+    }
+
+    public function pages(): array
+    {
+        return [
+            PresetPage::make('Home')->homepage()->withSections([
+                BlueprintSection::make(HeroSection::class)->settings([
+                    'eyebrow' => 'Baked fresh every morning',
+                    'heading' => 'Bread the street wakes up for',
+                    'subheading' => 'Sourdough, pastries and celebration cakes, made by hand in our own kitchen.',
+                    'cta_label' => 'Visit the shop',
+                    'cta_url' => '/visit',
+                    'cta_secondary_label' => '',
+                    'supporting_text' => '',
+                    'bg_image' => $this->photo('hero'),
+                    'media_mode' => $this->photo('hero') === '' ? 'none' : 'end',
+                    'layout' => 'editorial',
+                    'content_align' => 'start',
+                    'backdrop' => 'none',
+                    ...self::INHERIT,
+                ])->blocks([]),
+                BlueprintSection::make(FeaturesSection::class)
+                    ->settings([
+                        'eyebrow' => 'What we bake',
+                        'title' => 'Something for every table',
+                        'intro' => '',
+                        'columns' => '3',
+                        ...self::INHERIT,
+                    ])
+                    ->blocks([
+                        ['id' => 'feature-1', 'type' => 'feature', 'settings' => ['icon' => 'heroicon-o-clock', 'title' => 'Daily bread', 'description' => 'Loaves and rolls out of the oven every morning.']],
+                        ['id' => 'feature-2', 'type' => 'feature', 'settings' => ['icon' => 'heroicon-o-cake', 'title' => 'Cakes to order', 'description' => 'Birthdays, weddings and office parties.']],
+                        ['id' => 'feature-3', 'type' => 'feature', 'settings' => ['icon' => 'heroicon-o-sparkles', 'title' => 'Pastries', 'description' => 'Croissants, buns and seasonal tarts.']],
+                    ]),
+                BlueprintSection::make(ImageTextSection::class)->settings([
+                    'eyebrow' => 'Our kitchen',
+                    'title' => 'Slow dough, simple ingredients',
+                    'body' => '<p>Flour, water, salt and time. Tell visitors how you bake and what makes your shop yours.</p>',
+                    'label' => 'Plan a visit',
+                    'url' => '/visit',
+                    'image' => $this->photo('kitchen'),
+                    'media_placement' => $this->photo('kitchen') === '' ? 'none' : 'start',
+                    ...self::INHERIT,
+                ]),
+                BlueprintSection::make(FaqSection::class)
+                    ->settings(['eyebrow' => 'Good to know', 'title' => 'Questions we hear a lot', 'intro' => '', ...self::INHERIT])
+                    ->blocks([
+                        ['id' => 'faq-1', 'type' => 'item', 'settings' => ['question' => 'Can I order a cake for a date?', 'answer' => 'Yes. Get in touch with the date, size and flavour you have in mind.']],
+                        ['id' => 'faq-2', 'type' => 'item', 'settings' => ['question' => 'Do you bake gluten-free?', 'answer' => 'Ask us what is on the counter today.']],
+                    ]),
+                BlueprintSection::make(CtaSection::class)->settings([
+                    'badge' => '',
+                    'heading' => 'Come by while it is still warm',
+                    'subheading' => 'Find our address and opening hours.',
+                    'note' => '',
+                    'label' => 'Opening hours',
+                    'url' => '/visit',
+                    'backdrop' => 'none',
+                    ...self::INHERIT,
+                ]),
+            ]),
+            PresetPage::make('Visit us', 'visit')->withSections([
+                BlueprintSection::make(ContactSection::class)->settings([
+                    'heading' => 'Visit or get in touch',
+                    'subheading' => 'Questions about an order? Send us a message.',
+                    ...self::INHERIT,
+                ]),
+            ]),
+        ];
+    }
+
+    public function regions(): array
+    {
+        return [
+            BlueprintRegion::make(RegionName::Header)->sections([
+                BlueprintSection::make(HeaderSection::class)
+                    ->settings(['brand_text' => 'Your bakery', 'cta_label' => 'Visit us', 'cta_url' => '/visit', ...self::INHERIT])
+                    ->blocks([
+                        ['id' => 'nav-1', 'type' => 'nav-link', 'settings' => ['label' => 'Home', 'url' => '/']],
+                        ['id' => 'nav-2', 'type' => 'nav-link', 'settings' => ['label' => 'Visit us', 'url' => '/visit']],
+                    ]),
+            ]),
+            BlueprintRegion::make(RegionName::Footer)->sections([
+                BlueprintSection::make(FooterSection::class)
+                    ->settings(['brand' => 'Your bakery', 'description' => 'Handmade bread and cakes.', 'copyright' => '', ...self::INHERIT])
+                    ->blocks([
+                        ['id' => 'col-1', 'type' => 'column', 'settings' => ['heading' => 'Shop', 'links' => [['label' => 'Home', 'url' => '/'], ['label' => 'Visit us', 'url' => '/visit']]]],
+                    ]),
+            ]),
+        ];
+    }
+
+    private function photo(string $role): string
+    {
+        $path = 'images/themes/'.self::SLUG."/{$role}.webp";
+
+        return is_file(public_path($path)) ? "/{$path}" : '';
+    }
+}

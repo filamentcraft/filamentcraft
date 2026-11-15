@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.41.30] — 2026-11-15
+
+### Added
+
+- **`filamentcraft-theme-presets` agent skill.** Builds one theme preset or an enum-driven set end to end, exports a site as a preset, captures card screenshots, and checks the result with `assertStrict()` and `filamentcraft:presets --strict`. It ships templates, a Playwright capture script and a verify script. The preset parts of `filamentcraft-theming` moved into it.
+
 ## [1.41.29] — 2026-11-14
 
 ### Upgrade

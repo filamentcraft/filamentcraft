@@ -1,0 +1,154 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Shop\Pages;
+
+use App\Shop\ShopType;
+use FilamentCraft\Blueprints\AbstractBlueprint;
+use FilamentCraft\Blueprints\BlueprintSection;
+use FilamentCraft\Sections\Builtin\CtaSection;
+use FilamentCraft\Sections\Builtin\FaqSection;
+use FilamentCraft\Sections\Builtin\FeaturesSection;
+use FilamentCraft\Sections\Builtin\HeroSection;
+use FilamentCraft\Sections\Builtin\ImageTextSection;
+use FilamentCraft\Support\ColorSchemes;
+
+/**
+ * One builder per section type. Each home orders them and overrides a few layout knobs.
+ */
+abstract class HomePage extends AbstractBlueprint
+{
+    public function __construct(protected readonly ShopType $type) {}
+
+    public function name(): string
+    {
+        return __('shop-presets.nav.home');
+    }
+
+    public function slug(): string
+    {
+        return 'home';
+    }
+
+    public function isHomepage(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @param array<string, mixed> $overrides
+     */
+    protected function hero(array $overrides = []): BlueprintSection
+    {
+        $photo = $this->type->photo('hero');
+
+        return BlueprintSection::make(HeroSection::class)->settings([
+            'eyebrow' => $this->t('hero.eyebrow'),
+            'heading' => $this->t('hero.heading'),
+            'subheading' => $this->t('hero.subheading'),
+            'cta_label' => $this->t('hero.cta'),
+            'cta_url' => '/contact',
+            'cta_secondary_label' => '',
+            'supporting_text' => '',
+            'bg_image' => $photo,
+            'media_mode' => $photo === '' ? 'none' : 'end',
+            'backdrop' => 'none',
+            ...$this->inherit(),
+            ...$overrides,
+        ])->blocks([]);
+    }
+
+    /**
+     * @param array<string, mixed> $overrides
+     */
+    protected function features(array $overrides = []): BlueprintSection
+    {
+        $items = $this->items('features.items');
+
+        return BlueprintSection::make(FeaturesSection::class)
+            ->settings(['eyebrow' => $this->t('features.eyebrow'), 'title' => $this->t('features.title'), 'intro' => '', ...$this->inherit(), ...$overrides])
+            ->blocks(array_map(static fn (array $item, int $i): array => [
+                'id' => 'feature-'.($i + 1),
+                'type' => 'feature',
+                'settings' => ['icon' => $item['icon'], 'title' => $item['title'], 'description' => $item['description']],
+            ], $items, array_keys($items)));
+    }
+
+    /**
+     * @param array<string, mixed> $overrides
+     */
+    protected function story(array $overrides = []): BlueprintSection
+    {
+        $photo = $this->type->photo('story');
+
+        return BlueprintSection::make(ImageTextSection::class)->settings([
+            'eyebrow' => $this->t('story.eyebrow'),
+            'title' => $this->t('story.title'),
+            'body' => '<p>'.e($this->t('story.body')).'</p>',
+            'label' => '',
+            'url' => '',
+            'image' => $photo,
+            'media_placement' => $photo === '' ? 'none' : 'start',
+            ...$this->inherit(),
+            ...$overrides,
+        ]);
+    }
+
+    /**
+     * @param array<string, mixed> $overrides
+     */
+    protected function faq(array $overrides = []): BlueprintSection
+    {
+        $items = $this->items('faq.items');
+
+        return BlueprintSection::make(FaqSection::class)
+            ->settings(['eyebrow' => '', 'title' => $this->t('faq.title'), 'intro' => '', ...$this->inherit(), ...$overrides])
+            ->blocks(array_map(static fn (array $item, int $i): array => [
+                'id' => 'faq-'.($i + 1),
+                'type' => 'item',
+                'settings' => ['question' => $item['question'], 'answer' => $item['answer']],
+            ], $items, array_keys($items)));
+    }
+
+    /**
+     * @param array<string, mixed> $overrides
+     */
+    protected function cta(array $overrides = []): BlueprintSection
+    {
+        return BlueprintSection::make(CtaSection::class)->settings([
+            'badge' => '',
+            'heading' => $this->t('cta.heading'),
+            'subheading' => $this->t('cta.subheading'),
+            'note' => '',
+            'label' => $this->t('cta.label'),
+            'url' => '/contact',
+            'backdrop' => 'none',
+            ...$this->inherit(),
+            ...$overrides,
+        ]);
+    }
+
+    protected function t(string $key): string
+    {
+        return (string) __("shop-presets.{$this->type->value}.{$key}");
+    }
+
+    /**
+     * @return list<array<string, string>>
+     */
+    protected function items(string $key): array
+    {
+        $items = __("shop-presets.{$this->type->value}.{$key}");
+
+        return is_array($items) ? array_values($items) : [];
+    }
+
+    /**
+     * @return array{scheme: string}
+     */
+    protected function inherit(): array
+    {
+        return ['scheme' => ColorSchemes::INHERIT];
+    }
+}

@@ -1,0 +1,133 @@
+<?php
+
+declare(strict_types=1);
+
+// lang/en/shop-presets.php. Replace this sample copy with the user's own: no invented awards, prices, reviews or people.
+return [
+    'nav' => [
+        'home' => 'Home',
+        'contact' => 'Contact',
+    ],
+
+    'bakery' => [
+        'name' => 'Bakery',
+        'description' => 'Warm and handmade, for bakeries, patisseries and cafes.',
+        'hero' => [
+            'eyebrow' => 'Baked fresh every morning',
+            'heading' => 'Bread the street wakes up for',
+            'subheading' => 'Sourdough, pastries and celebration cakes, made by hand in our own kitchen.',
+            'cta' => 'Visit the shop',
+        ],
+        'features' => [
+            'eyebrow' => 'What we bake',
+            'title' => 'Something for every table',
+            'items' => [
+                ['icon' => 'heroicon-o-clock', 'title' => 'Daily bread', 'description' => 'Loaves and rolls out of the oven every morning.'],
+                ['icon' => 'heroicon-o-cake', 'title' => 'Cakes to order', 'description' => 'Birthdays, weddings and office parties.'],
+                ['icon' => 'heroicon-o-sparkles', 'title' => 'Pastries', 'description' => 'Croissants, buns and seasonal tarts.'],
+            ],
+        ],
+        'story' => [
+            'eyebrow' => 'Our kitchen',
+            'title' => 'Slow dough, simple ingredients',
+            'body' => 'Flour, water, salt and time. Tell visitors how you bake and what makes your shop yours.',
+        ],
+        'faq' => [
+            'title' => 'Questions we hear a lot',
+            'items' => [
+                ['question' => 'Can I order a cake for a date?', 'answer' => 'Yes. Get in touch with the date, size and flavour you have in mind.'],
+                ['question' => 'Do you bake gluten-free?', 'answer' => 'Ask us what is on the counter today.'],
+            ],
+        ],
+        'cta' => [
+            'heading' => 'Come by while it is still warm',
+            'subheading' => 'Find our address and opening hours.',
+            'label' => 'Get in touch',
+        ],
+        'contact' => [
+            'heading' => 'Visit or get in touch',
+            'subheading' => 'Questions about an order? Send us a message.',
+        ],
+    ],
+
+    'fashion' => [
+        'name' => 'Fashion',
+        'description' => 'Clean and editorial, for boutiques and clothing labels.',
+        'hero' => [
+            'eyebrow' => 'New season',
+            'heading' => 'Pieces made to be worn for years',
+            'subheading' => 'Considered clothing in small runs. Come and try it on.',
+            'cta' => 'Book a fitting',
+        ],
+        'features' => [
+            'eyebrow' => 'The shop',
+            'title' => 'How we work',
+            'items' => [
+                ['icon' => 'heroicon-o-scissors', 'title' => 'Alterations', 'description' => 'Hems and fits adjusted in the shop.'],
+                ['icon' => 'heroicon-o-gift', 'title' => 'Gift wrapping', 'description' => 'Ask at the counter.'],
+                ['icon' => 'heroicon-o-arrow-path', 'title' => 'Easy returns', 'description' => 'Tell customers your returns policy here.'],
+            ],
+        ],
+        'story' => [
+            'eyebrow' => 'About',
+            'title' => 'A small shop with a clear eye',
+            'body' => 'Describe the label, who designs it and what it stands for.',
+        ],
+        'faq' => [
+            'title' => 'Before you visit',
+            'items' => [
+                ['question' => 'Do I need an appointment?', 'answer' => 'Walk in any time; book a fitting for a quieter visit.'],
+            ],
+        ],
+        'cta' => [
+            'heading' => 'See the collection in person',
+            'subheading' => 'Book a fitting or drop by.',
+            'label' => 'Get in touch',
+        ],
+        'contact' => [
+            'heading' => 'Book a fitting',
+            'subheading' => 'Tell us a time that suits you.',
+        ],
+    ],
+
+    'services' => [
+        'name' => 'Services',
+        'description' => 'Clear and trustworthy, for consultants, agencies and local services.',
+        'hero' => [
+            'eyebrow' => 'Local and independent',
+            'heading' => 'Expert help, without the runaround',
+            'subheading' => 'Tell visitors what you do and who you do it for in one sentence.',
+            'cta' => 'Request a quote',
+        ],
+        'features' => [
+            'eyebrow' => 'Services',
+            'title' => 'What we can do for you',
+            'items' => [
+                ['icon' => 'heroicon-o-briefcase', 'title' => 'Consulting', 'description' => 'Describe your first service.'],
+                ['icon' => 'heroicon-o-calendar-days', 'title' => 'Ongoing support', 'description' => 'Describe your second service.'],
+                ['icon' => 'heroicon-o-chat-bubble-left-right', 'title' => 'Workshops', 'description' => 'Describe your third service.'],
+            ],
+        ],
+        'story' => [
+            'eyebrow' => 'About',
+            'title' => 'Who you will work with',
+            'body' => 'Introduce the team and how a project runs.',
+        ],
+        'faq' => [
+            'title' => 'Common questions',
+            'items' => [
+                ['question' => 'How do we start?', 'answer' => 'Send a short message and we will reply with next steps.'],
+                ['question' => 'Do you work remotely?', 'answer' => 'Explain where and how you work.'],
+            ],
+        ],
+        'cta' => [
+            'heading' => 'Tell us what you need',
+            'subheading' => 'Send a few lines and we will get back to you.',
+            'label' => 'Request a quote',
+        ],
+        'contact' => [
+            'heading' => 'Request a quote',
+            'subheading' => 'A few lines about the job is enough to start.',
+        ],
+    ],
+];

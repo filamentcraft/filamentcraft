@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Shop\Pages\Homes;
+
+use App\Shop\Pages\HomePage;
+
+final class ServicesHome extends HomePage
+{
+    public function sections(): array
+    {
+        return [
+            $this->hero(['layout' => 'compact', 'content_align' => 'start']),
+            $this->features(['layout' => 'cards', 'columns' => '3']),
+            $this->faq(),
+            $this->cta(['layout' => 'split']),
+        ];
+    }
+}

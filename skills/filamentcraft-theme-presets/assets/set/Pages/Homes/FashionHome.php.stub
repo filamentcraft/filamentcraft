@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Shop\Pages\Homes;
+
+use App\Shop\Pages\HomePage;
+
+final class FashionHome extends HomePage
+{
+    public function sections(): array
+    {
+        return [
+            $this->hero(['layout' => 'spotlight', 'content_align' => 'center', 'media_mode' => $this->type->photo('hero') === '' ? 'none' : 'background']),
+            $this->story(['media_placement' => $this->type->photo('story') === '' ? 'none' : 'end']),
+            $this->features(['layout' => 'minimal', 'columns' => '3']),
+            $this->cta(['layout' => 'banner']),
+        ];
+    }
+}
