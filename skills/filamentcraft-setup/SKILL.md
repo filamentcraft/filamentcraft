@@ -71,6 +71,8 @@ Never `require` a tenancy package for FilamentCraft. It resolves sites from Fila
 
 Each tenant gets a live site the moment it exists through a **site blueprint** plus a model observer, so onboarding needs no manual step. Recipe, access control and the public tenant URL scheme (`/{tenantSlug}/{path}`) are in [references/tenancy-and-provisioning.md](references/tenancy-and-provisioning.md).
 
+To add or revise pages on a site that already exists (seeders, demo accounts, connectors), use `FilamentCraft\Pages\SiteEditor`; it writes drafts and never publishes. `SiteEditor::for($site)->page($page)` also edits the sections of an existing page (see the filamentcraft-content skill). To give a new customer a first draft of a whole site from a brief, queue `app(SiteGenerator::class)->queue($site, $brief)` (`FilamentCraft\Ai\SiteGeneration\SiteGenerator`); there is no facade method for either.
+
 ## URLs and domains
 
 - `public_routes` on registers a fallback route plus `sitemap.xml`, `robots.txt` and `llms.txt`. A request maps to a site by exact `domain` (its `www.` twin also serves), then `subdomain` under `filamentcraft.domain.primary` (the APP_URL host by default), then tenancy, then the first live site. A host that matches a **non-live** site returns 404, and so does an unknown subdomain once any site has one.

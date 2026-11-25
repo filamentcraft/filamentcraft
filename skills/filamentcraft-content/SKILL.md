@@ -1,6 +1,6 @@
 ---
 name: filamentcraft-content
-description: "Manage a live FilamentCraft site's content from code or artisan: create, edit, publish, duplicate, rename or delete pages, change sections on existing pages, add a language and translate pages (copy or AI), edit the header, footer and menus, set page and site SEO, add redirects, read form submissions, add tracking scripts and answer what visitor data is stored (analytics, consent), add images to the media library, schedule or hide sections, restore page history, back up and restore sites, and clear the cache. Use this whenever the user asks to change what a FilamentCraft site says or shows without building a new section type: \"add a French version\", \"add an About page\", \"put Pricing in the menu\", \"change the footer\", \"fix the page titles\", \"redirect /old to /new\", \"export the contact messages\", \"why does the site still show old content\", seeders or scripts that write `Template`, `TemplateRevision`, `Region`, `Redirect`, `Media` or `Submission` rows."
+description: "Manage a live FilamentCraft site's content from code or artisan: create, edit, publish, duplicate, rename or delete pages, change sections on existing pages, add a language and translate pages (copy or AI), edit the header, footer and menus, set page and site SEO, add redirects, read form submissions, add tracking scripts and answer what visitor data is stored (analytics, consent), add images to the media library (including stock or AI image sources), schedule or hide sections, restore page history, back up and restore sites, and clear the cache. Use this whenever the user asks to change what a FilamentCraft site says or shows without building a new section type: \"add a French version\", \"add an About page\", \"put Pricing in the menu\", \"change the footer\", \"fix the page titles\", \"redirect /old to /new\", \"export the contact messages\", \"why does the site still show old content\", seeders or scripts that write `Template`, `TemplateRevision`, `Region`, `Redirect`, `Media` or `Submission` rows."
 license: MIT
 ---
 
@@ -12,7 +12,7 @@ Most content work belongs in the editor. Do it in code when the user asks for a 
 
 ## Rules that keep sites safe
 
-1. **Never edit a revision.** Append one (`parent_revision_id` = current head) under a row lock, move `head_revision_id`, fire `TemplateDraftSaved`. Publish with `$template->publishHead()`, never by setting `published_revision_id`. Recipes: [references/pages-and-revisions.md](references/pages-and-revisions.md).
+1. **Never edit a revision.** To change sections on an existing page use `SiteEditor::page()` ([references/draft-api.md](references/draft-api.md)); it handles revisions, and `StaleDraft` tells you the page changed since you loaded it. Otherwise append one (`parent_revision_id` = current head) under a row lock, move `head_revision_id`, fire `TemplateDraftSaved`. Publish with `$template->publishHead()`, never by setting `published_revision_id`. Recipes: [references/pages-and-revisions.md](references/pages-and-revisions.md).
 2. **Draft by default.** Leave page changes as a draft unless the user asked for them live, so the team can review them in the editor (History can roll back). Say which it is.
 3. **Some writes are live the moment you save**: regions (header/footer/announcement), page SEO (`TemplateSeo::write`), site settings, redirects, slugs, and AI translation of a region. Read the current value first, merge, and tell the user it is live.
 4. **Find the site safely.** Site slugs are only unique per owner. Use `Site::query()->forOwner($team)->live()->first()` in tenant apps, an id, or `ExportSiteCommand::findSite()` semantics (id, else a slug only one site uses). Use the model scopes (`forSite`, `published`, `draft`, `forOwner`, `live`) and `Model::query()`; models may be overridden by the host.
@@ -25,6 +25,7 @@ Most content work belongs in the editor. Do it in code when the user asks for a 
 
 | Task | Read |
 |---|---|
+| Edit sections of an existing page or region from code (`SiteEditor::page()`, `StaleDraft`, `save()` vs `publish()`), replace a page's sections from a spec (`revisePage()`), generate a whole site from a brief on the queue (`SiteGenerator::queue()`) | [references/draft-api.md](references/draft-api.md) |
 | Create a page, change sections on a page, publish/unpublish, duplicate, rename or move a page (with its redirect), set the homepage, delete a page, restore history, schedule or hide a section | [references/pages-and-revisions.md](references/pages-and-revisions.md) |
 | Add a language (and not leave it half-done), copy or AI-translate pages and header/footer, RTL, language switcher, hreflang, `/fr/...` URLs, locale links in host pages | [references/locales-and-translation.md](references/locales-and-translation.md) |
 | Header, footer, announcement bar, menu links | [references/regions-and-menus.md](references/regions-and-menus.md) |

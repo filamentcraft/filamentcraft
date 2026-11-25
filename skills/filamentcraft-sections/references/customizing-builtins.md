@@ -68,7 +68,7 @@ FilamentCraftPlugin::make()
     ->renderHook(RenderHook::SectionEnd, fn () => view('shop.trust-badges'), [HeroSection::class]);
 ```
 
-Hooks: `SectionStart`, `SectionEnd` (limit with the third argument), `HeaderNavStart`, `HeaderNavEnd`, `HeaderMobileMenuEnd`, `HeaderActionsStart`, `HeaderActionsEnd`, `FooterStart`, `FooterEnd`, `HeroContentEnd`, `ProductDetailGalleryAfter`, `ProductDetailPriceAfter`, `ProductDetailAddToCartAfter`, `ProductDetailInfoEnd` (the product-detail hooks get `['product' => ProductData]`).
+Hooks: `SectionStart`, `SectionEnd` (limit with the third argument), `HeaderNavStart`, `HeaderNavEnd`, `HeaderMobileMenuEnd`, `HeaderActionsStart`, `HeaderActionsEnd`, `FooterStart`, `FooterEnd`, `HeroContentEnd`, `ProductDetailGalleryAfter`, `ProductDetailPriceAfter`, `ProductDetailAddToCartAfter`, `ProductDetailInfoEnd` (the product-detail hooks get `['product' => ProductData]`). Header hook icons follow the header's Icon size with `class="fc-header__icon"` or `var(--fc-header-icon-size)`.
 
 Return a view, an `Htmlable` or a string (escaped). A section with a hook skips the fragment cache, so per-request output stays live.
 
