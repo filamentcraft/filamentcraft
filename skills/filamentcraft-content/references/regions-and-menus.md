@@ -91,3 +91,17 @@ $region->save();
 ```
 
 Translate `text` and `cta_label` per locale before saving. Section scheduling (`_schedule_from` / `_schedule_until`) works here too for time-boxed promotions.
+
+## Shared sections
+
+`FilamentCraft\Models\SharedSection` (table `filamentcraft_shared_sections`, swap via `filamentcraft.models.shared_section`) holds one section payload per site that pages and regions place by reference (a `shared-section` slice with `settings.shared_id`). Created in the editor with **Save as shared section** (copied into every site locale, the original becomes a reference); inserted from the **Shared** group of the add-section picker.
+
+- Editing happens in the editor's `?shared={id}` mode. Save is publishing (no draft, no history), flushes the site cache and shows how many pages it affects.
+- **Detach** turns one placement back into a regular section. `DeleteSharedSection` refuses while `SharedSections::usageCount()` is above zero, so detach first.
+- Hidden and scheduled inner sections are respected wherever it is placed; works on dynamic templates and variants.
+- Export writes `shared_sections.json`. Import always adds rows, remaps references on pages, history and regions, and nulls a reference whose section is not in the bundle.
+- Requires the `create_filamentcraft_shared_sections` migration (`php artisan filamentcraft:upgrade`).
+
+## Links inside rich text
+
+The rich-text link button uses the page-link picker (pages, host `LinkSource` records, free URL) and stores `data-fc-ref="page:{id}"` or `"{sourceKey}:{id}"` next to the href. `RichTextLinks` resolves the reference at render time (site-scoped): the current URL replaces the stored href, a link to a draft page becomes plain text on the live site, an unresolvable reference keeps the stored href, and every href still passes `resolveLinkUsing()`. A source opts in by also implementing `FilamentCraft\Links\Contracts\ResolvesLinkReference` (`resolve(Site $site, string $id): ?string`, `null` keeps the stored href). Page moves rewrite rich-text hrefs and flush the site cache; after changing a record's URL elsewhere call `app(FlushPublishedSiteCache::class)->flush($site)`.

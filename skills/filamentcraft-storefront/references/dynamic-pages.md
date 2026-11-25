@@ -80,3 +80,18 @@ Layout props: `site`, `title`, `color-scheme`, `mode` (`published`), `locale`, `
 - `<x-filamentcraft::layout>` emits no hreflang. In a multi-locale shop add `@push('fc-head') <x-filamentcraft::hreflang :site="$site" :current="$locale" /> @endpush` and `<x-filamentcraft::locale-switcher :site="$site" :current="$locale" />` (content skill, locales reference).
 - `#[Storefront(['title' => …])]` uses only `title`; other params are dropped (publish the layout view to use more). `Route::filamentCraftStorefront(?string $ownerModel, ?Closure $routes, $tenantParameter, $tenantSlugColumn, $tenantPattern)` defaults `tenantPattern` to exclude only `admin`: if your Filament panel path differs, pass a pattern that excludes it, or `/control-panel/users` is captured as a tenant.
 - Middleware aliases: `filamentcraft.site` (resolve the site from the host or domain) and `filamentcraft.tenant:{param},{OwnerModel},{slugColumn}`.
+
+## C. Alternate templates per record (variants)
+
+```php
+DynamicTemplateDefinition::make('product.show')
+    ->path('shop/{product}')
+    ->templateSlug(fn (RenderContext $context, Site $site): ?string => $context->binding('product')?->is_rental ? 'product-rental' : 'product')
+    ->fallbackTemplateSlug('product')   // required with a closure
+```
+
+- A variant is a `Template` with `variant_of` set to the definition name (editor: **Duplicate as variant**, asks for a name and template key; the key is what the closure returns). Requires the `add_variant_of_to_filamentcraft_templates` migration (`php artisan filamentcraft:upgrade`).
+- The closure's answer is used only when it is a **published** variant of the same definition on that site; otherwise the default page, then the fallback. A throw is reported and treated as `null`.
+- Variants have no public URL (their own slug 404s) and are excluded from the sitemap, `llms.txt`, IndexNow, homepage choice and page kind.
+- `DynamicTemplateRegistry::variants($site, 'product.show')` lists them (drafts included); `definitionForSlug($slug)` maps a template key to its definition. Doctor warns about variants of an unregistered definition. Export and import carry `variant_of`.
+- Variants cannot be tested by requesting their slug: request the record's URL with a record that makes the closure return the key.

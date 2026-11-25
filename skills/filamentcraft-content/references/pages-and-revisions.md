@@ -54,6 +54,8 @@ $page = $exists ? null : app(\FilamentCraft\Blueprints\BlueprintSeeder::class)->
 
 ## Change sections on an existing page
 
+Use `SiteEditor::page()` ([draft-api.md](draft-api.md)): it reads, edits, saves and publishes sections and throws `StaleDraft` when the page moved under you. The recipe below is the lower-level fallback.
+
 Append a revision. This is the editor's save, and `RestoreRevision` is the reference implementation:
 
 ```php

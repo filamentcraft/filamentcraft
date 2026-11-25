@@ -7,6 +7,100 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.42.0] — 2026-11-25
+
+### Upgrade
+
+Run `php artisan filamentcraft:upgrade`, then migrate. It publishes
+`create_filamentcraft_shared_sections`, `add_variant_of_to_filamentcraft_templates` and
+`add_source_to_filamentcraft_media`. Until you do, the site and editor keep working; shared
+sections and variants stay switched off.
+
+### Changed
+
+- **Out-of-range slider values snap to the nearest end.** A stored Range value outside its
+  slider (typed into the number box, imported, or from an older schema) used to fall back to the
+  setting's default; it now becomes the slider's minimum or maximum. A 2px body size on a 15–20px
+  slider renders at 15px instead of the default 17px. [51]
+- **The default-language canonical follows your `localeUrlsUsing()` resolver.** With a custom
+  resolver, the canonical and hreflang URL of the default language now come from it (with
+  `$isDefault = true`) instead of the page's base URL. A resolver that returns `null` for the
+  default language keeps the old URL. [72]
+- **`revisePageFromBlueprint()` keeps page settings.** A full revise no longer drops the page's settings (colour scheme and the like).
+
+### Added
+
+- **Features on phones.** A **Columns on phones** choice (one or two), an **Icon style** (tile,
+  large without a tile, or solid on the primary colour) and **Centre the items** for centred
+  sections. Existing sections keep one column, tiled icons and start-aligned items. [52]
+- **Category grid on phones.** The same **Columns on phones** choice; the tile shape follows the
+  existing **Image ratio** look setting. [58]
+- **Header icon size.** Separate desktop and phone sizes (16 to 32px, default 20px) for the menu
+  and close icons. Icons added through the header render hooks can follow it with
+  `class="fc-header__icon"` or `var(--fc-header-icon-size)`. [75]
+- **Category menus up to five levels.** Levels four and five show as nested lists in the mega
+  menu and the phone menu. [73]
+- **Solid sticky header.** **Background while pinned** offers Glass (the current look) or Solid.
+  Hosts can also set `--fc-header-sticky-opacity`. [74]
+- **`RecordSeo` `locales`.** A dynamic page's `seo()` hook can list the languages a record is
+  translated in, and hreflang skips the others. [78]
+- **`ThemePresetTester::forSite()`.** Names the site `assertStrict()` reads host menus from. [57]
+- **Page and record links in rich text [38].** The link button in a rich-text editor opens the same
+  picker as link fields: pages, your `LinkSource` records and a free URL. The link stores a
+  reference (`data-fc-ref`) and shows the target's current address, so renaming or moving a page
+  keeps it working. A link to a draft or deleted page is plain text on the live site, and every address still
+  goes through `resolveLinkUsing()`. Implement `ResolvesLinkReference` on a `LinkSource` to make its
+  records resolvable.
+- **Product and category links that follow slug renames [38].** Set the optional `id` on
+  `ProductData` and `CategoryData` and implement the new optional `FindsRecordsById` contract on
+  your `Storefront` or `Catalog`; rich-text links to those records then resolve by id. Nothing
+  changes for stores that do neither.
+- **Shared sections [25].** **Save as shared section** turns a section into one you place on many
+  pages and regions from the **Shared** group of the add-section picker. Edit it once, save, and it
+  is live everywhere, with a usage notice, **Detach** and delete blocked while it is used. It works
+  on dynamic templates and variants, respects hidden and scheduled inner sections, and travels in
+  site exports as `shared_sections.json`. `SharedSection` is swappable via
+  `filamentcraft.models.shared_section`.
+- **Alternate templates per record [24].** `DynamicTemplateDefinition::templateSlug()` takes a
+  closure `(RenderContext $context, Site $site): ?string` with a required `fallbackTemplateSlug()`.
+  Variants are made with **Duplicate as variant** in the editor and have no public address.
+  `DynamicTemplateRegistry::variants()` and `definitionForSlug()` read them, `filamentcraft:doctor`
+  warns about unknown definitions, and export and import carry `variant_of`.
+- **Draft API: edit pages, sections and regions from code.** `SiteEditor::for($site)->pages()` lists pages and `->page($page)` opens a draft with `sections()`, `section()`, `schema()`, `addSection()`, `updateSection()`, `moveSection()` and `removeSection()`; `PageDraft::save()` keeps it as a draft and `PageDraft::publish()` goes live. `->region()` does the same for the header, footer and announcement bar, which go live on save. A draft changed by someone else throws `StaleDraft` unless you pass `force: true`, and `SiteEditorSaved` fires after each save. See [Draft API](/guide/draft-api).
+- **`SiteEditor`: create and revise pages from code.** `SiteEditor::for($site)` adds a draft page from a registered blueprint or a spec array, `revisePage()` saves a spec as a new revision of an existing page, and `revisePageFromBlueprint()` does the same from a blueprint, all with warnings, a `strict` mode and a `PageDraftResult`. Nothing publishes until you call `publishHead()`. See [Creating Pages from Code](/guide/pages-from-code).
+- **`revisePageFromBlueprint()` without a blueprint, one locale at a time.** The blueprint defaults to the page's own, and `locales:` replaces only those languages while the others and the page settings stay untouched, so a new language can be seeded from a `SiteLocaleAdded` listener. See [Creating Pages from Code](/guide/pages-from-code#one-locale-at-a-time).
+- **Structured warnings.** Errors and warnings from `SiteEditor` are `SpecIssue` objects with a `SpecIssueCode`, a `path` and a `message`, so a connector can hand them straight back to a model. `InvalidPageSpec::messages()` and `warningMessages()` keep the plain strings. See [Draft API](/guide/draft-api#warnings-and-strict-mode).
+- **Generate a whole site from a brief on the queue.** `SiteGenerator::queue($site, $brief)` returns a run id and writes every page as a draft in a self-queuing job, firing `SiteGenerationStarted`, `SiteGenerationPageCompleted`, `SiteGenerationFinished` and `SiteGenerationFailed`. The palette and theme apply only when the last page is done, and `SiteGenerator::run($id)` reads progress. See [AI Assistant](/guide/ai-assistant#generate-a-site-from-code).
+- **Reference screenshot in the AI brief.** On providers that read images (Gemini, OpenAI, Anthropic) the brief step takes an optional screenshot (JPEG, PNG or WebP, up to 4 MB). Planning a single page sends it to the page and design planners (layout, mood, colours); planning a whole site sends it to the design planner only (mood, colours). The site plan and section writing never see it, and the model is told never to copy text or images. It is an upload, never a URL, never stored in the media library, and deleted after planning, so a design retry runs without it. See [AI Assistant](/guide/ai-assistant#reference-screenshot).
+- **Image sources in the media picker.** A source implementing the `ImageSource` contract and registered with `FilamentCraftPlugin::imageSources()` adds a tab beside the library: search on submit, thumbnails with a credit line, "Load more", and one click to use a result. Picks land in the field like a library pick, and external images keep their credit. See [Image Sources](/guide/image-sources).
+- **Built-in stock photo source.** `UnsplashImageSource` adds a Stock photos tab backed by the Unsplash API: set `FILAMENTCRAFT_UNSPLASH_ACCESS_KEY`, register it with `imageSources()`, and picked photos are hotlinked with their credit and a queued download ping. The key stays on the server. `showImageCredits(false)` turns off the credit line on pages. See [Image Sources](/guide/image-sources#stock-photos-unsplash).
+
+### Fixed
+
+- **Phone menu under a sticky header.** A long menu now scrolls on its own instead of running
+  off the screen. Both sticky toggles now say that the header stays pinned while either is on. [48]
+- **Mega menu at the right edge.** A wide dropdown shifts back inside the window, and a tall one
+  scrolls instead of running past the bottom. [49]
+- **Product card frame.** The frame and its hover ring now run around the image too. [59]
+- **Category product count.** "1 product" / "12 producten" with proper singular and plural
+  forms in every language. [50]
+- **New sections in the site's language.** Sections added from the editor take their default
+  text in the language being edited. The cart, checkout, category grid, product carousel,
+  product detail, product listing, image with text, newsletter, comparison, banner and pricing
+  plan copy is now translated, and the settings panel no longer marks such a fresh section as
+  changed. [47]
+- **Store hero buttons** are centred under centred banner text. A button radius typed above the
+  slider's range is kept (up to 32px) instead of falling back to 4px; any out-of-range slider
+  value now snaps to the nearest end. [51]
+- **Countdown on phones.** The four tiles share one row from 320px. [69]
+- **Strict preset checks** accept a header or footer pinned to a scheme the preset authors
+  itself, and validate host menus without a current site. [56] [57]
+- **Default-language hreflang** asks a custom `localeUrlsUsing()` resolver too, so per-language
+  slugs no longer point at a redirect. [72]
+- **Sitemap languages.** With a custom `localeUrlsUsing()` resolver, editor pages are listed in
+  every site language with their hreflang links. The resolver is called inside a request for
+  each page, so read the page through `request()` or the `Request` facade. [77]
+
 ## [1.41.30] — 2026-11-15
 
 ### Added
