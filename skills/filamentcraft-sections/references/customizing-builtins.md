@@ -72,6 +72,10 @@ Hooks: `SectionStart`, `SectionEnd` (limit with the third argument), `HeaderNavS
 
 Return a view, an `Htmlable` or a string (escaped). A section with a hook skips the fragment cache, so per-request output stays live.
 
+## Stable product page components
+
+`<x-filamentcraft::product.gallery :product :id :images :sticky>` (max 8 images, default slot renders inside), `<x-filamentcraft::accordion>` with `<x-filamentcraft::accordion.item :title :open>`, and `<x-filamentcraft::tabs :items :label>` (items are `['label' => ..., 'content' => ...]`, root carries `data-fc-tabs`). Classes and attributes stable for 1.x: `fc-gallery*`, `fc-accordion*`, `fc-tabset*`, `data-fc-tabs`, `data-fc-variants`. Product detail has a `sticky_gallery` toggle (default off), offset by `--fc-header-height`. Typical use: an accordion fed from `$product->meta()` returned from a `RenderHook::ProductDetailAddToCartAfter` hook scoped to `ProductDetailSection::class`, so no subclass or copied view is needed.
+
 ## Presets and catalog
 
 ```php

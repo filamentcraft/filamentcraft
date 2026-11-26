@@ -31,12 +31,47 @@ Data objects in `FilamentCraft\Commerce\Data`, all readonly with named arguments
 | Class | Fields |
 |---|---|
 | `CatalogQuery` | `collection` (`all`), `categorySlug`, `sort` (`featured`), `minMinor`, `maxMinor`, `search`, `limit`, `tag`, `brand` |
-| `ProductData` | required `slug`, `title`, `priceMinor`; optional `compareMinor`, `currencySymbol` (`$`), `symbolPosition` (`before`/`after`), `images` (list of URLs), `categoryName`, `categorySlug`, `rating`, `reviews`, `description`, `variants` (list of names), `attributes` (name ⇒ value), `inStock`, `isNew`, `isFeatured`, `url`, `currencyCode`, `meta` |
+| `ProductData` | required `slug`, `title`, `priceMinor`; optional `compareMinor`, `currencySymbol` (`$`), `symbolPosition` (`before`/`after`), `images` (list of URLs), `categoryName`, `categorySlug`, `rating`, `reviews`, `description`, `variants` (list of names, or `VariantData`), `options` (list of `ProductOptionData`), `swatches` (list of `ProductSwatch`), `attributes` (name ⇒ value), `inStock`, `isNew`, `isFeatured`, `url`, `currencyCode`, `meta` |
+| `ProductOptionData` | `key`, `name`, `values` (list of `ProductOptionValueData`), `display` (`ProductOptionDisplay::Buttons`, `Swatches`, `Select`) |
+| `ProductOptionValueData` | `key`, `label`, `color` (hex only), `image` |
+| `VariantData` | `key`, `label`, `options` (option key ⇒ value key), `priceMinor`, `compareMinor` (both null = product's), `inStock`, `image` |
+| `ProductSwatch` | `label`, `color` (hex only), `image`, `url` |
 | `CategoryData` | `slug`, `name`, `image`, `count`, `url`, `meta` |
 | `CustomerDetails` | `name`, `email`, `phone`, `address`, `city`, `postal`, `country`, `note`, `shippingMinor` (computed by the server) |
 | `OrderResult` | `number`, `totalMinor`, `itemCount`, `placed`; `OrderResult::failed()` |
 
-`ProductData` helpers the sections use: `onSale()`, `savePercent()`, `primaryImage()`, `badge()`.
+`ProductData` helpers the sections use: `onSale()`, `savePercent()`, `primaryImage()`, `badge()`, and for variants `variantList()`, `findVariant()`, `variantForOptions()`, `variantLabel()`, `priceFor()`, `compareFor()`, `savePercentFor()`, `inStockFor()`, `hasStructuredVariants()`.
+
+## Options, variants and swatches
+
+```php
+new ProductData(
+    slug: 'field-jacket', title: 'Field Jacket', priceMinor: 12900, url: '/shop/field-jacket',
+    options: [
+        new ProductOptionData('colour', 'Colour', [
+            new ProductOptionValueData('olive', 'Olive', color: '#4b5320'),
+            new ProductOptionValueData('sand', 'Sand', color: '#c2b280'),
+        ], ProductOptionDisplay::Swatches),
+        new ProductOptionData('size', 'Size', [new ProductOptionValueData('m', 'M'), new ProductOptionValueData('l', 'L')]),
+    ],
+    variants: [
+        new VariantData('olive-m', options: ['colour' => 'olive', 'size' => 'm']),
+        new VariantData('olive-l', options: ['colour' => 'olive', 'size' => 'l'], inStock: false),
+        new VariantData('sand-m', options: ['colour' => 'sand', 'size' => 'm'], priceMinor: 13900, compareMinor: 15900),
+    ],
+    swatches: [new ProductSwatch('Olive', color: '#4b5320'), new ProductSwatch('Sand', color: '#c2b280')],
+);
+```
+
+- Legacy `variants: ['S', 'M']` (strings) keeps working; mixing strings and `VariantData` is allowed.
+- `cart/add` takes `variant=<key>` or `options[colour]=olive`; `variant` wins when both arrive. No match or an unknown key sets the invalid flash; a sold-out variant, or a sold-out product without variants, sets the sold-out flash. Nothing is added.
+- Prices come from `priceFor()` server-side on every request, never from the form. A variant removed from the catalog drops out of existing session carts.
+- `placeOrder()` lines carry `variant` (the stored key) and the order snapshot has `variant` (label) and `variant_key` (raw key); look the price up with `$product->priceFor($line['variant'])`.
+- Only 3 or 6 digit hex colours reach a `style` attribute; anything else renders as a label-only chip.
+- Cards show `swatches` when the listing or carousel has **Show colour swatches** on (default off; max 5 then `+N`). Custom card views receive a `showSwatches` variable. Markup contract: `ul.fc-card-swatches[data-fc-swatches]`, `.fc-card-swatch`, `data-fc-swatch-image`, `--fc-swatch`.
+- A swatch `url` can preselect the product page: `?colour=olive` (option key = value key) or `?variant=<key>`. Unknown values are ignored.
+- A product with `VariantData` variants shows a **Choose options** link on cards instead of quick add, and `cart/add` without a variant sets the invalid flash.
+- The product page gallery shows at most 8 images. Product detail has a **Sticky gallery** toggle (default off).
 
 ## A complete adapter
 

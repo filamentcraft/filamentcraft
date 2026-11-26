@@ -5,7 +5,34 @@ All notable changes to FilamentCraft are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.42.1] — 2026-11-26
+
+### Upgrade
+
+No action needed. The new settings (Show colour swatches, Sticky gallery) default to off, and existing string `variants` keep working. Custom product card views receive a new `showSwatches` variable. The product page gallery now shows at most 8 images.
+
+- Legacy string-variant cart lines whose variant the host renamed or removed are now dropped from the cart (they used to be charged at the base price).
+- If you published the product detail view with `--copy-view`, iterate `$product->variantList()` (each `VariantData` has `key`; use `$product->variantLabel($key)` for the text) instead of echoing `$product->variants` entries, which can now be `VariantData`.
+- On product cards, products with variants (structured or label-only tiers) show a **Choose options** link instead of the quick-add button.
+
+### Added
+
+- **Product options, variants and swatches.** `ProductData` takes `options` (`ProductOptionData`, `ProductOptionValueData`, `ProductOptionDisplay`), structured `variants` (`VariantData` with its own price, compare price, stock and image) and `swatches` (`ProductSwatch`). The product page shows a picker that swaps price, stock and image, works without JavaScript, and posts `options[...]`. Cart and checkout price each line with `priceFor()` server-side, a stale variant drops out of a session cart, and order lines carry `variant_key`. (#190)
+- **Colour swatches on product cards.** A **Show colour swatches** toggle on Product listing and Product carousel (off by default) shows up to five swatches and a `+N` link. [22]
+- **Stable product page components.** `<x-filamentcraft::product.gallery>`, `<x-filamentcraft::accordion>`, `<x-filamentcraft::accordion.item>` and `<x-filamentcraft::tabs>`, with a **Sticky gallery** toggle on Product page. [29a]
+- **Live preset thumbnails.** The preset picker renders each preset in an iframe with your site's theme, fonts and catalog. `Preset::thumbnail()` shows a fixed image instead. (#193)
+- **Own-checkout docs.** Returning your own route from `url('checkout')` skips the built-in checkout, and a test now guards the Cart section's checkout link. The payment hand-off through `OrderResult::redirect()` was already shipped. (#192)
+
+### Changed
+
+- The product page gallery shows at most 8 images so every thumbnail selects its image (the radio CSS stopped at 5).
+
+### Fixed
+
+- A selected sold-out size now reads as an outlined, struck-through pill instead of faint white text on grey, and a sold-out colour swatch dims its colour but keeps its ring.
+- The empty variant message no longer leaves a gap between the option picker and the quantity row.
+- A card swatch with no link and no image is a plain colour dot instead of a button that does nothing.
+- Live preset thumbnails start loading as soon as the picker opens and show a visible placeholder while they load.
 
 ## [1.42.0] — 2026-11-25
 
