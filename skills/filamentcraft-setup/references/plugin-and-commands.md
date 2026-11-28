@@ -12,7 +12,7 @@
 | Commerce | `catalogs([...])`, `catalogCollections([...])` |
 | URLs | `publicUrlsViaNamedRoute(...)`, `publicUrlUsing(Closure)`, `localeUrlsUsing(Closure)` |
 | Assets | `stylesheet($url)`, `script($url)`, `viteBuild($dir, [$entries])`, `viteManifest($path, [$entries])`, `mirrorEditorStyles()`, `imageSizesUsing(Closure)` |
-| Editor chrome | `editorExitUrlUsing(...)`, `editorDocumentTitleUsing(...)`, `editorPrimaryColor(...)`, `usePanelPrimaryColor()`, `navigationGroup()`, `navigationLabel()` and the other `*NavigationLabel()` methods |
+| Editor chrome | `editorBackUrlUsing(url or Closure(Template, ?string $previousUrl), ?label)` (topbar Exit; default: the page the editor was opened from, then the All pages URL), `editorExitUrlUsing(...)` (All pages), `editorDocumentTitleUsing(...)`, `editorPrimaryColor(...)`, `usePanelPrimaryColor()`, `navigationGroup()`, `navigationLabel()` and the other `*NavigationLabel()` methods |
 | Forms | `withSubmissionsInbox(bool)`, `formRecipientsUsing(Closure(Site, SubmissionType))` |
 | AI assistant | `ai(bool)`, `aiProvider(Lab|string)`, `aiModels()`, `aiDefaultTier()`, `aiSiteKeys()`, `aiUsage()`, `aiLimits()` (rate and budget also take `Closure(Site)`), `aiInstructions()`, `aiVoice()`, `aiAccess()`, `aiModel(AiTier, string)`, `aiProviderOptions([...], ?provider)`, `aiPromptUsing(Closure(AiRequest): AiRequest)` (needs `laravel/ai`, PHP 8.3+) |
 | License | `softLicense(bool)` |
