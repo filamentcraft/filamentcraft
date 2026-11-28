@@ -5,6 +5,24 @@ All notable changes to FilamentCraft are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.42.4] — 2026-11-28
+
+### Upgrade
+
+No action needed. With the default `filamentcraft.storefront` keys the storefront output is unchanged; if you set them, add `php artisan filamentcraft:storefront-assets` to your deploy (`filamentcraft:upgrade` runs it).
+
+A hero with no slides renders exactly as before. Because the hero now has two block types (proof points and slides), its blocks panel shows one mixed list with an **Add block** menu instead of a single proof-point list.
+
+### Added
+
+- **Exit button in the editor topbar.** A back-arrow button at the start of the top bar takes people back to the page they opened the editor from (only pages on your own domain; the editor itself and sign-in pages are skipped). With no earlier page it goes where **All pages** goes. Choose the destination with `editorBackUrlUsing(url or fn (Template $template, ?string $previousUrl), label)`, or link into the editor with a `return` query parameter. Its label (default **Exit**) shows as a tooltip and to screen readers; the arrow flips in right-to-left layouts, and leaving with unsaved changes still asks first. (#318)
+- **White-label storefront.** Set `filamentcraft.storefront.prefix` (for example `sew`) and the live storefront ships `sew-` classes, `data-sew-*` attributes, `--sew-` CSS variables, `<sew-island>`, `sew:` browser events, `/sew/cart/*` cart URLs and `sew-section.*` Livewire aliases, with `site.css` and `site.js` served from `/assets/sew/`. `namespace` and `assets_path` override the derived names; `assets_path` alone just moves the two files. The new `filamentcraft:storefront-assets` command writes the renamed bundle, and `filamentcraft:doctor` fails when it is missing or out of date. The editor canvas and preview routes keep `fc`, and so do your saved content and exports. (#278)
+  - Your own stylesheets and scripts are not rewritten, so host rules that target `.fc-*` need the new prefix.
+  - Island bundles keep pushing to `window.FilamentCraftIslands`.
+  - The licence watermark and the bundled preset image URLs (`/images/filamentcraft/…`) keep their names.
+  - Changing the prefix resets visitors' saved colour-scheme choice once.
+- **Hero slideshow.** Add two or more **Slide** blocks to a hero and it becomes a slideshow. Each slide can set its own image, heading, text and button; an empty field falls back to the hero's own. A new **Slideshow** group turns on autoplay (3 to 15 seconds per slide) and shows or hides the arrows and dots. Autoplay pauses on hover and focus, has a pause button, and never runs for visitors who prefer reduced motion or inside the editor. Picking a slide in the editor sidebar scrolls the canvas to it. (#251)
+
 ## [1.42.3] — 2026-11-27
 
 ### Fixed
